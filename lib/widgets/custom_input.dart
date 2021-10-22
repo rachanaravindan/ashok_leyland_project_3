@@ -1,16 +1,16 @@
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:flutter/material.dart';
 
-class customInput extends StatelessWidget {
-  final String HintText;
+class CustomInput extends StatelessWidget {
+  final String hintText;
   final Function(String) onChanged;
   final Function(String) onSubmitted;
   final FocusNode focusNode;
   final TextInputAction textInputAction;
   final bool isPassword;
 
-  const customInput(
-      {this.HintText,
+  const CustomInput(
+      {this.hintText,
       this.onChanged,
       this.onSubmitted,
       this.focusNode,
@@ -36,12 +36,12 @@ class customInput extends StatelessWidget {
         textInputAction: textInputAction,
         decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: HintText ?? "Hint text",
+            hintText: hintText ?? "Hint text",
             contentPadding: EdgeInsets.symmetric(
               horizontal: 24.0,
               vertical: 18.0,
             )),
-        style: constants.regularDarkText,
+        style: Constants.regularDarkText,
       ),
     );
   }

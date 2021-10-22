@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import 'package:ashok_leyland_project_3/screens/trainee_details.dart';
+=======
+import 'package:ashok_leyland_project_3/screens/trainee_list.dart';
+>>>>>>> 499a272d58335735f65143bd8daea5948d581344
 import 'package:flutter/material.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,12 +11,20 @@ import 'package:sizer/sizer.dart';
 
 class SelectDepartmentScreen extends StatefulWidget {
   @override
+<<<<<<< HEAD
   _SelectDepartmentScreenState createState() => _SelectDepartmentScreenState();
 }
 
 class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
   Container departmentButton(
       String deptName, double heightVar, double widthVar) {
+=======
+  State<SelectDepartmentScreen> createState() => _SelectDepartmentScreenState();
+}
+
+class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
+  Container departmentButton(String deptName, double heightVar, double widthVar) {
+>>>>>>> 499a272d58335735f65143bd8daea5948d581344
     return Container(
       child: Column(
         children: [
@@ -26,8 +38,13 @@ class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
             ),
             onPressed: () {
               Navigator.push(
+<<<<<<< HEAD
                 context,
                 MaterialPageRoute(builder: (context) => TraineeDetails()),
+=======
+              context,
+              MaterialPageRoute(builder: (context) => traineeList())
+>>>>>>> 499a272d58335735f65143bd8daea5948d581344
               );
             },
             child: Container(

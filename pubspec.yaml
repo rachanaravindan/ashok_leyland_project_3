@@ -17,6 +17,7 @@ dependencies:
   hexcolor: ^2.0.5
   material_floating_search_bar: ^0.3.5
   sizer: ^2.0.15
+  font_awesome_flutter: ^9.2.0
 
 dev_dependencies:
   flutter_test:

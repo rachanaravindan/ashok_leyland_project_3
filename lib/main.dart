@@ -1,5 +1,6 @@
 import 'package:ashok_leyland_project_3/screens/select_department_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 void main() {
@@ -11,12 +12,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false ,
-      title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
+        accentColor: Color(0xFFFF1E00)
       ),
+      title: 'Ashok_leyland',
+     
       home: SelectDepartmentScreen(),
     );
   }
 }
-

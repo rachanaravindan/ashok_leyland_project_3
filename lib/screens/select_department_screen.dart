@@ -7,11 +7,12 @@ import 'package:sizer/sizer.dart';
 
 class SelectDepartmentScreen extends StatefulWidget {
   @override
-  State<SelectDepartmentScreen> createState() => _SelectDepartmentScreenState();
+  _SelectDepartmentScreenState createState() => _SelectDepartmentScreenState();
 }
 
 class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
-  Container departmentButton(String deptName, double heightVar, double widthVar) {
+  Container departmentButton(
+      String deptName, double heightVar, double widthVar) {
     return Container(
       child: Column(
         children: [
@@ -35,7 +36,6 @@ class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
               child: Icon(
                 Icons.engineering,
               ),
-             
               padding: EdgeInsets.symmetric(vertical: 55, horizontal: 5),
             ),
           ),
@@ -65,7 +65,7 @@ class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
                   child: Text('Select Department',
                       style: GoogleFonts.montserrat(
                         textStyle: TextStyle(
-                             fontSize: 30,
+                            fontSize: 30,
                             fontWeight: FontWeight.normal,
                             color: Colors.black),
                       )),
@@ -86,7 +86,8 @@ class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
                   runSpacing: 40,
                   alignment: WrapAlignment.start,
                   children: [
-                    departmentButton('Chassis & \n Frame Assembly', 15.0.h, 15.0.h),
+                    departmentButton(
+                        'Chassis & \n Frame Assembly', 15.0.h, 15.0.h),
                     departmentButton('GB assembly', 15.0.h, 15.0.h),
                     departmentButton('HT', 15.0.h, 15.0.h),
                     departmentButton('GB Machining', 15.0.h, 15.0.h),
@@ -96,8 +97,6 @@ class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
                     departmentButton('A-Engine Machining', 15.0.h, 15.0.h),
                     departmentButton('Axle Assembly', 15.0.h, 15.0.h),
                     departmentButton('Axle Machining', 15.0.h, 15.0.h),
-                    
-                   
                   ],
                 ),
               ),

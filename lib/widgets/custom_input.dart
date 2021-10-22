@@ -23,7 +23,7 @@ class CustomInput extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(
         vertical: 8.0,
-        horizontal: 24.0,
+        horizontal: 5.0,
       ),
       decoration: BoxDecoration(
           color: Color(0xFFf2F2F2), borderRadius: BorderRadius.circular(12.0)),

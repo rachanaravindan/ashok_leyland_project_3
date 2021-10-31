@@ -25,10 +25,8 @@ class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
               onPrimary: Colors.white, // foreground
             ),
             onPressed: () {
-              Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => traineeList())
-              );
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TraineeList()));
             },
             child: Container(
               height: heightVar,

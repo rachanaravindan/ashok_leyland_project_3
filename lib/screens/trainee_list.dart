@@ -1,4 +1,5 @@
 import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:ashok_leyland_project_3/screens/trainee_profile.dart';
 import 'package:ashok_leyland_project_3/widgets/custom_input.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -6,37 +7,30 @@ import 'select_department_screen.dart';
 import 'package:sizer/sizer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class traineeList extends StatefulWidget {
+class TraineeList extends StatefulWidget {
   @override
   _traineeListState createState() => _traineeListState();
 }
 
-
-class _traineeListState extends State<traineeList> {
-  
+class _traineeListState extends State<TraineeList> {
+  // TraineeList traineeListObj = TraineeList();
   @override
   Widget build(BuildContext context) {
-    List<String> nameList = ["Sneha N", "Rachana A", "Shrinithi Sellam V P", "Sharan Deepak R B"];
-    List<String> empIDList = ["19205102", "19205075", "19205098", "19205093"];
-    final List<String> items = [
-      "snehaa",
-      "shrii",
-      "shafran",
-      "rachajaaa",
-      "snehaa",
-      "shrii",
-      "shafran",
-      "rachaja",
-      "snehaa",
-      "shrii",
-      "shafran",
-      "rachaja",
-      "snehaa",
-      "shrii",
-      "shafran",
-      "rachaja"
+    List<String> nameList = [
+      "Sneha N",
+      "Rachana A",
+      "Shrinithi Sellam V P",
+      "Sharan Deepak R B",
+      "Suravarappu Sai Charan Reddy"
     ];
-
+    List<String> empIDList = [
+      "1920510223334455",
+      "192050754455666",
+      "19205098",
+      "19205093",
+      "19205110"
+    ];
+    List<String> joiningDateList = ["13/06/2001", "27/07/2001", "5/03/2002", "12/11/2001","30/02/2002"];
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
         child: Scaffold(
@@ -51,7 +45,8 @@ class _traineeListState extends State<traineeList> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => SelectDepartmentScreen()));
+                                builder: (context) =>
+                                    SelectDepartmentScreen()));
                       },
                       child: Container(
                         alignment: Alignment.topLeft,
@@ -62,8 +57,10 @@ class _traineeListState extends State<traineeList> {
                       ),
                     ),
                   ),
-                  Text('Trainee Details',
-                  style: Constants.ListItemHeading,)
+                  Text(
+                    'Trainee Details',
+                    style: Constants.ListItemHeading,
+                  )
                 ],
               ),
               Padding(
@@ -109,21 +106,25 @@ class _traineeListState extends State<traineeList> {
                   ),
                 ),
               ),
-              
+
               Row(
                 children: [
                   SizedBox(
                     width: 25.w,
                   ),
                   Text('Name',
-                  style: TextStyle(
-      fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.black)),
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black)),
                   SizedBox(
                     width: 40.w,
                   ),
                   Text('Id',
-                  style: TextStyle(
-      fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.black))
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black))
                 ],
               ),
               // ==============================================
@@ -143,51 +144,58 @@ class _traineeListState extends State<traineeList> {
                   itemCount: nameList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
-                      
                       onTap: () {
-                        print('jksdds');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => traineeProfile(
+                                      traineeName: nameList[index],
+                                      traineeID: empIDList[index],
+                                      joiningDate: joiningDateList[index],
+                                    )));
                       },
-                      child: Container(
-                        
-                        // height: 7.h,
-                        child: Card(
-                          margin: EdgeInsets.symmetric(vertical: 0.5.h, horizontal: 2.w),
-                          color: HexColor("#D9E9F2"),
-                          elevation: 0.5.h,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Center(
-                                child: Expanded(child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: CircleAvatar(
-                                    child: Icon(Icons.person),
-                                  ),
-                                )),
-                              ),
-                              Expanded(
-                                  flex: 1,
+                      child: Card(
+                        margin: EdgeInsets.symmetric(
+                            vertical: 0.5.h, horizontal: 2.w),
+                        color: HexColor("#D9E9F2"),
+                        elevation: 0.5.h,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Center(
+                              child: Expanded(
                                   child: Padding(
-                                    padding:
-                                        EdgeInsets.fromLTRB(5.w, 0, 0, 1.2.h),
+                                padding: const EdgeInsets.all(8.0),
+                                child: CircleAvatar(
+                                  child: Icon(Icons.person),
+                                ),
+                              )),
+                            ),
+                            Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.fromLTRB(5.w, 0, 0, 1.2.h),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
                                     child: Text(
                                       nameList[index],
-                                      style:
-                                          Constants.ListItemHeading,
+                                      style: Constants.ListItemHeading,
                                     ),
-                                  )),
-                              Expanded(
-                                  child: Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(12.w, 0, 0, 1.2.h),
+                                  ),
+                                )),
+                            Expanded(
+                                child: Padding(
+                              padding: EdgeInsets.fromLTRB(12.w, 0, 0, 1.2.h),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
                                 child: Text(
                                   empIDList[index],
                                   style: Constants.ListItemSubHeading,
-                                  
                                 ),
-                              )),
-                            ],
-                          ),
+                              ),
+                            )),
+                          ],
                         ),
                       ),
                     );
@@ -197,13 +205,9 @@ class _traineeListState extends State<traineeList> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.blue,
-            child: Icon(Icons.add),
-            onPressed: () {
-              
-
-            },
-          ),
+              backgroundColor: Colors.blue,
+              child: Icon(Icons.add),
+              onPressed: () {}),
         ),
       );
     });

@@ -20,7 +20,7 @@ class MarkAllocationScreen extends StatefulWidget {
 
 class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
   DateTime _currentdate = new DateTime.now();
-
+  bool _isDisable = true;
   Future<Null> _selectdate(BuildContext floatcontext) async {
     final DateTime _seldate = await showDatePicker(
         context: floatcontext,
@@ -61,6 +61,13 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isNumeric(String s) {
+      if (s == null) {
+        return false;
+      }
+      return double.parse(s, (e) => null) != null;
+    }
+
     String _formattedate = new DateFormat.yMMMd().format(_currentdate);
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
@@ -107,17 +114,22 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          _selectdate(context);
-                        },
-                        icon: Icon(Icons.calendar_today),
-                      ),
-                      Text('Date: $_formattedate '),
-                    ],
+                child: GestureDetector(
+                  onTap: () {
+                    _selectdate(context);
+                  },
+                  child: Card(
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            _selectdate(context);
+                          },
+                          icon: Icon(Icons.calendar_today),
+                        ),
+                        Text('Date: $_formattedate '),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -210,8 +222,34 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: TextField(
                     decoration: InputDecoration(labelText: 'Enter Marks'),
+                    onChanged: (str) {
+                      setState(() {
+                        if (str.isEmpty)
+                          _isDisable = true;
+                        else if (isNumeric(str)) _isDisable = false;
+                      });
+                    },
                   ),
-                )
+                ),
+              Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      elevation: 2,
+
+                      padding: EdgeInsets.symmetric(
+                          vertical: 1.5.h, horizontal: 11.6.h),
+                      onPrimary: Colors.white, // foreground
+                    ),
+                    onPressed: _isDisable
+                        ? null
+                        : () {
+                            print("Submitted");
+                          },
+                    child: Text('Submit')),
+              ),
             ],
           ),
         ),

@@ -189,7 +189,9 @@ class _traineeProfileState extends State<traineeProfile> {
 
                         onPrimary: Colors.white, // foreground
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        
+                      },
                       child: Text('Unit Allocation')),
                   SizedBox(
                     height: 1.h,

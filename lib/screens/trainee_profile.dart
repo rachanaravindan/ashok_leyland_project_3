@@ -30,8 +30,8 @@ class _traineeProfileState extends State<traineeProfile> {
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
           child: Scaffold(
-        backgroundColor: HexColor("#D9E9F2"),
-        body: Column(
+                backgroundColor: HexColor("#D9E9F2"),
+                body: Column(
           children: [
             // BACK ARROW==================================================
             Align(
@@ -58,7 +58,7 @@ class _traineeProfileState extends State<traineeProfile> {
                       padding: EdgeInsets.only(left: 2.h, top: 2.h),
                       alignment: Alignment.topLeft,
                       child: CircleAvatar(
-                        child: Icon(Icons.person),
+                        child: Icon(Icons.person,size: 7.h,color: Colors.white,),
                         radius: 5.h,
                       )),
                   Container(
@@ -91,7 +91,7 @@ class _traineeProfileState extends State<traineeProfile> {
                   SizedBox(
                     height: 7.h,
                   ),
-
+          
                   Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -104,7 +104,7 @@ class _traineeProfileState extends State<traineeProfile> {
                       Expanded(child: Text('Post Test')),
                     ],
                   ),
-
+          
                   // listview starting=====================================================
                   Expanded(
                     child: ListView.builder(
@@ -160,7 +160,7 @@ class _traineeProfileState extends State<traineeProfile> {
                         elevation: 2,
                         padding: EdgeInsets.symmetric(
                             vertical: 1.5.h, horizontal: 13.h),
-
+          
                         onPrimary: Colors.white, // foreground
                       ),
                       onPressed: () {
@@ -173,7 +173,7 @@ class _traineeProfileState extends State<traineeProfile> {
                                       traineeName: widget.traineeName,
                                       joiningDate: widget.joiningDate,
                                     )));
-
+          
                       },
                       child: Text('Marks Allocation')),
                   SizedBox(
@@ -186,7 +186,7 @@ class _traineeProfileState extends State<traineeProfile> {
                         elevation: 2,
                         padding: EdgeInsets.symmetric(
                             vertical: 1.5.h, horizontal: 13.8.h),
-
+          
                         onPrimary: Colors.white, // foreground
                       ),
                       onPressed: () {
@@ -201,7 +201,7 @@ class _traineeProfileState extends State<traineeProfile> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                         elevation: 2,
-
+          
                         padding: EdgeInsets.symmetric(
                             vertical: 1.5.h, horizontal: 11.6.h),
                         onPrimary: Colors.white, // foreground
@@ -215,8 +215,8 @@ class _traineeProfileState extends State<traineeProfile> {
               ),
             ),
           ],
-        ),
-      ));
+                ),
+              ));
     });
   }
 }

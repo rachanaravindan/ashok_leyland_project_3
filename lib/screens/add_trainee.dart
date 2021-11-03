@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddTrainee extends StatefulWidget {
   @override
@@ -10,7 +10,7 @@ class AddTrainee extends StatefulWidget {
 }
 
 class _AddTraineeState extends State<AddTrainee> {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  // FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
 
   String _traineeName, _registerNumber;
@@ -40,18 +40,18 @@ class _AddTraineeState extends State<AddTrainee> {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    Future<void> addUser() {
-      // Call the user's CollectionReference to add a new user
-      return users
-          .add({
-            'full_name': "sharan deepal", // John Doe
-            'company': "the fcking company", // Stokes and Sons
-            'age': "69" // 42
-          })
-          .then((value) => print("User Added"))
-          .catchError((error) => print("Failed to add user: $error"));
-    }
+    // CollectionReference users = FirebaseFirestore.instance.collection('users');
+    // Future<void> addUser() {
+    //   // Call the user's CollectionReference to add a new user
+    //   return users
+    //       .add({
+    //         'full_name': "sharan deepal", // John Doe
+    //         'company': "the fcking company", // Stokes and Sons
+    //         'age': "69" // 42
+    //       })
+    //       .then((value) => print("User Added"))
+    //       .catchError((error) => print("Failed to add user: $error"));
+    // }
 
     bool isNumeric(String s) {
       if (s == null) {
@@ -146,7 +146,7 @@ class _AddTraineeState extends State<AddTrainee> {
                             ? null
                             : () {
                                 print("Submitted");
-                                addUser();
+                                // addUser();
                               },
                         child: Text('Submit')),
                   ),

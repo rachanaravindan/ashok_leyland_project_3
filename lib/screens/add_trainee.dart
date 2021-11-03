@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddTrainee extends StatefulWidget {
   @override
@@ -9,6 +10,7 @@ class AddTrainee extends StatefulWidget {
 }
 
 class _AddTraineeState extends State<AddTrainee> {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
 
   String _traineeName, _registerNumber;
@@ -38,12 +40,26 @@ class _AddTraineeState extends State<AddTrainee> {
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    Future<void> addUser() {
+      // Call the user's CollectionReference to add a new user
+      return users
+          .add({
+            'full_name': "sharan deepal", // John Doe
+            'company': "the fcking company", // Stokes and Sons
+            'age': "69" // 42
+          })
+          .then((value) => print("User Added"))
+          .catchError((error) => print("Failed to add user: $error"));
+    }
+
     bool isNumeric(String s) {
       if (s == null) {
         return false;
       }
       return double.parse(s, (e) => null) != null;
     }
+
     String _formattedate = new DateFormat.yMMMd().format(currentDate);
 
     return Sizer(builder: (context, orientation, deviceType) {
@@ -82,8 +98,7 @@ class _AddTraineeState extends State<AddTrainee> {
                         setState(() {
                           if (input.isEmpty)
                             _isDisable = true;
-                          else if(isNumeric(input))
-                            _isDisable = false;
+                          else if (isNumeric(input)) _isDisable = false;
                         });
                       },
                       decoration: InputDecoration(labelText: 'Register Number'),
@@ -96,7 +111,6 @@ class _AddTraineeState extends State<AddTrainee> {
                       onTap: () {
                         setState(() {
                           _selectdate(context);
-                           
                         });
                       },
                       child: Card(
@@ -132,6 +146,7 @@ class _AddTraineeState extends State<AddTrainee> {
                             ? null
                             : () {
                                 print("Submitted");
+                                addUser();
                               },
                         child: Text('Submit')),
                   ),

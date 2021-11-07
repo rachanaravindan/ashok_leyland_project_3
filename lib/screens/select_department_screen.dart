@@ -60,7 +60,7 @@ class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
               Container(
                 padding: EdgeInsets.only(top: 10.0.h),
                 child: Center(
-                  child: Text('Select Department',
+                  child: Text('Home',
                       style: GoogleFonts.montserrat(
                         textStyle: TextStyle(
                             fontSize: 30,
@@ -84,17 +84,14 @@ class _SelectDepartmentScreenState extends State<SelectDepartmentScreen> {
                   runSpacing: 40,
                   alignment: WrapAlignment.start,
                   children: [
+                    departmentButton('Add Trainee', 15.0.h, 15.0.h),
+                    departmentButton('SDC Training', 15.0.h, 15.0.h),
+                    departmentButton('SDC Query', 15.0.h, 15.0.h),
                     departmentButton(
-                        'Chassis & \n Frame Assembly', 15.0.h, 15.0.h),
-                    departmentButton('GB assembly', 15.0.h, 15.0.h),
-                    departmentButton('HT', 15.0.h, 15.0.h),
-                    departmentButton('GB Machining', 15.0.h, 15.0.h),
-                    departmentButton('H- Engine assembly', 15.0.h, 15.0.h),
-                    departmentButton('Engine- Machining', 15.0.h, 15.0.h),
-                    departmentButton('A- Engine Assembly', 15.0.h, 15.0.h),
-                    departmentButton('A-Engine Machining', 15.0.h, 15.0.h),
-                    departmentButton('Axle Assembly', 15.0.h, 15.0.h),
-                    departmentButton('Axle Machining', 15.0.h, 15.0.h),
+                        'Department \n Allocation', 15.0.h, 15.0.h),
+                    departmentButton('On the job \n Training', 15.0.h, 15.0.h),
+                    departmentButton(
+                        'On the job \n Training \n Query', 15.0.h, 15.0.h),
                   ],
                 ),
               ),

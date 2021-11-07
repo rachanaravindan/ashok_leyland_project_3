@@ -18,6 +18,10 @@ class MarkAllocationScreen extends StatefulWidget {
   _MarkAllocationScreenState createState() => _MarkAllocationScreenState();
 }
 
+@override
+// DateTime _joiningDate;
+// DateTime currentDate = new DateTime.now();
+//bool _isDisable = false;
 class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
   DateTime _currentdate = new DateTime.now();
   bool _isDisable = true;
@@ -42,7 +46,7 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
   List<bool> isSelected2 = [false, false];
   bool showToggleBtn = false, showTextField = false;
   List<String> items = [
-    'Select any One',
+    'Choose Program',
     'Ashok Leyland Overview',
     'Basics of Automobile',
     'Safety',
@@ -52,10 +56,21 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
     'Work Ethics and Standing Orders',
     '5S, Gemba & TQM'
   ];
-  String DropDownValue, ToggleBtnVal;
+  List<String> DayItems = [
+    'Training Day',
+    'Day 1',
+    'Day 2',
+    'Day 3',
+    'Day 4',
+    'Day 5',
+    'Day 6'
+  ];
+  String DropDownValue, ToggleBtnVal, DayDropDownValue;
+  String _traineeName, _employeeId, _traineeQualifications, _traineeAge;
   @override
   void initState() {
     DropDownValue = items[0];
+    DayDropDownValue = DayItems[0];
     super.initState();
   }
 
@@ -108,8 +123,72 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 120),
                 child: Text(
-                  'Mark Allocation',
+                  'SDC Training',
                   style: Constants.boldHeading,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: TextField(
+                  onChanged: (input) {
+                    _employeeId = input;
+                    setState(() {
+                      if (input.isEmpty)
+                        _isDisable = true;
+                      else if (isNumeric(input)) _isDisable = false;
+                    });
+                  },
+                  decoration: InputDecoration(labelText: 'Employee Id'),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: TextField(
+                  onChanged: (input) {
+                    _traineeName = input;
+                    setState(() {
+                      if (input.isEmpty)
+                        _isDisable = true;
+                      else
+                        _isDisable = false;
+                    });
+                  },
+                  decoration: InputDecoration(labelText: 'Name'),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  dropdownColor: Colors.white,
+                  iconSize: 5.h,
+                  focusColor: Colors.red,
+                  value: DayDropDownValue,
+                  //elevation: 5,
+                  style: TextStyle(color: Colors.black),
+                  iconEnabledColor: Colors.black,
+                  items: DayItems.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  hint: Text(DayItems[0]),
+                  onChanged: (String value) {
+                    setState(() {
+                      DayDropDownValue = value;
+                      if (value != "Training Day") {
+                        showToggleBtn = true;
+                      } else
+                        showToggleBtn = false;
+                      showTextField = false;
+                    });
+                  },
                 ),
               ),
               Padding(
@@ -136,10 +215,8 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
               SizedBox(
                 height: 1.h,
               ),
-              AnimatedPadding(
-                duration: const Duration(seconds: 10),
-                curve: Curves.easeInOut,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+              Padding(
+                padding: EdgeInsets.all(8.0),
                 child: DropdownButton<String>(
                   isExpanded: true,
                   dropdownColor: Colors.white,
@@ -164,7 +241,7 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
                   onChanged: (String value) {
                     setState(() {
                       DropDownValue = value;
-                      if (value != "Select any One") {
+                      if (value != "Choose Program") {
                         showToggleBtn = true;
                       } else
                         showToggleBtn = false;
@@ -173,6 +250,43 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
                   },
                 ),
               ),
+              // AnimatedPadding(
+              //   duration: const Duration(seconds: 10),
+              //   curve: Curves.easeInOut,
+              //   padding: const EdgeInsets.symmetric(horizontal: 20),
+              //   child: DropdownButton<String>(
+              //     isExpanded: true,
+              //     dropdownColor: Colors.white,
+              //     iconSize: 5.h,
+              //     focusColor: Colors.red,
+              //     value: DropDownValue,
+              //     //elevation: 5,
+              //     style: TextStyle(color: Colors.black),
+              //     iconEnabledColor: Colors.black,
+              //     items: items.map<DropdownMenuItem<String>>((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(
+              //           value,
+              //           style: TextStyle(
+              //             color: Colors.black,
+              //           ),
+              //         ),
+              //       );
+              //     }).toList(),
+              //     hint: Text(items[0]),
+              //     onChanged: (String value) {
+              //       setState(() {
+              //         DropDownValue = value;
+              //         if (value != "Select any One") {
+              //           showToggleBtn = true;
+              //         } else
+              //           showToggleBtn = false;
+              //         showTextField = false;
+              //       });
+              //     },
+              //   ),
+              // ),
               SizedBox(
                 height: 1.h,
               ),

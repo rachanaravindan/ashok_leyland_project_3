@@ -13,10 +13,17 @@ class _AddTraineeState extends State<AddTrainee> {
   // FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
 
-  String _traineeName, _registerNumber;
+  String _traineeName, _employeeId, _traineeQualifications, _traineeAge;
   DateTime _joiningDate;
   DateTime currentDate = new DateTime.now();
   bool _isDisable = false;
+  bool showToggleBtn = false, showTextField = false;
+  List<String> GenderItems = ['Gender', 'Male', 'Female', 'Others'];
+  String GenderDropDownValue;
+  void initState() {
+    var GenderDropDownValue = GenderItems[0];
+    super.initState();
+  }
 
   Future<Null> _selectdate(BuildContext floatcontext) async {
     final DateTime _seldate = await showDatePicker(
@@ -87,21 +94,21 @@ class _AddTraineeState extends State<AddTrainee> {
                             _isDisable = false;
                         });
                       },
-                      decoration: InputDecoration(labelText: 'Name of Trainee'),
+                      decoration: InputDecoration(labelText: 'Name'),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: TextField(
                       onChanged: (input) {
-                        _registerNumber = input;
+                        _employeeId = input;
                         setState(() {
                           if (input.isEmpty)
                             _isDisable = true;
                           else if (isNumeric(input)) _isDisable = false;
                         });
                       },
-                      decoration: InputDecoration(labelText: 'Register Number'),
+                      decoration: InputDecoration(labelText: 'Employee Id'),
                     ),
                   ),
                   Padding(
@@ -124,10 +131,75 @@ class _AddTraineeState extends State<AddTrainee> {
                               },
                               icon: Icon(Icons.calendar_today),
                             ),
-                            Text('Date: $_formattedate'),
+                            Text('Date Of Joining: $_formattedate'),
                           ],
                         ),
                       ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: TextField(
+                      onChanged: (input) {
+                        _traineeQualifications = input;
+                        setState(() {
+                          if (input.isEmpty)
+                            _isDisable = true;
+                          else
+                            _isDisable = false;
+                        });
+                      },
+                      decoration: InputDecoration(labelText: 'Qualifications'),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      dropdownColor: Colors.white,
+                      iconSize: 5.h,
+                      focusColor: Colors.red,
+                      value: GenderDropDownValue,
+                      //elevation: 5,
+                      style: TextStyle(color: Colors.black),
+                      iconEnabledColor: Colors.black,
+                      items: GenderItems.map<DropdownMenuItem<String>>(
+                          (String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      hint: Text(GenderItems[0]),
+                      onChanged: (String value) {
+                        setState(() {
+                          GenderDropDownValue = value;
+                          if (value != "Gender") {
+                            showToggleBtn = true;
+                          } else
+                            showToggleBtn = false;
+                          showTextField = false;
+                        });
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: TextField(
+                      onChanged: (input) {
+                        _traineeAge = input;
+                        setState(() {
+                          if (input.isEmpty)
+                            _isDisable = true;
+                          else if (isNumeric(input)) _isDisable = false;
+                        });
+                      },
+                      decoration: InputDecoration(labelText: 'Age'),
                     ),
                   ),
                   Padding(
@@ -158,4 +230,10 @@ class _AddTraineeState extends State<AddTrainee> {
       );
     });
   }
+}
+
+@override
+Widget build(BuildContext context) {
+  // TODO: implement build
+  throw UnimplementedError();
 }

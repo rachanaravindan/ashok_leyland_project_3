@@ -1,4 +1,5 @@
 import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:ashok_leyland_project_3/screens/home.dart';
 import 'package:ashok_leyland_project_3/widgets/custom_input.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -88,283 +89,287 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
       return SafeArea(
           child: Scaffold(
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (widget.traineeName != null)
-                          print(widget.traineeName);
-                        else
-                          print('null');
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => traineeProfile(
-                                      traineeID: widget.traineeID,
-                                      traineeName: widget.traineeName,
-                                      joiningDate: widget.joiningDate,
-                                    )));
-                      },
-                      child: Container(
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.all(3.h),
-                        height: 3.0.h,
-                        width: 7.0.h,
-                        child: Icon(Icons.arrow_back),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (widget.traineeName != null)
+                            print(widget.traineeName);
+                          else
+                            print('null');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()));
+                        },
+                        child: Container(
+                          alignment: Alignment.topLeft,
+                          margin: EdgeInsets.only(top:3.h),
+                          height: 3.0.h,
+                          width: 7.0.h,
+                          child: Icon(Icons.arrow_back),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 120),
-                child: Text(
-                  'SDC Training',
-                  style: Constants.boldHeading,
+                  ],
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextField(
-                  onChanged: (input) {
-                    _employeeId = input;
-                    setState(() {
-                      if (input.isEmpty)
-                        _isDisable = true;
-                      else if (isNumeric(input)) _isDisable = false;
-                    });
-                  },
-                  decoration: InputDecoration(labelText: 'Employee Id'),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextField(
-                  onChanged: (input) {
-                    _traineeName = input;
-                    setState(() {
-                      if (input.isEmpty)
-                        _isDisable = true;
-                      else
-                        _isDisable = false;
-                    });
-                  },
-                  decoration: InputDecoration(labelText: 'Name'),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  dropdownColor: Colors.white,
-                  iconSize: 5.h,
-                  focusColor: Colors.red,
-                  value: DayDropDownValue,
-                  //elevation: 5,
-                  style: TextStyle(color: Colors.black),
-                  iconEnabledColor: Colors.black,
-                  items: DayItems.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  hint: Text(DayItems[0]),
-                  onChanged: (String value) {
-                    setState(() {
-                      DayDropDownValue = value;
-                      if (value != "Training Day") {
-                        showToggleBtn = true;
-                      } else
-                        showToggleBtn = false;
-                      showTextField = false;
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: GestureDetector(
-                  onTap: () {
-                    _selectdate(context);
-                  },
-                  child: Card(
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            _selectdate(context);
-                          },
-                          icon: Icon(Icons.calendar_today),
-                        ),
-                        Text('Date: $_formattedate '),
-                      ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'SDC Training',
+                      style: Constants.boldHeading,
                     ),
-                  ),
+                  ],
                 ),
-              ),
-              SizedBox(
-                height: 1.h,
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  dropdownColor: Colors.white,
-                  iconSize: 5.h,
-                  focusColor: Colors.red,
-                  value: DropDownValue,
-                  //elevation: 5,
-                  style: TextStyle(color: Colors.black),
-                  iconEnabledColor: Colors.black,
-                  items: items.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  hint: Text(items[0]),
-                  onChanged: (String value) {
-                    setState(() {
-                      DropDownValue = value;
-                      if (value != "Choose Program") {
-                        showToggleBtn = true;
-                      } else
-                        showToggleBtn = false;
-                      showTextField = false;
-                    });
-                  },
-                ),
-              ),
-              // AnimatedPadding(
-              //   duration: const Duration(seconds: 10),
-              //   curve: Curves.easeInOut,
-              //   padding: const EdgeInsets.symmetric(horizontal: 20),
-              //   child: DropdownButton<String>(
-              //     isExpanded: true,
-              //     dropdownColor: Colors.white,
-              //     iconSize: 5.h,
-              //     focusColor: Colors.red,
-              //     value: DropDownValue,
-              //     //elevation: 5,
-              //     style: TextStyle(color: Colors.black),
-              //     iconEnabledColor: Colors.black,
-              //     items: items.map<DropdownMenuItem<String>>((String value) {
-              //       return DropdownMenuItem<String>(
-              //         value: value,
-              //         child: Text(
-              //           value,
-              //           style: TextStyle(
-              //             color: Colors.black,
-              //           ),
-              //         ),
-              //       );
-              //     }).toList(),
-              //     hint: Text(items[0]),
-              //     onChanged: (String value) {
-              //       setState(() {
-              //         DropDownValue = value;
-              //         if (value != "Select any One") {
-              //           showToggleBtn = true;
-              //         } else
-              //           showToggleBtn = false;
-              //         showTextField = false;
-              //       });
-              //     },
-              //   ),
-              // ),
-              SizedBox(
-                height: 1.h,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 200),
-                child: Container(
-                    height: 5.h,
-                    child: showToggleBtn == true
-                        ? ToggleButtons(
-                            selectedBorderColor: Colors.black,
-                            borderColor: Colors.black,
-                            borderWidth: 0.2.h,
-                            borderRadius: BorderRadius.circular(0.5.h),
-                            isSelected: isSelected2,
-                            fillColor: Colors.blue,
-                            selectedColor: Colors.white,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Pre-Test"),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Post-Test"),
-                              ),
-                            ],
-                            onPressed: (int index) {
-                              setState(() {
-                                if (index == 0 || index == 1)
-                                  showTextField = true;
-                                for (int buttonIndex = 0;
-                                    buttonIndex < isSelected2.length;
-                                    buttonIndex++) {
-                                  if (buttonIndex == index) {
-                                    isSelected2[buttonIndex] = true;
-                                  } else {
-                                    isSelected2[buttonIndex] = false;
-                                  }
-                                }
-                              });
-                            },
-                          )
-                        : null),
-              ),
-              if (showTextField)
+
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.all(8.0),
                   child: TextField(
-                    decoration: InputDecoration(labelText: 'Enter Marks'),
-                    onChanged: (str) {
+                    onChanged: (input) {
+                      _employeeId = input;
                       setState(() {
-                        if (str.isEmpty)
+                        if (input.isEmpty)
                           _isDisable = true;
-                        else if (isNumeric(str)) _isDisable = false;
+                        else if (isNumeric(input)) _isDisable = false;
+                      });
+                    },
+                    decoration: InputDecoration(labelText: 'Employee Id'),
+                  ),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextField(
+                    onChanged: (input) {
+                      _traineeName = input;
+                      setState(() {
+                        if (input.isEmpty)
+                          _isDisable = true;
+                        else
+                          _isDisable = false;
+                      });
+                    },
+                    decoration: InputDecoration(labelText: 'Name'),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    dropdownColor: Colors.white,
+                    iconSize: 5.h,
+                    focusColor: Colors.red,
+                    value: DayDropDownValue,
+                    //elevation: 5,
+                    style: TextStyle(color: Colors.black),
+                    iconEnabledColor: Colors.black,
+                    items:
+                        DayItems.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    hint: Text(DayItems[0]),
+                    onChanged: (String value) {
+                      setState(() {
+                        DayDropDownValue = value;
+                        if (value != "Training Day") {
+                          showToggleBtn = true;
+                        } else
+                          showToggleBtn = false;
+                        showTextField = false;
                       });
                     },
                   ),
                 ),
-              Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      elevation: 2,
-
-                      padding: EdgeInsets.symmetric(
-                          vertical: 1.5.h, horizontal: 11.6.h),
-                      onPrimary: Colors.white, // foreground
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      _selectdate(context);
+                    },
+                    child: Card(
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              _selectdate(context);
+                            },
+                            icon: Icon(Icons.calendar_today),
+                          ),
+                          Text('Date: $_formattedate '),
+                        ],
+                      ),
                     ),
-                    onPressed: _isDisable
-                        ? null
-                        : () {
-                            print("Submitted");
-                          },
-                    child: Text('Submit')),
-              ),
-            ],
+                  ),
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    dropdownColor: Colors.white,
+                    iconSize: 5.h,
+                    focusColor: Colors.red,
+                    value: DropDownValue,
+                    //elevation: 5,
+                    style: TextStyle(color: Colors.black),
+                    iconEnabledColor: Colors.black,
+                    items: items.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    hint: Text(items[0]),
+                    onChanged: (String value) {
+                      setState(() {
+                        DropDownValue = value;
+                        if (value != "Choose Program") {
+                          showToggleBtn = true;
+                        } else
+                          showToggleBtn = false;
+                        showTextField = false;
+                      });
+                    },
+                  ),
+                ),
+                // AnimatedPadding(
+                //   duration: const Duration(seconds: 10),
+                //   curve: Curves.easeInOut,
+                //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                //   child: DropdownButton<String>(
+                //     isExpanded: true,
+                //     dropdownColor: Colors.white,
+                //     iconSize: 5.h,
+                //     focusColor: Colors.red,
+                //     value: DropDownValue,
+                //     //elevation: 5,
+                //     style: TextStyle(color: Colors.black),
+                //     iconEnabledColor: Colors.black,
+                //     items: items.map<DropdownMenuItem<String>>((String value) {
+                //       return DropdownMenuItem<String>(
+                //         value: value,
+                //         child: Text(
+                //           value,
+                //           style: TextStyle(
+                //             color: Colors.black,
+                //           ),
+                //         ),
+                //       );
+                //     }).toList(),
+                //     hint: Text(items[0]),
+                //     onChanged: (String value) {
+                //       setState(() {
+                //         DropDownValue = value;
+                //         if (value != "Select any One") {
+                //           showToggleBtn = true;
+                //         } else
+                //           showToggleBtn = false;
+                //         showTextField = false;
+                //       });
+                //     },
+                //   ),
+                // ),
+                SizedBox(
+                  height: 1.h,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 200),
+                  child: Container(
+                      height: 5.h,
+                      child: showToggleBtn == true
+                          ? ToggleButtons(
+                              selectedBorderColor: Colors.black,
+                              borderColor: Colors.black,
+                              borderWidth: 0.2.h,
+                              borderRadius: BorderRadius.circular(0.5.h),
+                              isSelected: isSelected2,
+                              fillColor: Colors.blue,
+                              selectedColor: Colors.white,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text("Pre-Test"),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text("Post-Test"),
+                                ),
+                              ],
+                              onPressed: (int index) {
+                                setState(() {
+                                  if (index == 0 || index == 1)
+                                    showTextField = true;
+                                  for (int buttonIndex = 0;
+                                      buttonIndex < isSelected2.length;
+                                      buttonIndex++) {
+                                    if (buttonIndex == index) {
+                                      isSelected2[buttonIndex] = true;
+                                    } else {
+                                      isSelected2[buttonIndex] = false;
+                                    }
+                                  }
+                                });
+                              },
+                            )
+                          : null),
+                ),
+                if (showTextField)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: TextField(
+                      decoration: InputDecoration(labelText: 'Enter Marks'),
+                      onChanged: (str) {
+                        setState(() {
+                          if (str.isEmpty)
+                            _isDisable = true;
+                          else if (isNumeric(str)) _isDisable = false;
+                        });
+                      },
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        elevation: 2,
+
+                        padding: EdgeInsets.symmetric(
+                            vertical: 1.5.h, horizontal: 11.6.h),
+                        onPrimary: Colors.white, // foreground
+                      ),
+                      onPressed: _isDisable
+                          ? null
+                          : () {
+                              print("Submitted");
+                            },
+                      child: Text('Submit')),
+                ),
+              ],
+            ),
           ),
         ),
       ));

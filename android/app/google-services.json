@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "557688614985",
+    "project_id": "ashok-leyland-project",
+    "storage_bucket": "ashok-leyland-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557688614985:android:adbff0bf0d59cefa944f98",
+        "android_client_info": {
+          "package_name": "com.ashok_leyland.ashok_leyland_project_3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557688614985-7mejatmilh1b12quco0jmg4au7kar1of.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSdgLRxIFIAbq0FJCa7wHiDdV00HCvuxs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "557688614985-7mejatmilh1b12quco0jmg4au7kar1of.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

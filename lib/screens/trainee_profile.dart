@@ -1,7 +1,6 @@
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:ashok_leyland_project_3/screens/mark_allocation.dart';
-import 'package:ashok_leyland_project_3/screens/select_department_screen.dart';
-import 'package:ashok_leyland_project_3/screens/temp_screen_delete_it.dart';
+import 'package:ashok_leyland_project_3/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:sizer/sizer.dart';
@@ -39,7 +38,7 @@ class _traineeProfileState extends State<traineeProfile> {
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TraineeList()));
+                      MaterialPageRoute(builder: (context) => HomeScreen()));
                 },
                 child: Container(
                   alignment: Alignment.topLeft,

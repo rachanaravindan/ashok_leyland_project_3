@@ -20,23 +20,29 @@ class _traineeListState extends State<TraineeList> {
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance
-        .collection('users')
-        .where('age', isGreaterThan: 10)
-        .snapshots();
-    Stream<QuerySnapshot> filter() {
-      FirebaseFirestore.instance
-          .collection('users')
-          .where('age', isGreaterThan: 10)
-          .get()
-          .then((QuerySnapshot doccs) {
-        if (doccs.docs.isNotEmpty) {
-          print("hello");
-          print(doccs.docs[0]["age"]);
-        }
-      });
-    }
-
+    List<String> nameList = [
+      "Sneha N",
+      "Rachana A",
+      "Shrinithi Sellam V P",
+      "Sharan Deepak R B",
+      "Suravarappu Sai Charan Reddy"
+    ];
+    List<String> empIDList = [
+      "1920510223334455",
+      "192050754455666",
+      "19205098",
+      "19205093",
+      "19205110"
+    ];
+    List<String> joiningDateList = [
+      "13/06/2001",
+      "27/07/2001",
+      "5/03/2002",
+      "12/11/2001",
+      "30/02/2002"
+    ];
+    final Stream<QuerySnapshot> _usersStream =
+        FirebaseFirestore.instance.collection('users').snapshots();
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
           child: Scaffold(
@@ -93,10 +99,7 @@ class _traineeListState extends State<TraineeList> {
                       // style: ElevatedButton.styleFrom(
                       //     // primary: HexColor("#F3F3F3"))
 
-                      onPressed: () {
-                        print("im pressed");
-                        filter();
-                      },
+                      onPressed: () {},
                       child: Row(
                         children: [
                           Padding(

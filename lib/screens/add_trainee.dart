@@ -12,9 +12,8 @@ class AddTrainee extends StatefulWidget {
 }
 
 class _AddTraineeState extends State<AddTrainee> {
-  // FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
-
+  crudMethod _traineeRef = new crudMethod();
   String _traineeName, _employeeId, _traineeQualifications, _traineeAge;
   DateTime _joiningDate;
   DateTime currentDate = new DateTime.now();
@@ -22,7 +21,7 @@ class _AddTraineeState extends State<AddTrainee> {
   bool showToggleBtn = false, showTextField = false;
   List<String> GenderItems = ['Gender', 'Male', 'Female', 'Others'];
   String GenderDropDownValue;
-  crudMethod crudOperations = new crudMethod();
+  crudMethod crudOperations = crudMethod();
   void initState() {
     var GenderDropDownValue = GenderItems[0];
     super.initState();
@@ -210,14 +209,15 @@ class _AddTraineeState extends State<AddTrainee> {
                             onPrimary: Colors.white, // foreground
                           ),
                           onPressed: () {
+                            
                             print("Submitted");
-                            crudOperations.storeData({
+                            _traineeRef.trainee.doc(_employeeId).set({
                               'name': _traineeName,
                               'empId': _employeeId,
-                              'doj': DateFormat("dd-MM-yyyy").format(currentDate),
+                              'doj':   DateFormat("dd-MM-yyyy").format(currentDate),
                               'qualifications': _traineeQualifications,
                               'gender': GenderDropDownValue,
-                              'age':_traineeAge,
+                              'age': _traineeAge,
                             });
                           },
                           child: Text('Submit')),

@@ -1,5 +1,5 @@
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
-import 'package:ashok_leyland_project_3/screens/mark_allocation.dart';
+import 'package:ashok_leyland_project_3/screens/sdc_training.dart';
 import 'package:ashok_leyland_project_3/screens/trainee_list.dart';
 import 'package:ashok_leyland_project_3/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => MarkAllocationScreen()));
+                          builder: (context) => SdcTrainingScreen()));
                   break;
                 case 3:
                   Navigator.push(

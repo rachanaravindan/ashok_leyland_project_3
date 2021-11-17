@@ -1,31 +1,37 @@
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:ashok_leyland_project_3/screens/home.dart';
+import 'package:ashok_leyland_project_3/services/crud.dart';
 import 'package:ashok_leyland_project_3/widgets/custom_input.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'trainee_profile.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 
-class MarkAllocationScreen extends StatefulWidget {
+class SdcTrainingScreen extends StatefulWidget {
   final String traineeName;
   final String traineeID;
   final String joiningDate;
 
-  const MarkAllocationScreen(
+  const SdcTrainingScreen(
       {Key key, this.traineeName, this.traineeID, this.joiningDate})
       : super(key: key);
   @override
-  _MarkAllocationScreenState createState() => _MarkAllocationScreenState();
+  _SdcTrainingScreenState createState() => _SdcTrainingScreenState();
 }
 
 @override
 // DateTime _joiningDate;
 // DateTime currentDate = new DateTime.now();
 //bool _isDisable = false;
-class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
+class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
+  var _nameController = TextEditingController();
   DateTime _currentdate = new DateTime.now();
   bool _isDisable = true;
+  crudMethod _traineeRef = new crudMethod();
+  DateTime currentDate = new DateTime.now();
+  int _preTestMarks = -1, _postTestMarks = -1, index = -1;
   Future<Null> _selectdate(BuildContext floatcontext) async {
     final DateTime _seldate = await showDatePicker(
         context: floatcontext,
@@ -67,7 +73,12 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
     'Day 6'
   ];
   String DropDownValue, ToggleBtnVal, DayDropDownValue;
-  String _traineeName, _employeeId, _traineeQualifications, _traineeAge;
+  String _traineeName,
+      _employeeId,
+      _traineeQualifications,
+      _traineeAge,
+      _name,
+      _mentorName;
   @override
   void initState() {
     DropDownValue = items[0];
@@ -77,6 +88,32 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _showMyDialog(String error) async {
+      print("Im Pressed");
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[Text(error)],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     bool isNumeric(String s) {
       if (s == null) {
         return false;
@@ -110,7 +147,7 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
                         },
                         child: Container(
                           alignment: Alignment.topLeft,
-                          margin: EdgeInsets.only(top:3.h),
+                          margin: EdgeInsets.only(top: 3.h),
                           height: 3.0.h,
                           width: 7.0.h,
                           child: Icon(Icons.arrow_back),
@@ -134,10 +171,12 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
                   child: TextField(
                     onChanged: (input) {
                       _employeeId = input;
-                      setState(() {
-                        if (input.isEmpty)
-                          _isDisable = true;
-                        else if (isNumeric(input)) _isDisable = false;
+                      setState(() async {
+                        DocumentSnapshot snapshot =
+                            await _traineeRef.trainee.doc(_employeeId).get();
+                        Map<String, dynamic> documentData = snapshot.data();
+                        print(documentData["name"] ?? "Null");
+                        _nameController.text = documentData["name"] ?? "Null";
                       });
                     },
                     decoration: InputDecoration(labelText: 'Employee Id'),
@@ -147,6 +186,7 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: TextField(
+                    controller: _nameController,
                     onChanged: (input) {
                       _traineeName = input;
                       setState(() {
@@ -157,6 +197,8 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
                       });
                     },
                     decoration: InputDecoration(labelText: 'Name'),
+                    enabled: false,
+                    enableInteractiveSelection: true,
                   ),
                 ),
                 Padding(
@@ -295,60 +337,47 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
                   height: 1.h,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 200),
-                  child: Container(
-                      height: 5.h,
-                      child: showToggleBtn == true
-                          ? ToggleButtons(
-                              selectedBorderColor: Colors.black,
-                              borderColor: Colors.black,
-                              borderWidth: 0.2.h,
-                              borderRadius: BorderRadius.circular(0.5.h),
-                              isSelected: isSelected2,
-                              fillColor: Colors.blue,
-                              selectedColor: Colors.white,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text("Pre-Test"),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text("Post-Test"),
-                                ),
-                              ],
-                              onPressed: (int index) {
-                                setState(() {
-                                  if (index == 0 || index == 1)
-                                    showTextField = true;
-                                  for (int buttonIndex = 0;
-                                      buttonIndex < isSelected2.length;
-                                      buttonIndex++) {
-                                    if (buttonIndex == index) {
-                                      isSelected2[buttonIndex] = true;
-                                    } else {
-                                      isSelected2[buttonIndex] = false;
-                                    }
-                                  }
-                                });
-                              },
-                            )
-                          : null),
-                ),
-                if (showTextField)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: TextField(
-                      decoration: InputDecoration(labelText: 'Enter Marks'),
-                      onChanged: (str) {
-                        setState(() {
-                          if (str.isEmpty)
-                            _isDisable = true;
-                          else if (isNumeric(str)) _isDisable = false;
-                        });
-                      },
-                    ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextField(
+                    decoration: InputDecoration(labelText: 'Mentor Name'),
+                    onChanged: (str) {
+                      setState(() {
+                        if (str.isEmpty) _isDisable = true;
+                        _mentorName = str;
+                      });
+                    },
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextField(
+                    decoration:
+                        InputDecoration(labelText: 'Enter Pre-Test Marks'),
+                    onChanged: (str) {
+                      setState(() {
+                        if (str.isEmpty)
+                          _isDisable = true;
+                        else if (isNumeric(str)) _isDisable = false;
+                        _preTestMarks = int.tryParse(str) ?? -1;
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextField(
+                    decoration:
+                        InputDecoration(labelText: 'Enter Post-Test Marks'),
+                    onChanged: (str) {
+                      setState(() {
+                        if (str.isEmpty)
+                          _isDisable = true;
+                        else if (isNumeric(str)) _isDisable = false;
+                        _postTestMarks = int.tryParse(str) ?? -1;
+                      });
+                    },
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(25.0),
                   child: ElevatedButton(
@@ -364,7 +393,23 @@ class _MarkAllocationScreenState extends State<MarkAllocationScreen> {
                       onPressed: _isDisable
                           ? null
                           : () {
-                              print("Submitted");
+                              if (_preTestMarks == -1 || _postTestMarks == -1) {
+                                _showMyDialog("Invalid Mark");
+                              } else {
+                                _traineeRef.trainee
+                                    .doc(_employeeId)
+                                    .collection("completed program")
+                                    .doc(DropDownValue)
+                                    .set({
+                                  "day": DayDropDownValue,
+                                  DropDownValue: true,
+                                  "pre_test_marks": _preTestMarks,
+                                  "post_test_marks": _postTestMarks,
+                                  "date of completion": DateFormat("dd-MM-yyyy").format(currentDate),
+                                  "training": DropDownValue,
+                                  "mentor name": _mentorName,
+                                });
+                              }
                             },
                       child: Text('Submit')),
                 ),

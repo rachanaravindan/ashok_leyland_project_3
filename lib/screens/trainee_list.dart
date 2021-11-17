@@ -1,7 +1,9 @@
-import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:ashok_leyland_project_3/Constants.dart';
+import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
 import 'package:ashok_leyland_project_3/screens/home.dart';
 import 'package:ashok_leyland_project_3/screens/trainee_profile.dart';
+import 'package:ashok_leyland_project_3/widgets/custom_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -15,18 +17,19 @@ class TraineeList extends StatefulWidget {
 
 class _traineeListState extends State<TraineeList> {
   final _formKey = GlobalKey<FormState>();
-  String _traineeName, _registerNumber;
+  String _traineeName, _registerNumber, _search;
   DateTime _joiningDate;
-
+  DateTime _fromDate = new DateTime.now();
+  DateTime _toDate = new DateTime.now();
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance
-        .collection('users')
-        .where('age', isGreaterThan: 10)
+        .collection("trainee")
+        .orderBy("empId")
         .snapshots();
     Stream<QuerySnapshot> filter() {
       FirebaseFirestore.instance
-          .collection('users')
+          .collection('trainee')
           .where('age', isGreaterThan: 10)
           .get()
           .then((QuerySnapshot doccs) {
@@ -36,6 +39,102 @@ class _traineeListState extends State<TraineeList> {
         }
       });
     }
+
+    Future<Null> selectFromDate(BuildContext floatcontext) async {
+      final DateTime _seldate = await showDatePicker(
+          context: floatcontext,
+          initialDate: _fromDate,
+          firstDate: DateTime(1990),
+          lastDate: DateTime(2100),
+          builder: (context, child) {
+            return SingleChildScrollView(
+              child: child,
+            );
+          });
+      if (_seldate != null && _seldate != _fromDate) {
+        setState(() {
+          _fromDate = _seldate;
+        });
+      }
+    }
+
+    Future<Null> _selectToDate(BuildContext floatcontext) async {
+      final DateTime _seldate = await showDatePicker(
+          context: floatcontext,
+          initialDate: _toDate,
+          firstDate: DateTime(1990),
+          lastDate: DateTime(2100),
+          builder: (context, child) {
+            return SingleChildScrollView(
+              child: child,
+            );
+          });
+      if (_seldate != null && _seldate != _toDate) {
+        setState(() {
+          _toDate = _seldate;
+        });
+      }
+    }
+
+    Future<void> _showMyDialog(Map<String, String> mapp) async {
+      return showGeneralDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        pageBuilder: (_, __, ___) {
+          return SizedBox.expand(
+            child: Center(
+                child: Row(children: [
+              Container(
+                
+              ),
+            ])),
+          );
+        },
+      );
+    }
+    // Future<void> _showMyDialog() async {
+    //   return showDialog<void>(
+    //     context: context,
+    //     barrierDismissible: false, // user must tap button!
+    //     builder: (BuildContext context) {
+    //       return AlertDialog(
+    //         title: Text('Filter'),
+    //         content: SingleChildScrollView(
+    //           child: ListBody(
+    //             children: [
+    //               GestureDetector(
+    //                 onTap: () {
+    //                   selectFromdate(context);
+    //                 },
+    //                 child: Card(
+    //                   child: Row(
+    //                     children: [
+    //                       IconButton(
+    //                         onPressed: () {
+    //                           _selectTodate(context);
+    //                         },
+    //                         icon: Icon(Icons.calendar_today),
+    //                       ),
+    //                       Text('Date: $_formattedate '),
+    //                     ],
+    //                   ),
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             child: const Text('Approve'),
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //             },
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //   );
+    // }
 
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
@@ -70,16 +169,21 @@ class _traineeListState extends State<TraineeList> {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 2.h),
-              child: Container(
-                height: 5.h,
-                child: TextField(
-                  decoration: InputDecoration(
-                      hintText: "Search",
-                      focusColor: Colors.black,
-                      fillColor: Colors.grey,
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30))),
+              child: GestureDetector(
+                onTap: () {},
+                child: Container(
+                  height: 6.h,
+                  child: TextField(
+                    decoration: InputDecoration(
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 10.0),
+                        hintText: "Search",
+                        focusColor: Colors.black,
+                        fillColor: Colors.grey,
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30))),
+                  ),
                 ),
               ),
             ),
@@ -146,7 +250,7 @@ class _traineeListState extends State<TraineeList> {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Loading");
+                  return Loading();
                 }
 
                 return ListView(

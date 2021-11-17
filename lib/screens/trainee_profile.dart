@@ -1,6 +1,8 @@
 import 'package:ashok_leyland_project_3/constants.dart';
-import 'package:ashok_leyland_project_3/screens/mark_allocation.dart';
+import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
+import 'package:ashok_leyland_project_3/screens/sdc_training.dart';
 import 'package:ashok_leyland_project_3/screens/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:sizer/sizer.dart';
@@ -23,14 +25,82 @@ class _traineeProfileState extends State<traineeProfile> {
   List<String> testNumber = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
   List<int> preTest = [45, 56, 67, 86, 45, 34, 90, 67];
   List<int> postTest = [45, 56, 67, 86, 45, 34, 90, 67];
+  Future<void> _showMyDialog(Map<String, String> mapp) async {
+    return showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      pageBuilder: (_, __, ___) {
+        return SizedBox.expand(
+            child: Center(
+          child: Container(
+            color: Colors.blue[100],
+            child: DataTable(
+              dividerThickness: 1.0,
+              headingRowColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+                if (states.contains(MaterialState.hovered))
+                  return Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withOpacity(0.08);
+                return null; // Use the default value.
+              }),
+              columns: [
+                DataColumn(label: Text("",style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(label: Text("",style: TextStyle(fontWeight: FontWeight.bold))),
+              ],
+              rows: [
+                DataRow(cells: [
+                  DataCell(Text("Name",style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataCell(Text(mapp["name"])),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text("Employee ID",style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataCell(Text(mapp["empId"])),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text("Day",style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataCell(Text(mapp["day"].toString())),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text("Training",
+                      style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataCell(Text(mapp["training"])),
+                ]),
+                // DataRow(cells: [
+                //   DataCell(Text("Mentor")),
+                //   DataCell(Text(mapp["mentor"])),
+                // ]),
+                DataRow(cells: [
+                  DataCell(Text("Date of Completion",
+                      style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataCell(Text(mapp["doj"])),
+                ]),               
+                DataRow(cells: [
+                  DataCell(Text("",
+                      style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataCell(Text("")),
+                ]),
+              ],
+            ),
+          ),
+        ));
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final Stream<QuerySnapshot> _marksStream = FirebaseFirestore.instance
+        .collection("trainee")
+        .doc(widget.traineeID)
+        .collection("completed program")
+        .snapshots();
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
           child: Scaffold(
-                backgroundColor: HexColor("#D9E9F2"),
-                body: Column(
+        backgroundColor: HexColor("#D9E9F2"),
+        body: Column(
           children: [
             // BACK ARROW==================================================
             Align(
@@ -57,7 +127,11 @@ class _traineeProfileState extends State<traineeProfile> {
                       padding: EdgeInsets.only(left: 2.h, top: 2.h),
                       alignment: Alignment.topLeft,
                       child: CircleAvatar(
-                        child: Icon(Icons.person,size: 7.h,color: Colors.white,),
+                        child: Icon(
+                          Icons.person,
+                          size: 7.h,
+                          color: Colors.white,
+                        ),
                         radius: 5.h,
                       )),
                   Container(
@@ -90,132 +164,104 @@ class _traineeProfileState extends State<traineeProfile> {
                   SizedBox(
                     height: 7.h,
                   ),
-          
+
                   Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
+                          flex: 2,
                           child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Text('Tests'),
-                      )),
+                            padding: const EdgeInsets.all(6),
+                            child: Text('Training'),
+                          )),
                       Expanded(child: Text('Pre Test')),
                       Expanded(child: Text('Post Test')),
                     ],
                   ),
-          
+
                   // listview starting=====================================================
                   Expanded(
-                    child: ListView.builder(
-                        //  physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        itemCount: testNumber.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            color: postTest[index] < 50
-                                ? Colors.red.shade400
-                                : Colors.green,
-                            shape: BeveledRectangleBorder(
-                              borderRadius: BorderRadius.circular(0.8.h),
-                            ),
-                            margin: EdgeInsets.symmetric(
-                                vertical: 0.5.h, horizontal: 3.w),
-                            //  color: HexColor("#D9E9F2"),
-                            elevation: 0.7.h,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      testNumber[index],
-                                      style: Constants.ListItemSubHeading,
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: _marksStream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return Text('Something went wrong');
+                        }
+
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Loading();
+                        }
+                        return ListView(
+                          //  physics: NeverScrollableScrollPhysics(),
+                          children: snapshot.data.docs
+                              .map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                                document.data() as Map<String, dynamic>;
+                            return Card(
+                              color: data["pre_test_marks"] < 50
+                                  ? Colors.red.shade400
+                                  : Colors.green,
+                              shape: BeveledRectangleBorder(
+                                borderRadius: BorderRadius.circular(0.8.h),
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 0.5.h, horizontal: 3.w),
+                              //  color: HexColor("#D9E9F2"),
+                              elevation: 0.7.h,
+                              child: InkWell(
+                                onTap: () {
+                                  _showMyDialog({
+                                    "name": widget.traineeName,
+                                    "empId": widget.traineeID,
+                                    "training": data["training"],
+                                    "day": data["day"],
+                                    "doj":
+                                        data["date of completion"].toString(),
+                                    "mentor": data["mentor"]
+                                  });
+                                },
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Text(
+                                          data["training"].toString(),
+                                          style: Constants.ListItemSubHeading,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Expanded(
+                                        child: Text(
+                                      data["pre_test_marks"].toString(),
+                                      style: Constants.ListItemSubHeading,
+                                    )),
+                                    Expanded(
+                                        child: Text(
+                                      data["post_test_marks"].toString(),
+                                      style: Constants.ListItemSubHeading,
+                                    ))
+                                  ],
                                 ),
-                                Expanded(
-                                    child: Text(
-                                  preTest[index].toString(),
-                                  style: Constants.ListItemSubHeading,
-                                )),
-                                Expanded(
-                                    child: Text(
-                                  postTest[index].toString(),
-                                  style: Constants.ListItemSubHeading,
-                                ))
-                              ],
-                            ),
-                          );
-                        }),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: 3.h,
-                  ),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        elevation: 2,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.5.h, horizontal: 13.h),
-          
-                        onPrimary: Colors.white, // foreground
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    MarkAllocationScreen(
-                                       traineeID: widget.traineeID,
-                                      traineeName: widget.traineeName,
-                                      joiningDate: widget.joiningDate,
-                                    )));
-          
-                      },
-                      child: Text('Marks Allocation')),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        elevation: 2,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.5.h, horizontal: 13.8.h),
-          
-                        onPrimary: Colors.white, // foreground
-                      ),
-                      onPressed: () {
-                        
-                      },
-                      child: Text('Unit Allocation')),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        elevation: 2,
-          
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.5.h, horizontal: 11.6.h),
-                        onPrimary: Colors.white, // foreground
-                      ),
-                      onPressed: () {},
-                      child: Text('Program Evaluation')),
-                  SizedBox(
-                    height: 1.h,
                   ),
                 ]),
               ),
             ),
           ],
-                ),
-              ));
+        ),
+      ));
     });
   }
 }

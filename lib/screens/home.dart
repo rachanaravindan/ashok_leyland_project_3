@@ -1,11 +1,17 @@
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
+<<<<<<< HEAD
 import 'package:ashok_leyland_project_3/screens/sdc_training.dart';
+=======
+import 'package:ashok_leyland_project_3/screens/department_allocation.dart';
+import 'package:ashok_leyland_project_3/screens/mark_allocation.dart';
+import 'package:ashok_leyland_project_3/screens/onTheJobTraining.dart';
+>>>>>>> 389e15456a08820ef8df8751d2abced81ee0707f
 import 'package:ashok_leyland_project_3/screens/trainee_list.dart';
 import 'package:ashok_leyland_project_3/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'search_bar.dart';
+//import 'search_bar.dart';
 import 'package:sizer/sizer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,15 +47,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) => SdcTrainingScreen()));
                   break;
                 case 3:
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => TraineeList()));
+                  break;
+                case 4:
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TraineeList()));
+                          builder: (context) => DepartmentAllocation()));
+                  break;
+                case 5:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OnTheJobTraining()));
                   break;
                 default:
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => TraineeList()));
-                  break; 
+                  break;
               }
             },
             child: Container(

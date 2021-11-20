@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:sizer/sizer.dart';
-import 'trainee_list.dart';
+import 'sdc_query.dart';
 
 class traineeProfile extends StatefulWidget {
   final String traineeName;

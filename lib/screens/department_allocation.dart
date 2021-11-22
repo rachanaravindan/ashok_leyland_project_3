@@ -108,8 +108,8 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                           child: Text(
                             value,
                             style: TextStyle(
-                              // color: Colors.black,
-                            ),
+                                // color: Colors.black,
+                                ),
                           ),
                         );
                       }).toList(),
@@ -140,7 +140,7 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                         ),
                         onPressed: () {
                           print("Submitted");
-                          crudOperations.storeData({});
+                          // crudOperations.storeData({});
                         },
                         child: Text('Submit')),
                   ),

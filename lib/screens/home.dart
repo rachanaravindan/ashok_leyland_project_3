@@ -1,15 +1,12 @@
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
-<<<<<<< HEAD
 import 'package:ashok_leyland_project_3/screens/sdc_training.dart';
-=======
 import 'package:ashok_leyland_project_3/screens/department_allocation.dart';
-import 'package:ashok_leyland_project_3/screens/mark_allocation.dart';
 import 'package:ashok_leyland_project_3/screens/onTheJobTraining.dart';
->>>>>>> 389e15456a08820ef8df8751d2abced81ee0707f
 import 'package:ashok_leyland_project_3/screens/trainee_list.dart';
 import 'package:ashok_leyland_project_3/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:google_fonts/google_fonts.dart';
 //import 'search_bar.dart';
 import 'package:sizer/sizer.dart';
@@ -123,7 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Container(
                 height: 10,
-
                 // child: Demo(), //search bar
               ),
               SizedBox(
@@ -136,15 +132,54 @@ class _HomeScreenState extends State<HomeScreen> {
                   runSpacing: 40,
                   alignment: WrapAlignment.start,
                   children: [
-                    departmentButton('Add Trainee', 15.0.h, 15.0.h, 1),
-                    departmentButton('SDC Training', 15.0.h, 15.0.h, 2),
-                    departmentButton('SDC Query', 15.0.h, 15.0.h, 3),
-                    departmentButton(
-                        'Department \n Allocation', 15.0.h, 15.0.h, 4),
-                    departmentButton(
-                        'On the job \n Training', 15.0.h, 15.0.h, 5),
-                    departmentButton(
-                        'On the job \n Training \n Query', 15.0.h, 15.0.h, 6),
+                    Bounce(
+                        duration: Duration(milliseconds: 100),
+                        onPressed: () {
+                          departmentButton('Add Trainee', 15.0.h, 15.0.h, 1);
+                        },
+                        child:
+                            departmentButton('Add Trainee', 15.0.h, 15.0.h, 1)),
+                    Bounce(
+                        duration: Duration(milliseconds: 100),
+                        onPressed: () {
+                          departmentButton('SDC Training', 15.0.h, 15.0.h, 2);
+                        },
+                        child: departmentButton(
+                            'SDC Training', 15.0.h, 15.0.h, 2)),
+                    Bounce(
+                        duration: Duration(milliseconds: 100),
+                        onPressed: () {
+                          departmentButton('SDC Query', 15.0.h, 15.0.h, 3);
+                        },
+                        child:
+                            departmentButton('SDC Query', 15.0.h, 15.0.h, 3)),
+                    Bounce(
+                      duration: Duration(milliseconds: 100),
+                      onPressed: () {
+                        departmentButton(
+                            'Department \n Allocation', 15.0.h, 15.0.h, 4);
+                      },
+                      child: departmentButton(
+                          'Department \n Allocation', 15.0.h, 15.0.h, 4),
+                    ),
+                    Bounce(
+                      duration: Duration(milliseconds: 100),
+                      onPressed: () {
+                        departmentButton(
+                            'On the job \n Training', 15.0.h, 15.0.h, 5);
+                      },
+                      child: departmentButton(
+                          'On the job \n Training', 15.0.h, 15.0.h, 5),
+                    ),
+                    Bounce(
+                      duration: Duration(milliseconds: 100),
+                      onPressed: () {
+                        departmentButton('On the job \n Training \n Query',
+                            15.0.h, 15.0.h, 6);
+                      },
+                      child: departmentButton(
+                          'On the job \n Training \n Query', 15.0.h, 15.0.h, 6),
+                    ),
                   ],
                 ),
               ),

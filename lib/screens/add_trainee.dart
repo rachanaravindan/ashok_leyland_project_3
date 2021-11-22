@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddTrainee extends StatefulWidget {
@@ -107,8 +108,9 @@ class _AddTraineeState extends State<AddTrainee> {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 2, horizontal: 4),
-                      child: GestureDetector(
-                        onTap: () {
+                      child: Bounce(
+                        duration: Duration(milliseconds: 110),
+                        onPressed: () {
                           setState(() {
                             _selectdate(context);
                           });
@@ -209,18 +211,32 @@ class _AddTraineeState extends State<AddTrainee> {
                             onPrimary: Colors.white, // foreground
                           ),
                           onPressed: () {
-                            
                             print("Submitted");
                             _traineeRef.trainee.doc(_employeeId).set({
                               'name': _traineeName,
                               'empId': _employeeId,
-                              'doj':   DateFormat("dd-MM-yyyy").format(currentDate),
+                              'doj':
+                                  DateFormat("dd-MM-yyyy").format(currentDate),
                               'qualifications': _traineeQualifications,
                               'gender': GenderDropDownValue,
                               'age': _traineeAge,
                             });
                           },
-                          child: Text('Submit')),
+                          child: Bounce(
+                              duration: Duration(milliseconds: 110),
+                              onPressed: () {
+                                print("Submitted");
+                                _traineeRef.trainee.doc(_employeeId).set({
+                                  'name': _traineeName,
+                                  'empId': _employeeId,
+                                  'doj': DateFormat("dd-MM-yyyy")
+                                      .format(currentDate),
+                                  'qualifications': _traineeQualifications,
+                                  'gender': GenderDropDownValue,
+                                  'age': _traineeAge,
+                                });
+                              },
+                              child: Text('Submit'))),
                     ),
                   ],
                 ),

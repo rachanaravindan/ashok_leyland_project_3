@@ -8,133 +8,109 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-class TraineeList extends StatefulWidget {
+class SdcQuery extends StatefulWidget {
+  final bool isLevelQuery;
+
+  const SdcQuery({Key key, this.isLevelQuery}) : super(key: key);
   @override
-  _traineeListState createState() => _traineeListState();
+  _SdcQueryState createState() => _SdcQueryState();
 }
 
-class _traineeListState extends State<TraineeList> {
+class _SdcQueryState extends State<SdcQuery> {
   final _formKey = GlobalKey<FormState>();
-  String _traineeName, _registerNumber, _search;
+  String _traineeName,
+      _registerNumber,
+      _search,
+      _dropDownValue = "Select Level";
   DateTime _joiningDate;
   DateTime _fromDate = new DateTime.now();
   DateTime _toDate = new DateTime.now();
+  Timestamp _fromTimeStamp = Timestamp.fromDate(DateTime.now());
+  Timestamp _toTimeStamp = Timestamp.fromDate(DateTime.now());
+  List<String> LevelList = ["Select Level", "L0", "L1"];
+  List<String> ProgramList = [
+    'Choose Program',
+    'Ashok Leyland Overview',
+    'Basics of Automobile',
+    'Safety',
+    'Cognitive',
+    'Dexterity',
+    'Parts Identification',
+    'Work Ethics and Standing Orders',
+    '5S, Gemba & TQM'
+  ];
+  List<String> respectiveList = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.isLevelQuery)
+      respectiveList = List.from(LevelList);
+    else
+      respectiveList = List.from(ProgramList);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance
-        .collection("trainee")
-        .orderBy("empId")
-        .snapshots();
-    Stream<QuerySnapshot> filter() {
-      FirebaseFirestore.instance
-          .collection('trainee')
-          .where('age', isGreaterThan: 10)
-          .get()
-          .then((QuerySnapshot doccs) {
-        if (doccs.docs.isNotEmpty) {
-          print("hello");
-          print(doccs.docs[0]["age"]);
-        }
-      });
-    }
-
     Future<Null> selectFromDate(BuildContext floatcontext) async {
-      final DateTime _seldate = await showDatePicker(
+      final DateTime _selFromDate = await showDatePicker(
           context: floatcontext,
           initialDate: _fromDate,
           firstDate: DateTime(1990),
-          lastDate: DateTime(2100),
+          lastDate: DateTime(3000),
           builder: (context, child) {
             return SingleChildScrollView(
               child: child,
             );
           });
-      if (_seldate != null && _seldate != _fromDate) {
+      if (_selFromDate != null && _selFromDate != _fromDate) {
         setState(() {
-          _fromDate = _seldate;
+          _fromDate = _selFromDate;
+          _fromTimeStamp = Timestamp.fromDate(_fromDate);
         });
       }
     }
 
     Future<Null> _selectToDate(BuildContext floatcontext) async {
-      final DateTime _seldate = await showDatePicker(
+      final DateTime _selToDate = await showDatePicker(
           context: floatcontext,
           initialDate: _toDate,
           firstDate: DateTime(1990),
-          lastDate: DateTime(2100),
+          lastDate: DateTime(3000),
           builder: (context, child) {
             return SingleChildScrollView(
               child: child,
             );
           });
-      if (_seldate != null && _seldate != _toDate) {
+      if (_selToDate != null && _selToDate != _toDate) {
         setState(() {
-          _toDate = _seldate;
+          _toDate = _selToDate;
+          _toTimeStamp = Timestamp.fromDate(_toDate);
         });
       }
     }
 
-    Future<void> _showMyDialog(Map<String, String> mapp) async {
-      return showGeneralDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        pageBuilder: (_, __, ___) {
-          return SizedBox.expand(
-            child: Center(
-                child: Row(children: [
-              Container(
-                
-              ),
-            ])),
-          );
-        },
-      );
+    Stream<QuerySnapshot> getData(BuildContext context) async* {
+      if (_dropDownValue != "Select Level") {
+        if (_fromTimeStamp != null && _toTimeStamp != null) {
+          yield* FirebaseFirestore.instance
+              .collection("trainee")
+              .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
+              .where("doj", isLessThanOrEqualTo: _toTimeStamp)
+              .where("level",isEqualTo: _dropDownValue)
+              .snapshots();
+        } else {
+          yield* FirebaseFirestore.instance
+              .collection("trainee")
+              .where("level", isEqualTo: _dropDownValue)
+              .snapshots();
+        }
+      } else
+        yield* FirebaseFirestore.instance.collection("trainee").snapshots();
     }
-    // Future<void> _showMyDialog() async {
-    //   return showDialog<void>(
-    //     context: context,
-    //     barrierDismissible: false, // user must tap button!
-    //     builder: (BuildContext context) {
-    //       return AlertDialog(
-    //         title: Text('Filter'),
-    //         content: SingleChildScrollView(
-    //           child: ListBody(
-    //             children: [
-    //               GestureDetector(
-    //                 onTap: () {
-    //                   selectFromdate(context);
-    //                 },
-    //                 child: Card(
-    //                   child: Row(
-    //                     children: [
-    //                       IconButton(
-    //                         onPressed: () {
-    //                           _selectTodate(context);
-    //                         },
-    //                         icon: Icon(Icons.calendar_today),
-    //                       ),
-    //                       Text('Date: $_formattedate '),
-    //                     ],
-    //                   ),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //         actions: <Widget>[
-    //           TextButton(
-    //             child: const Text('Approve'),
-    //             onPressed: () {
-    //               Navigator.of(context).pop();
-    //             },
-    //           ),
-    //         ],
-    //       );
-    //     },
-    //   );
-    // }
 
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
@@ -168,6 +144,89 @@ class _traineeListState extends State<TraineeList> {
               ],
             ),
             Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                dropdownColor: Colors.white,
+                iconSize: 5.h,
+                focusColor: Colors.red,
+                value: _dropDownValue,
+                //elevation: 5,
+                style: TextStyle(color: Colors.black),
+                iconEnabledColor: Colors.black,
+                items: respectiveList
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                          // color: Colors.black,
+                          ),
+                    ),
+                  );
+                }).toList(),
+                hint: Text(respectiveList[0]),
+                onChanged: (String value) {
+                  setState(() {
+                    _dropDownValue = value;
+                  });
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectFromDate(context);
+                  });
+                },
+                child: Card(
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            selectFromDate(context);
+                          });
+                        },
+                        icon: Icon(Icons.calendar_today),
+                      ),
+                      Text('From Date : ' +
+                          DateFormat("dd-MM-yyyy").format(_fromDate)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectToDate(context);
+                  });
+                },
+                child: Card(
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          (() {
+                            _selectToDate(context);
+                          });
+                        },
+                        icon: Icon(Icons.calendar_today),
+                      ),
+                      Text('To Date : ' +
+                          DateFormat("dd-MM-yyyy").format(_toDate)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 2.h),
               child: GestureDetector(
                 onTap: () {},
@@ -199,7 +258,6 @@ class _traineeListState extends State<TraineeList> {
 
                       onPressed: () {
                         print("im pressed");
-                        filter();
                       },
                       child: Row(
                         children: [
@@ -242,7 +300,7 @@ class _traineeListState extends State<TraineeList> {
             ),
             Expanded(
                 child: StreamBuilder<QuerySnapshot>(
-              stream: _usersStream,
+              stream: getData(context),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
@@ -263,9 +321,9 @@ class _traineeListState extends State<TraineeList> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => traineeProfile(
-                                      traineeName: data["name"],
-                                      traineeID: data["empId"],
-                                      joiningDate: data["doj"],
+                                      traineeName: data["name"] ??= "null",
+                                      traineeID: data["empId"] ??= "null",
+                                      joiningDate: data["doj"].toDate().toString(),
                                     )));
                       },
                       child: Card(
@@ -293,7 +351,7 @@ class _traineeListState extends State<TraineeList> {
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Text(
-                                      data["name"],
+                                      data["name"] ??= "null",
                                       style: Constants.ListItemHeading,
                                     ),
                                   ),
@@ -304,7 +362,7 @@ class _traineeListState extends State<TraineeList> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Text(
-                                  data["empId"],
+                                  data["empId"] ??= "null",
                                   style: Constants.ListItemSubHeading,
                                 ),
                               ),
@@ -320,7 +378,7 @@ class _traineeListState extends State<TraineeList> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.grey,
             child: Icon(Icons.add),
             onPressed: () {
               Navigator.push(context,

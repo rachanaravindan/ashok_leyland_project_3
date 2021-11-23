@@ -215,11 +215,11 @@ class _AddTraineeState extends State<AddTrainee> {
                             _traineeRef.trainee.doc(_employeeId).set({
                               'name': _traineeName,
                               'empId': _employeeId,
-                              'doj':
-                                  DateFormat("dd-MM-yyyy").format(currentDate),
+                              'doj': Timestamp.fromDate(currentDate),
                               'qualifications': _traineeQualifications,
                               'gender': GenderDropDownValue,
                               'age': _traineeAge,
+                              'level': "L0"
                             });
                           },
                           child: Bounce(

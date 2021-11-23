@@ -1,12 +1,13 @@
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
+import 'package:ashok_leyland_project_3/screens/sdc_query_home.dart';
 import 'package:ashok_leyland_project_3/screens/sdc_training.dart';
 import 'package:ashok_leyland_project_3/screens/department_allocation.dart';
 import 'package:ashok_leyland_project_3/screens/onTheJobTraining.dart';
-import 'package:ashok_leyland_project_3/screens/trainee_list.dart';
+import 'package:ashok_leyland_project_3/screens/sdc_query.dart';
 import 'package:ashok_leyland_project_3/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
-import 'package:flutter_bounce/flutter_bounce.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 //import 'search_bar.dart';
 import 'package:sizer/sizer.dart';
@@ -18,8 +19,37 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   AuthService _authService = AuthService();
+  String assetLoc;
+  void setAssetName(int screen) {
+    switch (screen) {
+      case 1:
+        assetLoc = "assets/Add_trainee.svg";
+        break;
+      case 2:
+        assetLoc = "assets/SDC_Training.svg";
+        break;
+      case 3:
+        assetLoc = "assets/Query.svg";
+        break;
+      case 4:
+        assetLoc = "assets/department-allocation.svg";
+        break;
+      case 5:
+        assetLoc = "assets/onthejobbb.svg";
+        break;
+      case 6:
+        assetLoc = "assets/on_the_job_query.svg";
+        break;
+      default:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SdcQueryHome()));
+        break;
+    }
+  }
+
   Container departmentButton(
       String deptName, double heightVar, double widthVar, int screen) {
+    setAssetName(screen);
     return Container(
       child: Column(
         children: [
@@ -36,42 +66,52 @@ class _HomeScreenState extends State<HomeScreen> {
                 case 1:
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => AddTrainee()));
+                  assetLoc = "assets/Add_trainee.svg";
                   break;
                 case 2:
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => SdcTrainingScreen()));
+                  assetLoc = "assets/SDC_Training.svg";
                   break;
                 case 3:
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TraineeList()));
+                      MaterialPageRoute(builder: (context) => SdcQueryHome()));
+                  assetLoc = "assets/Query.svg";
                   break;
                 case 4:
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => DepartmentAllocation()));
+                  assetLoc = "assets/department-allocation.svg";
                   break;
                 case 5:
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => OnTheJobTraining()));
+                  assetLoc = "assets/onthejobbb.svg";
+                  break;
+                case 6:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OnTheJobTraining()));
+                  assetLoc = "assets/on_the_job_query.svg";
                   break;
                 default:
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TraineeList()));
+                      MaterialPageRoute(builder: (context) => SdcQueryHome()));
                   break;
               }
             },
             child: Container(
               height: heightVar,
               width: widthVar,
-              child: Icon(
-                Icons.engineering,
-              ),
-              padding: EdgeInsets.symmetric(vertical: 55, horizontal: 5),
+              child: SvgPicture.asset(assetLoc, width: 5.h, height: 10.h),
+              // padding: EdgeInsets.symmetric(vertical: 55, horizontal: 5),
             ),
           ),
           SizedBox(
@@ -107,79 +147,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 5.0.h),
+                padding: EdgeInsets.only(top: 3.0.h),
                 child: Center(
                   child: Text('Home',
                       style: GoogleFonts.montserrat(
                         textStyle: TextStyle(
                             fontSize: 30,
-                            fontWeight: FontWeight.normal,
+                            fontWeight: FontWeight.w400,
                             color: Colors.black),
                       )),
                 ),
               ),
               Container(
                 height: 10,
+
                 // child: Demo(), //search bar
               ),
               SizedBox(
-                height: 40,
+                height: 20,
               ),
               Container(
                 padding: EdgeInsets.only(bottom: 25),
                 child: Wrap(
-                  spacing: 30,
-                  runSpacing: 40,
-                  alignment: WrapAlignment.start,
+                  spacing: 20,
+                  runSpacing: 35,
+                  alignment: WrapAlignment.center,
                   children: [
-                    Bounce(
-                        duration: Duration(milliseconds: 100),
-                        onPressed: () {
-                          departmentButton('Add Trainee', 15.0.h, 15.0.h, 1);
-                        },
-                        child:
-                            departmentButton('Add Trainee', 15.0.h, 15.0.h, 1)),
-                    Bounce(
-                        duration: Duration(milliseconds: 100),
-                        onPressed: () {
-                          departmentButton('SDC Training', 15.0.h, 15.0.h, 2);
-                        },
-                        child: departmentButton(
-                            'SDC Training', 15.0.h, 15.0.h, 2)),
-                    Bounce(
-                        duration: Duration(milliseconds: 100),
-                        onPressed: () {
-                          departmentButton('SDC Query', 15.0.h, 15.0.h, 3);
-                        },
-                        child:
-                            departmentButton('SDC Query', 15.0.h, 15.0.h, 3)),
-                    Bounce(
-                      duration: Duration(milliseconds: 100),
-                      onPressed: () {
-                        departmentButton(
-                            'Department \n Allocation', 15.0.h, 15.0.h, 4);
-                      },
-                      child: departmentButton(
-                          'Department \n Allocation', 15.0.h, 15.0.h, 4),
-                    ),
-                    Bounce(
-                      duration: Duration(milliseconds: 100),
-                      onPressed: () {
-                        departmentButton(
-                            'On the job \n Training', 15.0.h, 15.0.h, 5);
-                      },
-                      child: departmentButton(
-                          'On the job \n Training', 15.0.h, 15.0.h, 5),
-                    ),
-                    Bounce(
-                      duration: Duration(milliseconds: 100),
-                      onPressed: () {
-                        departmentButton('On the job \n Training \n Query',
-                            15.0.h, 15.0.h, 6);
-                      },
-                      child: departmentButton(
-                          'On the job \n Training \n Query', 15.0.h, 15.0.h, 6),
-                    ),
+                    departmentButton('Add Trainee', 17.0.h, 17.0.h, 1),
+                    departmentButton('SDC Training', 17.0.h, 17.0.h, 2),
+                    departmentButton('SDC Query', 17.0.h, 17.0.h, 3),
+                    departmentButton(
+                        'Department \n Allocation', 17.0.h, 17.0.h, 4),
+                    departmentButton(
+                        'On The Job \n Training', 17.0.h, 17.0.h, 5),
+                    departmentButton(
+                        'On The Job Training \n Query', 17.0.h, 17.0.h, 6),
                   ],
                 ),
               ),

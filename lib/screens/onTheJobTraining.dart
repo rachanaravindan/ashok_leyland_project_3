@@ -417,7 +417,6 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                         ),
                         onPressed: () {
                           print("Submitted");
-                          // crudOperations.storeData({});
                         },
                         child: Text('PROMOTE')),
                   ),

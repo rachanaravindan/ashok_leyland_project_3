@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
+
+import 'done_add_screen.dart';
+import 'home.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddTrainee extends StatefulWidget {
@@ -69,8 +72,28 @@ class _AddTraineeState extends State<AddTrainee> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  // mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: GestureDetector(
+                        onTap: () {
+                         
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()));
+                        },
+                        child: Container(
+                          alignment: Alignment.topLeft,
+                          margin: EdgeInsets.only(left: 1.h,top: 2.h),
+                          height: 3.0.h,
+                          width: 7.0.h,
+                          child: Icon(Icons.arrow_back),
+                        ),
+                      ),
+                    ),
                     Text(
                       "Add Trainee",
                       style: Constants.boldHeading,
@@ -218,8 +241,12 @@ class _AddTraineeState extends State<AddTrainee> {
                               'qualifications': _traineeQualifications,
                               'gender': GenderDropDownValue,
                               'age': _traineeAge,
-                              'level':"L0"
+                              'level':"L0",                              
                             });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DoneMark()));
                           },
                           child: Text('Submit')),
                     ),

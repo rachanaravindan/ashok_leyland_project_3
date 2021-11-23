@@ -11,10 +11,10 @@ import 'sdc_query.dart';
 class traineeProfile extends StatefulWidget {
   final String traineeName;
   final String traineeID;
-  final String joiningDate;
+  // final String joiningDate;
 
   const traineeProfile(
-      {Key key, this.traineeName, this.traineeID, this.joiningDate})
+      {Key key, this.traineeName, this.traineeID, })
       : super(key: key);
 
   @override
@@ -22,9 +22,7 @@ class traineeProfile extends StatefulWidget {
 }
 
 class _traineeProfileState extends State<traineeProfile> {
-  List<String> testNumber = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
-  List<int> preTest = [45, 56, 67, 86, 45, 34, 90, 67];
-  List<int> postTest = [45, 56, 67, 86, 45, 34, 90, 67];
+
   Future<void> _showMyDialog(Map<String, String> mapp) async {
     return showGeneralDialog<void>(
       context: context,
@@ -153,14 +151,14 @@ class _traineeProfileState extends State<traineeProfile> {
                       style: Constants.ListItemSubHeading,
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.only(left: 3.h, top: 1.h),
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Joining Date :  ' + widget.joiningDate,
-                      style: Constants.ListItemSubHeading,
-                    ),
-                  ),
+                  // Container(
+                  //   padding: EdgeInsets.only(left: 3.h, top: 1.h),
+                  //   alignment: Alignment.topLeft,
+                  //   child: Text(
+                  //     'Joining Date :  ' + widget.joiningDate,
+                  //     style: Constants.ListItemSubHeading,
+                  //   ),
+                  // ),
                   SizedBox(
                     height: 7.h,
                   ),

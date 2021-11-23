@@ -14,7 +14,7 @@ class _SdcQueryHomeState extends State<SdcQueryHome> {
 
   var items = [
     QueryCard('Query By Level', Color(0xff6DC8F3), Color(0xff73A1F9), true),
-    QueryCard('Query By Program', Color(0xffFF5B95), Color(0xffF8556D), true),
+    QueryCard('Query By Program', Color(0xffFF5B95), Color(0xffF8556D), false),
   ];
 
   @override

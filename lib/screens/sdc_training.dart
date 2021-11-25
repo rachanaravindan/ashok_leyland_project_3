@@ -339,7 +339,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextField(
-                    decoration: InputDecoration(labelText: 'Mentor Name'),
+                    decoration: InputDecoration(labelText: 'Trainer Name'),
                     onChanged: (str) {
                       setState(() {
                         if (str.isEmpty) _isDisable = true;
@@ -405,10 +405,14 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                   DropDownValue: true,
                                   "pre_test_marks": _preTestMarks,
                                   "post_test_marks": _postTestMarks,
-                                  "date of completion": DateFormat("dd-MM-yyyy").format(currentDate),
+                                  "date of completion": DateFormat("dd-MM-yyyy")
+                                      .format(currentDate),
                                   "training": DropDownValue,
                                   "mentor name": _mentorName,
                                 });
+                                _traineeRef.trainee
+                                    .doc(_employeeId)
+                                    .update({"completed Program":FieldValue.arrayUnion([DropDownValue])});
                               }
                             },
                       child: Text('Submit')),

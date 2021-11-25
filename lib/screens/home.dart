@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       default:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SdcQueryHome()));
+            context, MaterialPageRoute(builder: (context) => SdcQuery()));
         break;
     }
   }
@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     break;
                   case 3:
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SdcQueryHome()));
+                        MaterialPageRoute(builder: (context) => SdcQuery()));
                     assetLoc = "assets/Query.svg";
                     break;
                   case 4:
@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     break;
                   default:
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SdcQueryHome()));
+                        MaterialPageRoute(builder: (context) => SdcQuery()));
                     break;
                 }
               },

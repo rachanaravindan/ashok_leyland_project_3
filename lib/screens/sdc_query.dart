@@ -20,22 +20,19 @@ import 'package:csv/csv.dart';
 import 'package:ext_storage/ext_storage.dart';
 
 class SdcQuery extends StatefulWidget {
-  final bool isLevelQuery;
-
-  const SdcQuery({Key key, this.isLevelQuery}) : super(key: key);
   @override
   _SdcQueryState createState() => _SdcQueryState();
 }
 
 class _SdcQueryState extends State<SdcQuery> {
   TextEditingController _searchController = TextEditingController();
-  
+
   final _formKey = GlobalKey<FormState>();
   String _traineeName,
       _registerNumber,
       _search,
-      _dropDownValue;
-      
+      _levelDropDownValue,
+      _programDropDownValue;
   DateTime _joiningDate;
   DateTime _fromDate = new DateTime.now();
   DateTime _toDate = new DateTime.now();
@@ -56,16 +53,15 @@ class _SdcQueryState extends State<SdcQuery> {
     '5S, Gemba & TQM'
   ];
   Future resultsLoaded;
-  List<String> respectiveList = [];
+  List<String> respectiveLevelList = [];
+  List<String> respectiveProgramList = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _searchController.addListener(_onSearchChanged);
-    if (widget.isLevelQuery)
-      respectiveList = List.from(LevelList);
-    else
-      respectiveList = List.from(ProgramList);
+    respectiveLevelList = List.from(LevelList);
+    respectiveProgramList = List.from(ProgramList);
   }
 
   @override
@@ -108,14 +104,30 @@ class _SdcQueryState extends State<SdcQuery> {
   var data;
   getData() async {
     print("checking");
-    if (_dropDownValue != "Select Level") {
-      if (_fromTimeStamp != null && _toTimeStamp != null) {
+    if (_levelDropDownValue != "Select Level") {
+      //with level and program case
+      if (_programDropDownValue != "Choose Program") { 
+        if (_fromTimeStamp != null && _toTimeStamp != null) {
+          data = await FirebaseFirestore.instance
+              .collection("trainee")
+              .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
+              .where("doj", isLessThanOrEqualTo: _toTimeStamp)
+              .where("level", isEqualTo: _levelDropDownValue)
+              .where("completed Program", arrayContains: _programDropDownValue)
+              .get();
+          setState(() {
+            print("in Set data");
+            _allResults = data.docs;
+          });
+        }
+      }
+      else if (_fromTimeStamp != null && _toTimeStamp != null) {
         print("with date");
         data = await FirebaseFirestore.instance
             .collection("trainee")
             .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
             .where("doj", isLessThanOrEqualTo: _toTimeStamp)
-            .where("level", isEqualTo: _dropDownValue)
+            .where("level", isEqualTo: _levelDropDownValue)
             .get();
         setState(() {
           print("in Set data");
@@ -125,7 +137,7 @@ class _SdcQueryState extends State<SdcQuery> {
         print("without date");
         data = await FirebaseFirestore.instance
             .collection("trainee")
-            .where("level", isEqualTo: _dropDownValue)
+            .where("level", isEqualTo: _levelDropDownValue)
             .get();
         setState(() {
           print("in Set data");
@@ -244,7 +256,7 @@ class _SdcQueryState extends State<SdcQuery> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SdcQueryHome()));
+                              builder: (context) => HomeScreen()));
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -274,11 +286,11 @@ class _SdcQueryState extends State<SdcQuery> {
                 dropdownColor: Colors.white,
                 iconSize: 5.h,
                 focusColor: Colors.red,
-                value: _dropDownValue,
+                value: _levelDropDownValue,
                 //elevation: 5,
                 style: TextStyle(color: Colors.black),
                 iconEnabledColor: Colors.black,
-                items: respectiveList
+                items: respectiveLevelList
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -290,10 +302,42 @@ class _SdcQueryState extends State<SdcQuery> {
                     ),
                   );
                 }).toList(),
-                hint: Text(respectiveList[0]),
+                hint: Text(respectiveLevelList[0]),
                 onChanged: (String value) {
                   setState(() {
-                    _dropDownValue = value;
+                    _levelDropDownValue = value;
+                    getData();
+                  });
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                dropdownColor: Colors.white,
+                iconSize: 5.h,
+                focusColor: Colors.red,
+                value: _programDropDownValue,
+                //elevation: 5,
+                style: TextStyle(color: Colors.black),
+                iconEnabledColor: Colors.black,
+                items: respectiveProgramList
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                          // color: Colors.black,
+                          ),
+                    ),
+                  );
+                }).toList(),
+                hint: Text(respectiveProgramList[0]),
+                onChanged: (String value) {
+                  setState(() {
+                    _programDropDownValue = value;
                     getData();
                   });
                 },

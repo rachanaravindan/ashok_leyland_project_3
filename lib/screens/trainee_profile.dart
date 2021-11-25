@@ -11,10 +11,10 @@ import 'sdc_query.dart';
 class traineeProfile extends StatefulWidget {
   final String traineeName;
   final String traineeID;
-  // final String joiningDate;
+  final String joiningDate;
 
   const traineeProfile(
-      {Key key, this.traineeName, this.traineeID, })
+      {Key key, this.traineeName, this.traineeID, this.joiningDate})
       : super(key: key);
 
   @override

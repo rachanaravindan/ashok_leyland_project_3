@@ -4,6 +4,7 @@ import 'package:ashok_leyland_project_3/services/crud.dart';
 import 'package:ashok_leyland_project_3/widgets/custom_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:sizer/sizer.dart';
 import 'trainee_profile.dart';
 import 'package:intl/intl.dart';
@@ -145,13 +146,30 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                               MaterialPageRoute(
                                   builder: (context) => HomeScreen()));
                         },
-                        child: Container(
-                          alignment: Alignment.topLeft,
-                          margin: EdgeInsets.only(top: 3.h),
-                          height: 3.0.h,
-                          width: 7.0.h,
-                          child: Icon(Icons.arrow_back),
+                        child:Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(top: 3.h),
+                        height: 5.0.h,
+                        width: 6.0.h,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                          },
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30.0,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(5),
+                              primary: Colors.black,
+                              ),
                         ),
+                      ),
                       ),
                     ),
                   ],
@@ -379,8 +397,8 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(25.0),
-                  child: ElevatedButton(
+                    padding: const EdgeInsets.all(25.0),
+                    child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
@@ -415,8 +433,34 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                     .update({"completed Program":FieldValue.arrayUnion([DropDownValue])});
                               }
                             },
-                      child: Text('Submit')),
-                ),
+                      child: Bounce(
+                          duration: Duration(milliseconds: 110),
+                          onPressed: _isDisable
+                              ? null
+                              : () {
+                                  if (_preTestMarks == -1 ||
+                                      _postTestMarks == -1) {
+                                    _showMyDialog("Invalid Mark");
+                                  } else {
+                                    _traineeRef.trainee
+                                        .doc(_employeeId)
+                                        .collection("completed program")
+                                        .doc(DropDownValue)
+                                        .set({
+                                      "day": DayDropDownValue,
+                                      DropDownValue: true,
+                                      "pre_test_marks": _preTestMarks,
+                                      "post_test_marks": _postTestMarks,
+                                      "date of completion":
+                                          DateFormat("dd-MM-yyyy")
+                                              .format(currentDate),
+                                      "training": DropDownValue,
+                                      "mentor name": _mentorName,
+                                    });
+                                  }
+                                },
+                          child: Text('Submit')),
+                    )),
               ],
             ),
           ),

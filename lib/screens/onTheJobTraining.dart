@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
+
+import 'home.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OnTheJobTraining extends StatefulWidget {
@@ -14,6 +16,9 @@ class OnTheJobTraining extends StatefulWidget {
 class _OnTheJobTrainingState extends State<OnTheJobTraining> {
   // FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
+  var _nameController = TextEditingController();
+  var _deptController = TextEditingController();
+  crudMethod _traineeRef = new crudMethod();
 
   String _traineeName, _employeeId, _facultyName;
   Map<String, String> _operationMap = {
@@ -207,11 +212,38 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
           body: Form(
             key: _formKey,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(2.w, 5.h, 2.w, 0),
+              padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
+                      height: 5.0.h,
+                      width: 6.0.h,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()));
+                        },
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(5),
+                          primary: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
                   Text(
                     "On The Job Training",
                     style: Constants.boldHeading,
@@ -219,14 +251,16 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
 
                   //EMPLOYEE ID
                   Padding(
-                    padding: EdgeInsets.fromLTRB(2.w, 5.h, 2.w, 0),
+                    padding: const EdgeInsets.all(8.0),
                     child: TextField(
                       onChanged: (input) {
                         _employeeId = input;
-                        setState(() {
-                          if (input.isEmpty)
-                            _isDisable = true;
-                          else if (isNumeric(input)) _isDisable = false;
+                        setState(() async {
+                          DocumentSnapshot snapshot =
+                              await _traineeRef.trainee.doc(_employeeId).get();
+                          Map<String, dynamic> documentData = snapshot.data();
+                          print(documentData["name"] ?? "Null");
+                          _nameController.text = documentData["name"] ?? "Null";
                         });
                       },
                       decoration: InputDecoration(labelText: 'Employee Id'),
@@ -237,6 +271,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: TextField(
+                      controller: _nameController,
                       onChanged: (input) {
                         _traineeName = input;
                         setState(() {
@@ -247,6 +282,8 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                         });
                       },
                       decoration: InputDecoration(labelText: 'Name'),
+                      enabled: false,
+                      enableInteractiveSelection: true,
                     ),
                   ),
 
@@ -302,7 +339,12 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                       onChanged: (input) {
                         setState(() {
                           operationNumber = input;
-                          print(_operationMap[operationNumber]);
+                          try {
+                            print(_operationMap[operationNumber]);
+                            _deptController.text= _operationMap[operationNumber];
+                          } catch (error) {
+                            print("im in catch");
+                          }
                           if (input.isEmpty)
                             _isDisable = true;
                           else
@@ -310,14 +352,18 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                         });
                       },
                       decoration:
-                          InputDecoration(labelText: 'Operation Number'),
+                          InputDecoration(labelText: 'Enter Operation Number'),
                     ),
                   ),
-                  (operationNumber != null)
-                      ? Text("Operation Description" +
-                              _operationMap[operationNumber.toString()] ??
-                          "Enter Operation Number")
-                      : null,
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: _deptController,
+                      enabled: false,
+                      decoration:
+                          InputDecoration(labelText: 'Operation Description'),
+                    ),
+                  ),
 
                   //DATE OF TRAINING
                   Padding(

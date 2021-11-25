@@ -146,13 +146,30 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                               MaterialPageRoute(
                                   builder: (context) => HomeScreen()));
                         },
-                        child: Container(
-                          alignment: Alignment.topLeft,
-                          margin: EdgeInsets.only(top: 3.h),
-                          height: 3.0.h,
-                          width: 7.0.h,
-                          child: Icon(Icons.arrow_back),
+                        child:Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(top: 3.h),
+                        height: 5.0.h,
+                        width: 6.0.h,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                          },
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30.0,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(5),
+                              primary: Colors.black,
+                              ),
                         ),
+                      ),
                       ),
                     ),
                   ],
@@ -340,7 +357,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextField(
-                    decoration: InputDecoration(labelText: 'Mentor Name'),
+                    decoration: InputDecoration(labelText: 'Trainer Name'),
                     onChanged: (str) {
                       setState(() {
                         if (str.isEmpty) _isDisable = true;

@@ -5,6 +5,9 @@ import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
+import 'done_add_screen.dart';
+import 'home.dart';
+import 'package:hexcolor/hexcolor.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddTrainee extends StatefulWidget {
@@ -70,8 +73,36 @@ class _AddTraineeState extends State<AddTrainee> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  // mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(top: 1.h),
+                        height: 5.0.h,
+                        width: 6.0.h,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                          },
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30.0,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(5),
+                              primary: Colors.black,
+                              ),
+                        ),
+                      ),
+                    ),
                     Text(
                       "Add Trainee",
                       style: Constants.boldHeading,
@@ -219,8 +250,13 @@ class _AddTraineeState extends State<AddTrainee> {
                               'qualifications': _traineeQualifications,
                               'gender': GenderDropDownValue,
                               'age': _traineeAge,
-                              'level': "L0"
+                              'level': "L0",
+                              'level': "L0",
                             });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DoneMark()));
                           },
                           child: Bounce(
                               duration: Duration(milliseconds: 110),

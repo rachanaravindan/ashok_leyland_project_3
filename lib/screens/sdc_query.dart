@@ -1,15 +1,23 @@
+import 'dart:io';
+
 import 'package:ashok_leyland_project_3/Constants.dart';
+import 'package:ashok_leyland_project_3/models/card.dart';
 import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
 import 'package:ashok_leyland_project_3/screens/home.dart';
+import 'package:ashok_leyland_project_3/screens/sdc_query_home.dart';
 import 'package:ashok_leyland_project_3/screens/trainee_profile.dart';
 import 'package:ashok_leyland_project_3/widgets/custom_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:csv/csv.dart';
+import 'package:ext_storage/ext_storage.dart';
 
 class SdcQuery extends StatefulWidget {
   final bool isLevelQuery;
@@ -20,16 +28,21 @@ class SdcQuery extends StatefulWidget {
 }
 
 class _SdcQueryState extends State<SdcQuery> {
+  TextEditingController _searchController = TextEditingController();
+  
   final _formKey = GlobalKey<FormState>();
   String _traineeName,
       _registerNumber,
       _search,
-      _dropDownValue = "Select Level";
+      _dropDownValue;
+      
   DateTime _joiningDate;
   DateTime _fromDate = new DateTime.now();
   DateTime _toDate = new DateTime.now();
   Timestamp _fromTimeStamp = Timestamp.fromDate(DateTime.now());
   Timestamp _toTimeStamp = Timestamp.fromDate(DateTime.now());
+  List _allResults = [];
+  List _searchResults = [];
   List<String> LevelList = ["Select Level", "L0", "L1"];
   List<String> ProgramList = [
     'Choose Program',
@@ -42,15 +55,137 @@ class _SdcQueryState extends State<SdcQuery> {
     'Work Ethics and Standing Orders',
     '5S, Gemba & TQM'
   ];
+  Future resultsLoaded;
   List<String> respectiveList = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _searchController.addListener(_onSearchChanged);
     if (widget.isLevelQuery)
       respectiveList = List.from(LevelList);
     else
       respectiveList = List.from(ProgramList);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    resultsLoaded = getData();
+  }
+
+  _onSearchChanged() {
+    searchResultsList();
+    print(_searchController.text);
+  }
+
+  searchResultsList() {
+    var showResults = [];
+    if (_searchController.text != "") {
+      for (var item in _allResults) {
+        var empId = item["name"].toLowerCase();
+        if (empId.contains(_searchController.text.toLowerCase())) {
+          showResults.add(item);
+        }
+      }
+    } else {
+      showResults = List.from(_allResults);
+    }
+    setState(() {
+      _searchResults = showResults;
+    });
+  }
+
+  var data;
+  getData() async {
+    print("checking");
+    if (_dropDownValue != "Select Level") {
+      if (_fromTimeStamp != null && _toTimeStamp != null) {
+        print("with date");
+        data = await FirebaseFirestore.instance
+            .collection("trainee")
+            .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
+            .where("doj", isLessThanOrEqualTo: _toTimeStamp)
+            .where("level", isEqualTo: _dropDownValue)
+            .get();
+        setState(() {
+          print("in Set data");
+          _allResults = data.docs;
+        });
+      } else {
+        print("without date");
+        data = await FirebaseFirestore.instance
+            .collection("trainee")
+            .where("level", isEqualTo: _dropDownValue)
+            .get();
+        setState(() {
+          print("in Set data");
+          _allResults = data.docs;
+        });
+      }
+    } else {
+      print("showing everything");
+      data = await FirebaseFirestore.instance.collection("trainee").get();
+      setState(() {
+        print("in Set data");
+        _allResults = data.docs;
+      });
+    }
+    searchResultsList();
+    return "complete";
+  }
+
+  void _generateCsvFile() async {
+    // ignore: unused_local_variable
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+
+    List<dynamic> associateList = [
+      {"number": 1, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+      {"number": 2, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+      {"number": 3, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+      {"number": 4, "lat": "14.97534313396318", "lon": "101.22998536005622"}
+    ];
+
+    List<List<dynamic>> rows = [];
+
+    List<dynamic> row = [];
+    row.add("Sno");
+    row.add("EmpId");
+    row.add("Name");
+    row.add("Age");
+    rows.add(row);
+    for (int i = 0; i < _allResults.length; i++) {
+      Map<String, dynamic> data = _allResults[i].data() as Map<String, dynamic>;
+      List<dynamic> row = [];
+      row.add(i + 1);
+      row.add(data["name"]);
+      row.add(data["empId"]);
+      row.add(data["age"]);
+      rows.add(row);
+    }
+
+    String csv = const ListToCsvConverter().convert(rows);
+
+    String dir = await ExtStorage.getExternalStoragePublicDirectory(
+        ExtStorage.DIRECTORY_DOWNLOADS);
+    print("dir $dir");
+    String file = "$dir";
+
+    File f = File(file + "/filename.csv");
+
+    f.writeAsString(csv);
+    OpenFile.open(file + "/filename.csv");
   }
 
   @override
@@ -70,6 +205,7 @@ class _SdcQueryState extends State<SdcQuery> {
         setState(() {
           _fromDate = _selFromDate;
           _fromTimeStamp = Timestamp.fromDate(_fromDate);
+          getData();
         });
       }
     }
@@ -89,27 +225,9 @@ class _SdcQueryState extends State<SdcQuery> {
         setState(() {
           _toDate = _selToDate;
           _toTimeStamp = Timestamp.fromDate(_toDate);
+          getData();
         });
       }
-    }
-
-    Stream<QuerySnapshot> getData(BuildContext context) async* {
-      if (_dropDownValue != "Select Level") {
-        if (_fromTimeStamp != null && _toTimeStamp != null) {
-          yield* FirebaseFirestore.instance
-              .collection("trainee")
-              .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
-              .where("doj", isLessThanOrEqualTo: _toTimeStamp)
-              .where("level",isEqualTo: _dropDownValue)
-              .snapshots();
-        } else {
-          yield* FirebaseFirestore.instance
-              .collection("trainee")
-              .where("level", isEqualTo: _dropDownValue)
-              .snapshots();
-        }
-      } else
-        yield* FirebaseFirestore.instance.collection("trainee").snapshots();
     }
 
     return Sizer(builder: (context, orientation, deviceType) {
@@ -119,24 +237,30 @@ class _SdcQueryState extends State<SdcQuery> {
           children: [
             Row(
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HomeScreen()));
-                    },
-                    child: Container(
-                      alignment: Alignment.topLeft,
-                      margin: EdgeInsets.all(3.h),
-                      height: 3.0.h,
-                      width: 7.0.h,
-                      child: Icon(Icons.arrow_back),
-                    ),
-                  ),
-                ),
+                Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(top: 2.h),
+                        height: 5.0.h,
+                        width: 6.0.h,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                          },
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30.0,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(5),
+                              primary: Colors.black,
+                              ),
+                        ),
+                      ),
                 Text(
                   'Trainee Details',
                   style: Constants.ListItemHeading,
@@ -170,6 +294,7 @@ class _SdcQueryState extends State<SdcQuery> {
                 onChanged: (String value) {
                   setState(() {
                     _dropDownValue = value;
+                    getData();
                   });
                 },
               ),
@@ -213,6 +338,7 @@ class _SdcQueryState extends State<SdcQuery> {
                     children: [
                       IconButton(
                         onPressed: () {
+                          // ignore: unnecessary_statements
                           (() {
                             _selectToDate(context);
                           });
@@ -233,6 +359,7 @@ class _SdcQueryState extends State<SdcQuery> {
                 child: Container(
                   height: 6.h,
                   child: TextField(
+                    controller: _searchController,
                     decoration: InputDecoration(
                         contentPadding:
                             const EdgeInsets.symmetric(vertical: 10.0),
@@ -243,36 +370,6 @@ class _SdcQueryState extends State<SdcQuery> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30))),
                   ),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Container(
-                padding: EdgeInsets.fromLTRB(5.w, 3.w, 1.w, 1.w),
-                child: Row(
-                  children: [
-                    ElevatedButton(
-                      // style: ElevatedButton.styleFrom(
-                      //     // primary: HexColor("#F3F3F3"))
-
-                      onPressed: () {
-                        print("im pressed");
-                      },
-                      child: Row(
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.only(right: 1.h),
-                              child:
-                                  Icon(Icons.filter_list, color: Colors.white)),
-                          Text(
-                            'Filter',
-                            style: TextStyle(color: Colors.white),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -299,90 +396,20 @@ class _SdcQueryState extends State<SdcQuery> {
               ],
             ),
             Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-              stream: getData(context),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Something went wrong');
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Loading();
-                }
-
-                return ListView(
-                  children: snapshot.data.docs.map((DocumentSnapshot document) {
-                    Map<String, dynamic> data =
-                        document.data() as Map<String, dynamic>;
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => traineeProfile(
-                                      traineeName: data["name"] ??= "null",
-                                      traineeID: data["empId"] ??= "null",
-                                      joiningDate: data["doj"].toDate().toString(),
-                                    )));
-                      },
-                      child: Card(
-                        margin: EdgeInsets.symmetric(
-                            vertical: 0.5.h, horizontal: 2.w),
-                        color: HexColor("#D9E9F2"),
-                        elevation: 0.5.h,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Center(
-                              child: Expanded(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: CircleAvatar(
-                                  child: Icon(Icons.person),
-                                ),
-                              )),
-                            ),
-                            Expanded(
-                                flex: 1,
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(5.w, 0, 0, 1.2.h),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                      data["name"] ??= "null",
-                                      style: Constants.ListItemHeading,
-                                    ),
-                                  ),
-                                )),
-                            Expanded(
-                                child: Padding(
-                              padding: EdgeInsets.fromLTRB(12.w, 0, 0, 1.2.h),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Text(
-                                  data["empId"] ??= "null",
-                                  style: Constants.ListItemSubHeading,
-                                ),
-                              ),
-                            )),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                );
-              },
-            )),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _searchResults.length,
+                itemBuilder: (BuildContext context, int index) =>
+                    buildCard(context, _searchResults[index]),
+              ),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
             backgroundColor: Colors.grey,
             child: Icon(Icons.add),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AddTrainee()));
+              _generateCsvFile();
             }),
       ));
     });

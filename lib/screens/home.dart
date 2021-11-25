@@ -1,4 +1,6 @@
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
+import 'package:ashok_leyland_project_3/screens/promotion.dart';
+import 'package:ashok_leyland_project_3/screens/promotion.dart';
 import 'package:ashok_leyland_project_3/screens/sdc_query_home.dart';
 import 'package:ashok_leyland_project_3/screens/sdc_training.dart';
 import 'package:ashok_leyland_project_3/screens/department_allocation.dart';
@@ -39,6 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case 6:
         assetLoc = "assets/on_the_job_query.svg";
+        break;
+      case 7:
+        assetLoc = "";
         break;
       default:
         Navigator.push(
@@ -101,6 +106,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) => OnTheJobTraining()));
                   assetLoc = "assets/on_the_job_query.svg";
                   break;
+                  case 7:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Promotion()));
+                  assetLoc = "";
+                  break;
                 default:
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => SdcQueryHome()));
@@ -147,13 +159,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 3.0.h),
+                padding: EdgeInsets.only(top: 5.0.h),
                 child: Center(
                   child: Text('Home',
                       style: GoogleFonts.montserrat(
                         textStyle: TextStyle(
                             fontSize: 30,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.normal,
                             color: Colors.black),
                       )),
                 ),
@@ -164,24 +176,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 // child: Demo(), //search bar
               ),
               SizedBox(
-                height: 20,
+                height: 40,
               ),
               Container(
                 padding: EdgeInsets.only(bottom: 25),
                 child: Wrap(
-                  spacing: 20,
-                  runSpacing: 35,
-                  alignment: WrapAlignment.center,
+                  spacing: 30,
+                  runSpacing: 40,
+                  alignment: WrapAlignment.start,
                   children: [
-                    departmentButton('Add Trainee', 17.0.h, 17.0.h, 1),
-                    departmentButton('SDC Training', 17.0.h, 17.0.h, 2),
-                    departmentButton('SDC Query', 17.0.h, 17.0.h, 3),
+                    departmentButton('Add Trainee', 16.0.h, 16.0.h, 1),
+                    departmentButton('SDC Training', 16.0.h, 16.0.h, 2),
+                    departmentButton('SDC Query', 16.0.h, 16.0.h, 3),
                     departmentButton(
-                        'Department \n Allocation', 17.0.h, 17.0.h, 4),
+                        'Department \n Allocation', 16.0.h, 16.0.h, 4),
                     departmentButton(
-                        'On The Job \n Training', 17.0.h, 17.0.h, 5),
+                        'On the job \n Training', 16.0.h, 16.0.h, 5),
                     departmentButton(
-                        'On The Job Training \n Query', 17.0.h, 17.0.h, 6),
+                        'On the job \n Training \n Query', 16.0.h, 16.0.h, 6),
+                    departmentButton(
+                        'Promotion', 16.0.h, 16.0.h, 7),
+
                   ],
                 ),
               ),

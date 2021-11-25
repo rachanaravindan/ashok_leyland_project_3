@@ -4,8 +4,6 @@ import 'package:ashok_leyland_project_3/screens/signin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-import '../main.dart';
-
 class Splash extends StatefulWidget {
   // Splash({Key? key }) : super(key: key);
 

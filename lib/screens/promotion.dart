@@ -8,34 +8,22 @@ import 'package:ashok_leyland_project_3/constants.dart';
 import 'home.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DepartmentAllocation extends StatefulWidget {
+class Promotion extends StatefulWidget {
   @override
-  _DepartmentAllocationState createState() => _DepartmentAllocationState();
+  _PromotionState createState() => _PromotionState();
 }
 
-class _DepartmentAllocationState extends State<DepartmentAllocation> {
+class _PromotionState extends State<Promotion> {
   // FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   var _nameController = TextEditingController();
   crudMethod _traineeRef = new crudMethod();
 
   String _traineeName, _employeeId, _traineeQualifications, _traineeAge;
-  DateTime _joiningDate;
-  DateTime currentDate = new DateTime.now();
   bool _isDisable = false;
   bool showToggleBtn = false, showTextField = false;
-  List<String> departmentItems = [
-    'Department',
-    'Chassis & Frame Assembly',
-    'GB Assembly',
-    'HT'
-  ];
-  String departmentDropDownValue;
   crudMethod crudOperations = new crudMethod();
-  void initState() {
-    var departmentDropDownValue = departmentItems[0];
-    super.initState();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +33,6 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
       }
       return double.parse(s, (e) => null) != null;
     }
-
-    String _formattedate = new DateFormat.yMMMd().format(currentDate);
 
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
@@ -90,7 +76,7 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                     ),
                   
                   Text(
-                    "Department \n Allocation",
+                    "Promotion",
                     style: Constants.boldHeading,
                   ),
 
@@ -112,6 +98,7 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                   ),
                 ),
 
+                  //NAME
                   Padding(
                   padding: EdgeInsets.all(8.0),
                   child: TextField(
@@ -131,43 +118,6 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                   ),
                 ),
 
-
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      dropdownColor: Colors.white,
-                      iconSize: 5.h,
-                      focusColor: Colors.red,
-                      value: departmentDropDownValue,
-                      //elevation: 5,
-                      style: TextStyle(color: Colors.black),
-                      iconEnabledColor: Colors.black,
-                      items: departmentItems
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                                // color: Colors.black,
-                                ),
-                          ),
-                        );
-                      }).toList(),
-                      hint: Text(departmentItems[0]),
-                      onChanged: (String value) {
-                        setState(() {
-                          departmentDropDownValue = value;
-                          if (value != "department") {
-                            showToggleBtn = true;
-                          } else
-                            showToggleBtn = false;
-                          showTextField = false;
-                        });
-                      },
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(25.0),
                     child: ElevatedButton(
@@ -184,7 +134,6 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                           print("Submitted");
                           // crudOperations.storeData({});
                           _traineeRef.trainee.doc(_employeeId).update({
-                            "department": departmentDropDownValue,
                           });
                         },
                   

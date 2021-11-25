@@ -13,8 +13,8 @@ class _SdcQueryHomeState extends State<SdcQueryHome> {
   final double _borderRadius = 24;
 
   var items = [
-    QueryCard('Query By Level', Color(0xff6DC8F3), Color(0xff73A1F9), true),
-    QueryCard('Query By Program', Color(0xffFF5B95), Color(0xffF8556D), false),
+    QueryCard('Query By Level', Color(0xFFFFC107), Color(0xff73A1F9), true),
+    QueryCard('Query By Program', Color(0xFFFFC107), Color(0xffF8556D), false),
   ];
 
   @override

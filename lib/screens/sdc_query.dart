@@ -237,30 +237,30 @@ class _SdcQueryState extends State<SdcQuery> {
           children: [
             Row(
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SdcQueryHome()));
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.blue, shape: BoxShape.circle),
-                      alignment: Alignment.topLeft,
-                      margin: EdgeInsets.all(3.h),
-                      height: 5.0.h,
-                      width: 5.0.h,
-                      child: Center(
+                Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(top: 2.h),
+                        height: 5.0.h,
+                        width: 6.0.h,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                          },
                           child: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                      )),
-                    ),
-                  ),
-                ),
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30.0,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(5),
+                              primary: Colors.black,
+                              ),
+                        ),
+                      ),
                 Text(
                   'Trainee Details',
                   style: Constants.ListItemHeading,
@@ -406,7 +406,7 @@ class _SdcQueryState extends State<SdcQuery> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.grey,
             child: Icon(Icons.add),
             onPressed: () {
               _generateCsvFile();

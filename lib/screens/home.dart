@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => Promotion()));
-                  assetLoc = "";
+                  assetLoc = "assets/promotion.svg";
                   break;
               }
             },

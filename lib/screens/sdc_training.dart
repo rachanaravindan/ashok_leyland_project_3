@@ -1,3 +1,4 @@
+mport 'package:ashok_leyland_project_3/constants.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:ashok_leyland_project_3/screens/home.dart';
 import 'package:ashok_leyland_project_3/services/crud.dart';
@@ -26,8 +27,15 @@ class SdcTrainingScreen extends StatefulWidget {
 // DateTime _joiningDate;
 // DateTime currentDate = new DateTime.now();
 //bool _isDisable = false;
+double entered_pretest_mark = 0;
+double entered_posttest_mark = 0;
+double total_pretest_mark = 0;
+double total_posttest_mark = 0;
+
 class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
   var _nameController = TextEditingController();
+  var _pretestPercentage = TextEditingController();
+  var _posttestPercentage = TextEditingController();
   DateTime _currentdate = new DateTime.now();
   bool _isDisable = true;
   crudMethod _traineeRef = new crudMethod();
@@ -146,30 +154,30 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                               MaterialPageRoute(
                                   builder: (context) => HomeScreen()));
                         },
-                        child:Container(
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(top: 3.h),
-                        height: 5.0.h,
-                        width: 6.0.h,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
-                          },
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 30.0,
-                          ),
-                          style: ElevatedButton.styleFrom(
+                        child: Container(
+                          alignment: Alignment.topLeft,
+                          margin: EdgeInsets.only(top: 3.h),
+                          height: 5.0.h,
+                          width: 6.0.h,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomeScreen()));
+                            },
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 30.0,
+                            ),
+                            style: ElevatedButton.styleFrom(
                               shape: CircleBorder(),
                               padding: EdgeInsets.all(5),
                               primary: Colors.black,
-                              ),
+                            ),
+                          ),
                         ),
-                      ),
                       ),
                     ),
                   ],
@@ -370,13 +378,65 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextField(
                     decoration:
+                        InputDecoration(labelText: 'Total Pre-Test Marks'),
+                    onChanged: (str) {
+                      setState(() {
+                        if (str.isEmpty)
+                          _isDisable = true;
+                        else if (isNumeric(str)) _isDisable = false;
+                        total_pretest_mark = double.tryParse(str) ?? -1;
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextField(
+                    decoration:
                         InputDecoration(labelText: 'Enter Pre-Test Marks'),
                     onChanged: (str) {
                       setState(() {
                         if (str.isEmpty)
                           _isDisable = true;
                         else if (isNumeric(str)) _isDisable = false;
-                        _preTestMarks = int.tryParse(str) ?? -1;
+                        entered_pretest_mark = double.tryParse(str) ?? -1;
+                        if (entered_pretest_mark != null &&
+                            total_pretest_mark != null) {
+                          _pretestPercentage.text =
+                              ((entered_pretest_mark / total_pretest_mark) *
+                                  100).toString();
+                        }
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextField(
+                    controller: _pretestPercentage,
+                    enabled: false,
+                    decoration:
+                        InputDecoration(labelText: 'Percentage (Pre-Test)'),
+                    onChanged: (str) {
+                      setState(() {
+                        if (str.isEmpty)
+                          _isDisable = true;
+                        else if (isNumeric(str)) _isDisable = false;
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextField(
+                    decoration:
+                        InputDecoration(labelText: 'Total Post-Test Marks'),
+                    onChanged: (str) {
+                      setState(() {
+                        if (str.isEmpty)
+                          _isDisable = true;
+                        else if (isNumeric(str)) _isDisable = false;
+                        total_posttest_mark = double.tryParse(str) ?? -1;
                       });
                     },
                   ),
@@ -391,7 +451,29 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                         if (str.isEmpty)
                           _isDisable = true;
                         else if (isNumeric(str)) _isDisable = false;
-                        _postTestMarks = int.tryParse(str) ?? -1;
+                        entered_posttest_mark = double.tryParse(str) ?? -1;
+                        if (entered_posttest_mark != null &&
+                            total_posttest_mark != null) {
+                          _posttestPercentage.text =
+                              ((entered_posttest_mark / total_posttest_mark) *
+                                  100).toString();
+                        }
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextField(
+                    controller: _posttestPercentage,
+                    enabled: false,
+                    decoration:
+                        InputDecoration(labelText: 'Percentage (Post-Test)'),
+                    onChanged: (str) {
+                      setState(() {
+                        if (str.isEmpty)
+                          _isDisable = true;
+                        else if (isNumeric(str)) _isDisable = false;
                       });
                     },
                   ),
@@ -428,9 +510,10 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                   "training": DropDownValue,
                                   "mentor name": _mentorName,
                                 });
-                                _traineeRef.trainee
-                                    .doc(_employeeId)
-                                    .update({"completed Program":FieldValue.arrayUnion([DropDownValue])});
+                                _traineeRef.trainee.doc(_employeeId).update({
+                                  "completed Program":
+                                      FieldValue.arrayUnion([DropDownValue])
+                                });
                               }
                             },
                       child: Bounce(
@@ -449,8 +532,9 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                         .set({
                                       "day": DayDropDownValue,
                                       DropDownValue: true,
-                                      "pre_test_marks": _preTestMarks,
-                                      "post_test_marks": _postTestMarks,
+                                      "pre_test_marks": ((entered_pretest_mark / total_pretest_mark) * 100),
+                                      "post_test_marks": ((entered_posttest_mark / total_posttest_mark) *
+                                  100),
                                       "date of completion":
                                           DateFormat("dd-MM-yyyy")
                                               .format(currentDate),

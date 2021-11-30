@@ -15,18 +15,21 @@ class AuthService {
       print(e);
     }
   }
+
   Future<String> signIn(String email, String password) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
       return e.code;
     } catch (e) {
-      print(e);
+      print("Sign in page error : "+e);
     }
   }
+
   Future signOut() async {
     try {
-      return await _auth.signOut();
+      return await _auth.signOut().then((_) => print("Successfully signed out !!!"));
     } catch (error) {
       print(error.toString());
       return null;

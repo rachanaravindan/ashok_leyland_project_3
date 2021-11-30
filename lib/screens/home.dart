@@ -1,11 +1,14 @@
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
+import 'package:ashok_leyland_project_3/screens/on_the_job_training_query.dart';
 import 'package:ashok_leyland_project_3/screens/promotion.dart';
 import 'package:ashok_leyland_project_3/screens/promotion.dart';
 import 'package:ashok_leyland_project_3/screens/sdc_training.dart';
 import 'package:ashok_leyland_project_3/screens/department_allocation.dart';
 import 'package:ashok_leyland_project_3/screens/onTheJobTraining.dart';
 import 'package:ashok_leyland_project_3/screens/sdc_query.dart';
+import 'package:ashok_leyland_project_3/screens/signin_page.dart';
 import 'package:ashok_leyland_project_3/services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -102,14 +105,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => OnTheJobTraining()));
+                          builder: (context) => OnTheJobTrainingQuery()));
                   assetLoc = "assets/on_the_job_query.svg";
                   break;
-                  case 7:
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Promotion()));
+                case 7:
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Promotion()));
                   assetLoc = "assets/promotion.svg";
                   break;
               }
@@ -146,8 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Align(
                   alignment: Alignment.topRight,
                   child: GestureDetector(
-                    onTap: () {
-                      _authService.signOut();
+                    onTap: () async {
+                     await FirebaseAuth.instance.signOut();
                     },
                     child: Icon(Icons.logout_outlined),
                   ),
@@ -189,9 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         'On the job \n Training', 16.0.h, 16.0.h, 5),
                     departmentButton(
                         'On the job \n Training \n Query', 16.0.h, 16.0.h, 6),
-                    departmentButton(
-                        'Promotion', 16.0.h, 16.0.h, 7),
-
+                    departmentButton('Promotion', 16.0.h, 16.0.h, 7),
                   ],
                 ),
               ),

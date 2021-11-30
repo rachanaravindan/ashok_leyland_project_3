@@ -1,6 +1,8 @@
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
 import 'package:ashok_leyland_project_3/services/auth.dart';
+import 'package:ashok_leyland_project_3/services/verify.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 
 class SignInPage extends StatefulWidget {
+  
   @override
   _SignInPageState createState() => _SignInPageState();
 }
@@ -65,6 +68,20 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
+  Future<String> register(String email, String password) async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((_) => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => VerifyScreen())));
+    } on FirebaseAuthException catch (e) {
+      return e.code;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
     Future<void> _showMyDialog(String error) async {
@@ -282,7 +299,7 @@ class _SignInPageState extends State<SignInPage> {
                                 if (formKey.currentState.validate() &&
                                     formPassKey.currentState.validate()) {
                                   if (buttonText == "Create an Account") {
-                                    String e = await _authObj.register(
+                                    String e = await register(
                                         _emailcontroller.text,
                                         _pwdcontroller.text);
                                     if (e == 'weak-password') {

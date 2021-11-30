@@ -61,6 +61,7 @@ Widget buildCard(BuildContext context, DocumentSnapshot document) {
 // }
 
   return Bounce(
+    duration:Duration(milliseconds:20),
     onPressed: () {
       String _date;
       _date= data["doj"].toDate().toString();

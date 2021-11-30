@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
-
+import 'assesment_list_screen.dart';
 import 'home.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -147,8 +147,10 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
     '60- Fitment Of Dowel And Idler Shaft Mounting'
   ];
   List<String> respectiveDropDown = ['Assessment List'];
+
+  bool valuefirst = false;
+  bool valuesecond = false;
   List<String> assessmentListItems = [
-    'Assessment List',
     '1. Able to understand and follow all the safety instructions as per WIS ',
     '2. Able to understand and follow all the work instruction as per WIS',
     '3. Able to understand and follow the critical instruction to meet quality and safety',
@@ -203,274 +205,283 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
     }
 
     String _formattedate = new DateFormat.yMMMd().format(currentDate);
+    Widget AssessmentList(int a) {
+      return Row(
+        children: <Widget>[
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(child: Text(assessmentListItems[a])),
+          Checkbox(
+            checkColor: Colors.green,
+            activeColor: Colors.green,
+            value: this.valuefirst,
+            onChanged: (bool value) {
+              setState(() {
+                this.valuefirst = value;
+              });
+            },
+          ),
+          Checkbox(
+            checkColor: Colors.red,
+            activeColor: Colors.red,
+            value: this.valuesecond,
+            onChanged: (bool value) {
+              setState(() {
+                this.valuesecond = value;
+              });
+            },
+          ),
+        ],
+      );
+    }
 
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
           backgroundColor: Colors.yellow[00],
-          body: Form(
-            key: _formKey,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Container(
+          body: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Align(
                       alignment: Alignment.topLeft,
-                      margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
-                      height: 5.0.h,
-                      width: 6.0.h,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeScreen()));
-                        },
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 30.0,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          shape: CircleBorder(),
-                          padding: EdgeInsets.all(5),
-                          primary: Colors.black,
+                      child: Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
+                        height: 5.0.h,
+                        width: 6.0.h,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                          },
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30.0,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            shape: CircleBorder(),
+                            padding: EdgeInsets.all(5),
+                            primary: Colors.black,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Text(
-                    "On The Job Training",
-                    style: Constants.boldHeading,
-                  ),
-
-                  //EMPLOYEE ID
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      onChanged: (input) {
-                        _employeeId = input;
-                        setState(() async {
-                          DocumentSnapshot snapshot =
-                              await _traineeRef.trainee.doc(_employeeId).get();
-                          Map<String, dynamic> documentData = snapshot.data();
-                          print(documentData["name"] ?? "Null");
-                          _nameController.text = documentData["name"] ?? "Null";
-                        });
-                      },
-                      decoration: InputDecoration(labelText: 'Employee Id'),
+                    Text(
+                      "On The Job Training",
+                      style: Constants.boldHeading,
                     ),
-                  ),
 
-                  //NAME
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _nameController,
-                      onChanged: (input) {
-                        _traineeName = input;
-                        setState(() {
-                          if (input.isEmpty)
-                            _isDisable = true;
-                          else
-                            _isDisable = false;
-                        });
-                      },
-                      decoration: InputDecoration(labelText: 'Name'),
-                      enabled: false,
-                      enableInteractiveSelection: true,
+                    //EMPLOYEE ID
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        onChanged: (input) {
+                          _employeeId = input;
+                          setState(() async {
+                            DocumentSnapshot snapshot = await _traineeRef
+                                .trainee
+                                .doc(_employeeId)
+                                .get();
+                            Map<String, dynamic> documentData = snapshot.data();
+                            print(documentData["name"] ?? "Null");
+                            _nameController.text =
+                                documentData["name"] ?? "Null";
+                          });
+                        },
+                        decoration: InputDecoration(labelText: 'Employee Id'),
+                      ),
                     ),
-                  ),
 
-                  //DEPARTMENT
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      dropdownColor: Colors.white,
-                      iconSize: 5.h,
-                      focusColor: Colors.red,
-                      value: departmentDropDownValue,
-                      //elevation: 5,
-                      style: TextStyle(color: Colors.black),
-                      iconEnabledColor: Colors.black,
-                      items: departmentItems
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                                // color: Colors.black,
-                                ),
-                          ),
-                        );
-                      }).toList(),
-                      hint: Text(departmentItems[0]),
-                      onChanged: (String value) {
-                        setState(() {
-                          departmentDropDownValue = value;
-                          if (value == 'Chassis & Frame Assembly')
-                            respectiveDropDown = List.from(operationUnitItems1);
-                          else if (value == 'GB Assembly')
-                            respectiveDropDown = List.from(operationUnitItems2);
-                          else if (value == 'HT')
-                            respectiveDropDown = List.from(operationUnitItems3);
-
-                          if (value != "department") {
-                            showToggleBtn = true;
-                          } else
-                            showToggleBtn = false;
-                          showTextField = false;
-                        });
-                      },
-                    ),
-                  ),
-
-                  //OPERATION NUMBER
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: TextField(
-                      onChanged: (input) {
-                        setState(() {
-                          operationNumber = input;
-                          try {
-                            if (_operationMap.containsKey(operationNumber))
-                              _deptController.text =
-                                  _operationMap[operationNumber];
+                    //NAME
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _nameController,
+                        onChanged: (input) {
+                          _traineeName = input;
+                          setState(() {
+                            if (input.isEmpty)
+                              _isDisable = true;
                             else
-                              _deptController.text = "";
-                          } catch (error) {
-                            print("im in catch");
-                            _deptController.text = "";
-                          }
-                          if (input.isEmpty)
-                            _isDisable = true;
-                          else
-                            _isDisable = false;
-                        });
-                      },
-                      decoration:
-                          InputDecoration(labelText: 'Enter Operation Number'),
+                              _isDisable = false;
+                          });
+                        },
+                        decoration: InputDecoration(labelText: 'Name'),
+                        enabled: false,
+                        enableInteractiveSelection: true,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _deptController,
-                      enabled: false,
-                      decoration:
-                          InputDecoration(labelText: 'Operation Description'),
-                    ),
-                  ),
 
-                  //DATE OF TRAINING
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectdate(context);
-                        });
-                      },
-                      child: Card(
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _selectdate(context);
-                                });
-                              },
-                              icon: Icon(Icons.calendar_today),
+                    //DEPARTMENT
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        dropdownColor: Colors.white,
+                        iconSize: 5.h,
+                        focusColor: Colors.red,
+                        value: departmentDropDownValue,
+                        //elevation: 5,
+                        style: TextStyle(color: Colors.black),
+                        iconEnabledColor: Colors.black,
+                        items: departmentItems
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                  // color: Colors.black,
+                                  ),
                             ),
-                            Text('Date Of Training: $_formattedate'),
-                          ],
+                          );
+                        }).toList(),
+                        hint: Text(departmentItems[0]),
+                        onChanged: (String value) {
+                          setState(() {
+                            departmentDropDownValue = value;
+                            if (value == 'Chassis & Frame Assembly')
+                              respectiveDropDown =
+                                  List.from(operationUnitItems1);
+                            else if (value == 'GB Assembly')
+                              respectiveDropDown =
+                                  List.from(operationUnitItems2);
+                            else if (value == 'HT')
+                              respectiveDropDown =
+                                  List.from(operationUnitItems3);
+
+                            if (value != "department") {
+                              showToggleBtn = true;
+                            } else
+                              showToggleBtn = false;
+                            showTextField = false;
+                          });
+                        },
+                      ),
+                    ),
+
+                    //OPERATION NUMBER
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        onChanged: (input) {
+                          setState(() {
+                            operationNumber = input;
+                            try {
+                              if (_operationMap.containsKey(operationNumber))
+                                _deptController.text =
+                                    _operationMap[operationNumber];
+                              else
+                                _deptController.text = "";
+                            } catch (error) {
+                              print("im in catch");
+                              _deptController.text = "";
+                            }
+                            if (input.isEmpty)
+                              _isDisable = true;
+                            else
+                              _isDisable = false;
+                          });
+                        },
+                        decoration: InputDecoration(
+                            labelText: 'Enter Operation Number'),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _deptController,
+                        maxLines: 3,
+                        enabled: false,
+                        decoration:
+                            InputDecoration(labelText: 'Operation Description'),
+                      ),
+                    ),
+
+                    //DATE OF TRAINING
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 4),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectdate(context);
+                          });
+                        },
+                        child: Card(
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _selectdate(context);
+                                  });
+                                },
+                                icon: Icon(Icons.calendar_today),
+                              ),
+                              Text('Date Of Training: $_formattedate'),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  //FACULTY NAME
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: TextField(
-                      onChanged: (input) {
-                        _facultyName = input;
-                        setState(() {
-                          if (input.isEmpty)
-                            _isDisable = true;
-                          else
-                            _isDisable = false;
-                        });
-                      },
-                      decoration: InputDecoration(labelText: 'Faculty Name'),
-                    ),
-                  ),
-
-                  //ASSESSMENT LIST
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      dropdownColor: Colors.white,
-                      iconSize: 5.h,
-                      focusColor: Colors.red,
-                      value: assessmentListDropDownValue,
-                      //elevation: 5,
-                      style: TextStyle(color: Colors.black),
-                      iconEnabledColor: Colors.black,
-                      items: assessmentListItems
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                                // color: Colors.black,
-                                ),
-                          ),
-                        );
-                      }).toList(),
-                      hint: Text(assessmentListItems[0]),
-                      onChanged: (String value) {
-                        setState(() {
-                          assessmentListDropDownValue = value;
-                          if (value != "assessmentList") {
-                            showToggleBtn = true;
-                          } else
-                            showToggleBtn = false;
-                          showTextField = false;
-                        });
-                      },
-                    ),
-                  ),
-
-                  //BUTTON
-                  Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                          elevation: 2,
-
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.5.h, horizontal: 11.6.h),
-                          onPrimary: Colors.white, // foreground
-                        ),
-                        onPressed: () {
-                          print("Submitted");
+                    //FACULTY NAME
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        onChanged: (input) {
+                          _facultyName = input;
+                          setState(() {
+                            if (input.isEmpty)
+                              _isDisable = true;
+                            else
+                              _isDisable = false;
+                          });
                         },
-                        child: Text('PROMOTE')),
-                  ),
-                ],
+                        decoration: InputDecoration(labelText: 'Faculty Name'),
+                      ),
+                    ),
+
+                    //BUTTON
+                    Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            elevation: 2,
+
+                            padding: EdgeInsets.symmetric(
+                                vertical: 1.5.h, horizontal: 10.w),
+                            onPrimary: Colors.white, // foreground
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AssesmentListScreen(
+                                          empId: _employeeId,
+                                          operationNo: operationNumber,
+                                          facultyName: _facultyName,
+                                          dateOfCompletion: Timestamp.fromDate(currentDate)
+                                        )));
+                          },
+                          child: Text('Select the assessment')),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

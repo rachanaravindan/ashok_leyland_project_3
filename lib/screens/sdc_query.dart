@@ -1,5 +1,7 @@
-import 'package:ashok_leyland_project_3/Constants.dart';
+//original
 import 'dart:io';
+
+import 'package:ashok_leyland_project_3/Constants.dart';
 import 'package:ashok_leyland_project_3/models/card.dart';
 import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
@@ -104,7 +106,7 @@ class _SdcQueryState extends State<SdcQuery> {
     print("checking");
     if (_levelDropDownValue != "Select Level") {
       //with level and program case
-      if (_programDropDownValue != "Choose Program") { 
+      if (_programDropDownValue != "Choose Program") {
         if (_fromTimeStamp != null && _toTimeStamp != null) {
           data = await FirebaseFirestore.instance
               .collection("trainee")
@@ -118,8 +120,7 @@ class _SdcQueryState extends State<SdcQuery> {
             _allResults = data.docs;
           });
         }
-      }
-      else if (_fromTimeStamp != null && _toTimeStamp != null) {
+      } else if (_fromTimeStamp != null && _toTimeStamp != null) {
         print("with date");
         data = await FirebaseFirestore.instance
             .collection("trainee")
@@ -242,228 +243,238 @@ class _SdcQueryState extends State<SdcQuery> {
 
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
-          child: Scaffold(
-        body: Container(
-          padding: EdgeInsets.symmetric(vertical: 15),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                         Align( alignment: Alignment.topLeft),
-                  Container(
-                          margin: EdgeInsets.only(top: 3.h),
-                          height: 5.0.h,
-                          width: 6.0.h,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomeScreen()));
-                            },
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 30.0,
-                            ),
-                            style: ElevatedButton.styleFrom(
-                                shape: CircleBorder(),
-                                padding: EdgeInsets.all(5),
-                                primary: Colors.black,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Colors.yellow[00],
+          floatingActionButton: FloatingActionButton(
+                  backgroundColor: Colors.grey,
+                  child: Icon(Icons.add),
+                  onPressed: () {
+                    _generateCsvFile();
+                  }),
+          body: Form(
+            key: _formKey,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Align(
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
+                        height: 5.0.h,
+                        width: 6.0.h,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                          },
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30.0,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(5),
+                              primary: Colors.black,
+                              ),
+                        ),
+                      ),
+                    ),
+                  
+                  Text(
+                    "SDC Query",
+                    style: Constants.boldHeading,
+                  ),
+
+                  //SEARCH BAR
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        height: 6.h,
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 10.0),
+                              hintText: "Search",
+                              focusColor: Colors.black,
+                              fillColor: Colors.grey,
+                              prefixIcon: Icon(Icons.search),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30))),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  //SELECT LEVEL DROPDOWN
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      dropdownColor: Colors.white,
+                      iconSize: 5.h,
+                      focusColor: Colors.red,
+                      value: _levelDropDownValue,
+                      //elevation: 5,
+                      style: TextStyle(color: Colors.black),
+                      iconEnabledColor: Colors.black,
+                      items: respectiveLevelList
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                                // color: Colors.black,
                                 ),
                           ),
+                        );
+                      }).toList(),
+                      hint: Text(respectiveLevelList[0]),
+                      onChanged: (String value) {
+                        setState(() {
+                          _levelDropDownValue = value;
+                          getData();
+                        });
+                      },
+                    ),
+                  ),
+
+                  //CHOOSE PROGRAM DROPDOWN
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      dropdownColor: Colors.white,
+                      iconSize: 5.h,
+                      focusColor: Colors.red,
+                      value: _programDropDownValue,
+                      //elevation: 5,
+                      style: TextStyle(color: Colors.black),
+                      iconEnabledColor: Colors.black,
+                      items: respectiveProgramList
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                                // color: Colors.black,
+                                ),
+                          ),
+                        );
+                      }).toList(),
+                      hint: Text(respectiveProgramList[0]),
+                      onChanged: (String value) {
+                        setState(() {
+                          _programDropDownValue = value;
+                          getData();
+                        });
+                      },
+                    ),
+                  ),
+
+                  //FROM DATEPICKER
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectFromDate(context);
+                        });
+                      },
+                      child: Card(
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  selectFromDate(context);
+                                });
+                              },
+                              icon: Icon(Icons.calendar_today),
+                            ),
+                            Text('From Date : ' +
+                                DateFormat("dd-MM-yyyy").format(_fromDate)),
+                          ],
                         ),
-                  Text(
-                    'SDC Query Trainee Details',
-                    style: Constants.ListItemHeading,
-                  )
+                      ),
+                    ),
+                  ),
+
+                  //TO DATEPICKER
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectToDate(context);
+                        });
+                      },
+                      child: Card(
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                // ignore: unnecessary_statements
+                                (() {
+                                  _selectToDate(context);
+                                });
+                              },
+                              icon: Icon(Icons.calendar_today),
+                            ),
+                            Text('To Date : ' +
+                                DateFormat("dd-MM-yyyy").format(_toDate)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 25.w,
+                      ),
+                      Text(
+                        'Name',
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black),
+                      ),
+                      SizedBox(
+                        width: 40.w,
+                      ),
+                      Text('Id',
+                          style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black))
+                    ],
+                  ),
+
+                  Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _searchResults.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          buildCard(context, _searchResults[index]),
+                    ),
+                  ),
                 ],
               ),
-              
-              //SELECT LEVEL
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  dropdownColor: Colors.white,
-                  iconSize: 5.h,
-                  focusColor: Colors.red,
-                  value: _levelDropDownValue,
-                  //elevation: 5,
-                  style: TextStyle(color: Colors.black),
-                  iconEnabledColor: Colors.black,
-                  items: respectiveLevelList
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                            // color: Colors.black,
-                            ),
-                      ),
-                    );
-                  }).toList(),
-                  hint: Text(respectiveLevelList[0]),
-                  onChanged: (String value) {
-                    setState(() {
-                      _levelDropDownValue = value;
-                      getData();
-                    });
-                  },
-                ),
-              ),
-              
-              //CHOOSE PROGRAM
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  dropdownColor: Colors.white,
-                  iconSize: 5.h,
-                  focusColor: Colors.red,
-                  value: _programDropDownValue,
-                  //elevation: 5,
-                  style: TextStyle(color: Colors.black),
-                  iconEnabledColor: Colors.black,
-                  items: respectiveProgramList
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                            // color: Colors.black,
-                            ),
-                      ),
-                    );
-                  }).toList(),
-                  hint: Text(respectiveProgramList[0]),
-                  onChanged: (String value) {
-                    setState(() {
-                      _programDropDownValue = value;
-                      getData();
-                    });
-                  },
-                ),
-              ),
-              
-              
-              // FROM DATE
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectFromDate(context);
-                    });
-                  },
-                  child: Card(
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              selectFromDate(context);
-                            });
-                          },
-                          icon: Icon(Icons.calendar_today),
-                        ),
-                        Text('From Date : ' +
-                            DateFormat("dd-MM-yyyy").format(_fromDate)),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectToDate(context);
-                    });
-                  },
-                  child: Card(
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            // ignore: unnecessary_statements
-                            (() {
-                              _selectToDate(context);
-                            });
-                          },
-                          icon: Icon(Icons.calendar_today),
-                        ),
-                        Text('To Date : ' +
-                            DateFormat("dd-MM-yyyy").format(_toDate)),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 2.h),
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    height: 6.h,
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 10.0),
-                          hintText: "Search",
-                          focusColor: Colors.black,
-                          fillColor: Colors.grey,
-                          prefixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30))),
-                    ),
-                  ),
-                ),
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 25.w,
-                  ),
-                  Text(
-                    'Name',
-                    style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black),
-                  ),
-                  SizedBox(
-                    width: 40.w,
-                  ),
-                  Text('Id',
-                      style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black))
-                ],
-              ),
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _searchResults.length,
-                  itemBuilder: (BuildContext context, int index) =>
-                      buildCard(context, _searchResults[index]),
-                ),
-              ),
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.add),
-            onPressed: () {
-              _generateCsvFile();
-            }),
-      ));
+              ))));
     });
   }
 }

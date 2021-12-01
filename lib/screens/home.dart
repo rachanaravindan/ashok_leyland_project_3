@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
         assetLoc = "assets/on_the_job_query.svg";
         break;
       case 7:
-        assetLoc = "";
+        assetLoc = "assets/promotion.svg";
         break;
       default:
         Navigator.push(
@@ -148,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                     onTap: () async {
-                     await FirebaseAuth.instance.signOut();
+                      await FirebaseAuth.instance.signOut();
                     },
                     child: Icon(Icons.logout_outlined),
                   ),

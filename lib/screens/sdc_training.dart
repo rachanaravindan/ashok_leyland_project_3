@@ -1,4 +1,4 @@
-mport 'package:ashok_leyland_project_3/constants.dart';
+import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:ashok_leyland_project_3/screens/home.dart';
 import 'package:ashok_leyland_project_3/services/crud.dart';
@@ -100,7 +100,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
     Future<void> _showMyDialog(String error) async {
       print("Im Pressed");
       return showDialog<void>(
-        context: context,
+        context: context ?? "Empty",
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
           return AlertDialog(
@@ -503,16 +503,17 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                     .set({
                                   "day": DayDropDownValue,
                                   DropDownValue: true,
-                                  "pre_test_marks": _preTestMarks,
-                                  "post_test_marks": _postTestMarks,
+                                  "pre_test_marks": _preTestMarks ?? "Empty",
+                                  "post_test_marks": _postTestMarks ?? "Empty",
                                   "date of completion": DateFormat("dd-MM-yyyy")
                                       .format(currentDate),
                                   "training": DropDownValue,
-                                  "mentor name": _mentorName,
+                                  "mentor name": _mentorName ?? "Empty",
                                 });
                                 _traineeRef.trainee.doc(_employeeId).update({
                                   "completed Program":
-                                      FieldValue.arrayUnion([DropDownValue])
+                                      FieldValue.arrayUnion([DropDownValue]) ??
+                                          "Empty"
                                 });
                               }
                             },
@@ -526,20 +527,22 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                     _showMyDialog("Invalid Mark");
                                   } else {
                                     _traineeRef.trainee
-                                        .doc(_employeeId)
+                                        .doc(_employeeId) 
                                         .collection("completed program")
                                         .doc(DropDownValue)
                                         .set({
                                       "day": DayDropDownValue,
                                       DropDownValue: true,
-                                      "pre_test_marks": ((entered_pretest_mark / total_pretest_mark) * 100),
+                                      "pre_test_marks": ((entered_pretest_mark / total_pretest_mark) * 100) ??
+                                          "Empty",
                                       "post_test_marks": ((entered_posttest_mark / total_posttest_mark) *
-                                  100),
+                                  100) ??
+                                              "Empty",
                                       "date of completion":
                                           DateFormat("dd-MM-yyyy")
                                               .format(currentDate),
-                                      "training": DropDownValue,
-                                      "mentor name": _mentorName,
+                                      "training": DropDownValue ?? "Empty",
+                                      "mentor name": _mentorName ?? "Empty",
                                     });
                                   }
                                 },

@@ -18,7 +18,7 @@ class AddTrainee extends StatefulWidget {
 class _AddTraineeState extends State<AddTrainee> {
   final _formKey = GlobalKey<FormState>();
   crudMethod _traineeRef = new crudMethod();
-  String _traineeName, _employeeId, _traineeQualifications, _traineeAge;
+  String _traineeName , _employeeId, _traineeQualifications, _traineeAge;
   DateTime _joiningDate;
   DateTime currentDate = new DateTime.now();
   bool _isDisable = false;
@@ -241,38 +241,26 @@ class _AddTraineeState extends State<AddTrainee> {
                                 vertical: 1.5.h, horizontal: 11.6.h),
                             onPrimary: Colors.white, // foreground
                           ),
-                          onPressed: () {
+                          onPressed:  _isDisable
+                              ? null :() {
                             print("Submitted");
                             _traineeRef.trainee.doc(_employeeId).set({
-                              'name': _traineeName,
-                              'empId': _employeeId,
+                              'name': _traineeName ?? "Empty",
+                              'empId': _employeeId ?? "Empty",
                               'doj': Timestamp.fromDate(currentDate),
-                              'qualifications': _traineeQualifications,
-                              'gender': GenderDropDownValue,
-                              'age': _traineeAge,
+                              'qualifications': _traineeQualifications ?? "Empty",
+                              'gender': GenderDropDownValue ?? "Empty",
+                              'age': _traineeAge ?? "Empty",
                               'level': "L0",
-                              'level': "L0",
+                              
                             });
+                            
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => DoneMark()));
                           },
-                          child: Bounce(
-                              duration: Duration(milliseconds: 110),
-                              onPressed: () {
-                                print("Submitted");
-                                _traineeRef.trainee.doc(_employeeId).set({
-                                  'name': _traineeName,
-                                  'empId': _employeeId,
-                                  'doj': DateFormat("dd-MM-yyyy")
-                                      .format(currentDate),
-                                  'qualifications': _traineeQualifications,
-                                  'gender': GenderDropDownValue,
-                                  'age': _traineeAge,
-                                });
-                              },
-                              child: Text('Submit'))),
+                         ),
                     ),
                   ],
                 ),

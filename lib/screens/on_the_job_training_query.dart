@@ -464,7 +464,7 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
                         Expanded(
                           child: ListView.builder(
                             shrinkWrap: true,
-                            itemCount: _searchResults.length,
+                            itemCount: _searchResults.length ,
                             itemBuilder: (BuildContext context, int index) =>
                                 buildCard(context, _searchResults[index]),
                           ),

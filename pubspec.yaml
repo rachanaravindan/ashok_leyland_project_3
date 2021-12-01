@@ -35,6 +35,8 @@ dependencies:
   ext_storage: ^1.0.3
   animated_splash_screen: ^1.1.0
   open_mail_app: ^0.4.1
+  excel: ^2.0.0-null-safety-3
+
 
 dev_dependencies:
   flutter_test:

@@ -218,7 +218,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
             value: this.valuefirst,
             onChanged: (bool value) {
               setState(() {
-                this.valuefirst = value;
+                this.valuefirst = value ?? "Empty";
               });
             },
           ),
@@ -382,7 +382,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                                 _deptController.text =
                                     _operationMap[operationNumber];
                               else
-                                _deptController.text = "";
+                                _deptController.text = "" ?? "Empty";
                             } catch (error) {
                               print("im in catch");
                               _deptController.text = "";
@@ -472,9 +472,9 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         AssesmentListScreen(
-                                          empId: _employeeId,
-                                          operationNo: operationNumber,
-                                          facultyName: _facultyName,
+                                          empId: _employeeId ?? "Empty",
+                                          operationNo: operationNumber ?? "Empty",
+                                          facultyName: _facultyName ?? "Empty",
                                           dateOfCompletion: Timestamp.fromDate(currentDate)
                                         )));
                           },

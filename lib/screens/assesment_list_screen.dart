@@ -153,14 +153,15 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
                     }
 
                     _traineeRef.trainee
-                        .doc(widget.empId)
+                        .doc(widget.empId ?? "Empty")
                         .collection("completed training")
-                        .doc(widget.operationNo)
+                        .doc(widget.operationNo ?? "Empty")
                         .set({
                       "date of completion": widget.dateOfCompletion,
-                      "operation no": widget.operationNo,
-                      "faculty name": widget.facultyName,
-                      "Level": findCurrentLevel(completedAssesments.length)
+                      "operation no": widget.operationNo ?? "Empty",
+                      "faculty name": widget.facultyName ?? "Empty",
+                      "Level": findCurrentLevel(completedAssesments.length) ??
+                          "Empty"
                     });
                     _traineeRef.trainee
                         .doc(widget.empId)

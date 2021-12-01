@@ -62,33 +62,33 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
                       alignment: Alignment.topLeft,
-                      child: Container(
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
-                        height: 5.0.h,
-                        width: 6.0.h,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
-                          },
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 30.0,
-                          ),
-                          style: ElevatedButton.styleFrom(
-                              shape: CircleBorder(),
-                              padding: EdgeInsets.all(5),
-                              primary: Colors.black,
-                              ),
+                      margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
+                      height: 5.0.h,
+                      width: 6.0.h,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()));
+                        },
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(5),
+                          primary: Colors.black,
                         ),
                       ),
                     ),
-                  
+                  ),
+
                   Text(
                     "Department \n Allocation",
                     style: Constants.boldHeading,
@@ -96,41 +96,41 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
 
                   //EMPLOYEE ID
                   Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    onChanged: (input) {
-                      _employeeId = input;
-                      setState(() async {
-                        DocumentSnapshot snapshot =
-                            await _traineeRef.trainee.doc(_employeeId).get();
-                        Map<String, dynamic> documentData = snapshot.data();
-                        print(documentData["name"] ?? "Null");
-                        _nameController.text = documentData["name"] ?? "Null";
-                      });
-                    },
-                    decoration: InputDecoration(labelText: 'Employee Id'),
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      onChanged: (input) {
+                        _employeeId = input;
+                        setState(() async {
+                          DocumentSnapshot snapshot =
+                              await _traineeRef.trainee.doc(_employeeId).get() ??
+                              "Empty";
+                          Map<String, dynamic> documentData = snapshot.data() ?? "Empty";
+                          print(documentData["name"] ?? "Null");
+                          _nameController.text = documentData["name"] ?? "Null";
+                        });
+                      },
+                      decoration: InputDecoration(labelText: 'Employee Id'),
+                    ),
                   ),
-                ),
 
                   Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _nameController,
-                    onChanged: (input) {
-                      _traineeName = input;
-                      setState(() {
-                        if (input.isEmpty)
-                          _isDisable = true;
-                        else
-                          _isDisable = false;
-                      });
-                    },
-                    decoration: InputDecoration(labelText: 'Name'),
-                    enabled: false,
-                    enableInteractiveSelection: true,
+                    padding: EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: _nameController,
+                      onChanged: (input) {
+                        _traineeName = input;
+                        setState(() {
+                          if (input.isEmpty)
+                            _isDisable = true;
+                          else
+                            _isDisable = false;
+                        });
+                      },
+                      decoration: InputDecoration(labelText: 'Name'),
+                      enabled: false,
+                      enableInteractiveSelection: true,
+                    ),
                   ),
-                ),
-
 
                   Padding(
                     padding: EdgeInsets.all(8.0),
@@ -187,7 +187,6 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                             "department": departmentDropDownValue,
                           });
                         },
-                  
                         child: Text('Submit')),
                   ),
                 ],

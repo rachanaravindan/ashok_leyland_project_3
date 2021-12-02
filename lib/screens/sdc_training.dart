@@ -40,7 +40,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
   bool _isDisable = true;
   crudMethod _traineeRef = new crudMethod();
   DateTime currentDate = new DateTime.now();
-  int _preTestMarks = -1, _postTestMarks = -1, index = -1;
+  double _preTestMarks = -1, _postTestMarks = -1, index = -1;
   Future<Null> _selectdate(BuildContext floatcontext) async {
     final DateTime _seldate = await showDatePicker(
         context: floatcontext,
@@ -130,6 +130,19 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
       return double.parse(s, (e) => null) != null;
     }
 
+    Future<void> getSetData() async {
+      DocumentSnapshot snapshot = await _traineeRef.trainee
+          .doc(_employeeId)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          Map<String, dynamic> documentData = documentSnapshot.data();
+          print(documentData["name"] ?? "Null");
+          _nameController.text = documentData["name"];
+        }
+      });
+    }
+
     String _formattedate = new DateFormat.yMMMd().format(_currentdate);
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
@@ -197,12 +210,8 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   child: TextField(
                     onChanged: (input) {
                       _employeeId = input;
-                      setState(() async {
-                        DocumentSnapshot snapshot =
-                            await _traineeRef.trainee.doc(_employeeId).get();
-                        Map<String, dynamic> documentData = snapshot.data();
-                        print(documentData["name"] ?? "Null");
-                        _nameController.text = documentData["name"] ?? "Null";
+                      setState(() {
+                        getSetData();
                       });
                     },
                     decoration: InputDecoration(labelText: 'Employee Id'),
@@ -404,7 +413,8 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                             total_pretest_mark != null) {
                           _pretestPercentage.text =
                               ((entered_pretest_mark / total_pretest_mark) *
-                                  100).toString();
+                                      100)
+                                  .toString();
                         }
                       });
                     },
@@ -456,7 +466,8 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                             total_posttest_mark != null) {
                           _posttestPercentage.text =
                               ((entered_posttest_mark / total_posttest_mark) *
-                                  100).toString();
+                                      100)
+                                  .toString();
                         }
                       });
                     },
@@ -479,8 +490,8 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   ),
                 ),
                 Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: ElevatedButton(
+                  padding: const EdgeInsets.all(25.0),
+                  child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
@@ -492,62 +503,100 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                       ),
                       onPressed: _isDisable
                           ? null
-                          : () {
-                              if (_preTestMarks == -1 || _postTestMarks == -1) {
-                                _showMyDialog("Invalid Mark");
-                              } else {
-                                _traineeRef.trainee
-                                    .doc(_employeeId)
-                                    .collection("completed program")
-                                    .doc(DropDownValue)
-                                    .set({
-                                  "day": DayDropDownValue,
-                                  DropDownValue: true,
-                                  "pre_test_marks": _preTestMarks ?? "Empty",
-                                  "post_test_marks": _postTestMarks ?? "Empty",
-                                  "date of completion": DateFormat("dd-MM-yyyy")
-                                      .format(currentDate),
-                                  "training": DropDownValue,
-                                  "mentor name": _mentorName ?? "Empty",
-                                });
-                                _traineeRef.trainee.doc(_employeeId).update({
-                                  "completed Program":
-                                      FieldValue.arrayUnion([DropDownValue]) ??
-                                          "Empty"
-                                });
-                              }
+                          : () async {
+                             _preTestMarks =
+                                  ((entered_pretest_mark / total_pretest_mark) *
+                                      100);
+                              _postTestMarks = ((entered_posttest_mark /
+                                      total_posttest_mark) *
+                                  100);
+                              // //-------Old Code-------------
+                              _traineeRef.trainee
+                                  .doc(_employeeId)
+                                  .collection("completed training")
+                                  .doc(DropDownValue)
+                                  .set({
+                                "day": DayDropDownValue,
+                                "pre_test_marks": _preTestMarks ?? "Empty",
+                                "post_test_marks": _postTestMarks ?? "Empty",
+                                "date of completion": DateFormat("dd-MM-yyyy")
+                                    .format(currentDate),
+                                "training": DropDownValue,
+                                "mentor name": _mentorName ?? "Empty",
+                              });
+
+                              _traineeRef.trainee.doc(_employeeId).update({
+                                "completed Program":
+                                    FieldValue.arrayUnion([DropDownValue]) ??
+                                        "Empty",
+                                "date of completion of ${DropDownValue}":Timestamp.fromDate(_currentdate)
+                              });
+
+                              // // ---------New Code----------------
+                             
+                              // Map<String, dynamic> completedProgramMap = {
+                              //   "day": DayDropDownValue,
+                              //   "pre_test_marks": _preTestMarks ?? "Empty",
+                              //   "post_test_marks": _postTestMarks ?? "Empty",
+                              //   "date of completion": DateFormat("dd-MM-yyyy")
+                              //       .format(currentDate),
+                              //   "training": DropDownValue,
+                              //   "mentor name": _mentorName ?? "Empty",
+                              // };
+
+                              // FirebaseFirestore.instance
+                              //     .collection("trainee")
+                              //     .doc(_employeeId)
+                              //     .get()
+                              //     .then((DocumentSnapshot documentSnapshot) {
+                              //   if (documentSnapshot.exists) {
+                              //     Map<String, dynamic> documentData =
+                              //         documentSnapshot.data();
+
+                              //     var completed_program_map = new List(9);
+                              //     print(completed_program_map);
+                              //     completed_program_map =
+                              //         documentData["completed program map"];
+                              //     for (int i = 0; i < items.length; i++)
+                              //       completed_program_map[i] =
+                              //           documentData["completed program map"]
+                              //               [i];
+                              //     completed_program_map[
+                              //             items.indexOf(DropDownValue)] =
+                              //         completedProgramMap;
+                              //     _traineeRef.trainee.doc(_employeeId).update({
+                              //       "completed program map":
+                              //           completed_program_map ?? "Empty"
+                              //     });
+                              //   } else {
+                              //     print("doesnt exist");
+                              //   }
+                              // });
+
+                              //-----------------------
+                              // try {
+                              //   var completed_program_map =
+                              //       variable['completed program map'];
+                              // completed_program_map[
+                              //         items.indexOf(DropDownValue)] =
+                              //     completedProgramMap;
+                              // _traineeRef.trainee.doc(_employeeId).update({
+                              //   "completed program map":
+                              //       completed_program_map ?? "Empty"
+                              //   });
+                              // } catch (e) {
+                              //   List completed_program_map_catch = [];
+                              //   completed_program_map_catch[
+                              //           items.indexOf(DropDownValue)] =
+                              //       completedProgramMap;
+                              //   print(completed_program_map_catch);
+                              // _traineeRef.trainee.doc(_employeeId).update({
+                              //   "completed program map":
+                              //       completed_program_map_catch ?? "Empty"
+                              // });
                             },
-                      child: Bounce(
-                          duration: Duration(milliseconds: 110),
-                          onPressed: _isDisable
-                              ? null
-                              : () {
-                                  if (_preTestMarks == -1 ||
-                                      _postTestMarks == -1) {
-                                    _showMyDialog("Invalid Mark");
-                                  } else {
-                                    _traineeRef.trainee
-                                        .doc(_employeeId) 
-                                        .collection("completed program")
-                                        .doc(DropDownValue)
-                                        .set({
-                                      "day": DayDropDownValue,
-                                      DropDownValue: true,
-                                      "pre_test_marks": ((entered_pretest_mark / total_pretest_mark) * 100) ??
-                                          "Empty",
-                                      "post_test_marks": ((entered_posttest_mark / total_posttest_mark) *
-                                  100) ??
-                                              "Empty",
-                                      "date of completion":
-                                          DateFormat("dd-MM-yyyy")
-                                              .format(currentDate),
-                                      "training": DropDownValue ?? "Empty",
-                                      "mentor name": _mentorName ?? "Empty",
-                                    });
-                                  }
-                                },
-                          child: Text('Submit')),
-                    )),
+                      child: Text('Submit')),
+                ),
               ],
             ),
           ),

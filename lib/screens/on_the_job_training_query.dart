@@ -33,7 +33,7 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
   Timestamp _toTimeStamp = Timestamp.fromDate(DateTime.now());
   List _allResults = [];
   List _searchResults = [];
-  List<String> LevelList = ["Select Level", "L0", "L1"];
+  List<String> LevelList = ["Select Level", "L0", "L1","L2","L3","L4"];
   List<String> ProgramList = [
     'Choose Program',
     'Ashok Leyland Overview',

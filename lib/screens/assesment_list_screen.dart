@@ -147,25 +147,25 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
                     }),
               ),
               ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     for (int i = 0; i < passCheckBox.length; i++) {
                       if (passCheckBox[i] == true) completedAssesments.add(i);
                     }
 
-                    _traineeRef.trainee
+                    await _traineeRef.trainee
                         .doc(widget.empId ?? "Empty")
-                        .collection("completed training")
+                        .collection("completed on the job training")
                         .doc(widget.operationNo ?? "Empty")
                         .set({
                       "date of completion": widget.dateOfCompletion,
                       "operation no": widget.operationNo ?? "Empty",
                       "faculty name": widget.facultyName ?? "Empty",
-                      "Level": findCurrentLevel(completedAssesments.length) ??
-                          "Empty"
+                      "Level": findCurrentLevel(completedAssesments.length) ?? "Empty"
                     });
-                    _traineeRef.trainee
+
+                    await _traineeRef.trainee
                         .doc(widget.empId)
-                        .collection("completed training")
+                        .collection("completed on the job training")
                         .doc(widget.operationNo)
                         .update({
                       "completed assessments":

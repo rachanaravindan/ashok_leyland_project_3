@@ -252,6 +252,11 @@ class _AddTraineeState extends State<AddTrainee> {
                               'gender': GenderDropDownValue ?? "Empty",
                               'age': _traineeAge ?? "Empty",
                               'level': "L0",
+                              'completed program map':[{},{},{},{},{},{},
+                                    {},
+                                    {},
+                                    {}
+                                ]
                               
                             });
                             

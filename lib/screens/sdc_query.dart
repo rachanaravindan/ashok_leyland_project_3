@@ -7,6 +7,7 @@ import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
 import 'package:ashok_leyland_project_3/screens/home.dart';
 import 'package:ashok_leyland_project_3/screens/trainee_profile.dart';
+import 'package:ashok_leyland_project_3/services/crud.dart';
 import 'package:ashok_leyland_project_3/widgets/custom_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
@@ -35,8 +36,8 @@ class _SdcQueryState extends State<SdcQuery> {
   String _traineeName,
       _registerNumber,
       _search,
-      _levelDropDownValue,
-      _programDropDownValue;
+      _levelDropDownValue = "Select Level",
+      _programDropDownValue = "Choose Program";
   DateTime _joiningDate;
   DateTime _fromDate = new DateTime.now();
   DateTime _toDate = new DateTime.now();
@@ -88,16 +89,71 @@ class _SdcQueryState extends State<SdcQuery> {
     print(_searchController.text);
   }
 
+  crudMethod crudObj = new crudMethod();
+
   Future<void> _createExcel() async {
 // Create a new Excel Document.
     final Workbook workbook = Workbook();
 
 // Accessing worksheet via index.
     final Worksheet sheet = workbook.worksheets[0];
+    List<List<dynamic>> rows = [];
+    List<dynamic> row = [];
+    row.add("Sno");
+    row.add("EmpId");
+    row.add("Name");
+    row.add("Age");
+    row.add("Gender");
+    row.add("Qualification");
+    row.add("Level");
+    row.add("Program");
+    row.add("date of completion");
+    row.add("day");
+    row.add("pre-Test Percentage");
+    row.add("post-Test Percentage");
+    rows.add(row);
+    for (int i = 0; i < _allResults.length; i++) {
+      Map<String, dynamic> data = _allResults[i].data() as Map<String, dynamic>;
+      List<dynamic> row = [];
+      row.add(i + 1);
+      row.add(data["empId"]);
+      row.add(data["name"]);
+      row.add(data["age"]);
+      row.add(data["gender"]);
+      row.add(data["qualifications"]);
+      row.add(data["level"]);
+      await FirebaseFirestore.instance
+          .collection("trainee")
+          .doc(data["empId"])
+          .collection("completed training")
+          .doc(_programDropDownValue)
+          .get()
+          .then((DocumentSnapshot snapshot) {
+        if (snapshot.exists) {
+          print("Im in the snapshot.exists");
+          Map<String, dynamic> documentData = snapshot.data();
+          print(documentData);
+          print(documentData["training"] ?? "Null");
+          row.add(documentData["training"].toString());
+          row.add(documentData["date of completion"].toString());
+          row.add(documentData["day"].toString());
+          row.add(documentData["mentor name"].toString());
+          row.add(documentData["post_test_marks"].toString());
+          row.add(documentData["pre_test_marks"].toString());
+        }
+      });
+      print(row);
+      rows.add(row);
+    }
 
 // Set the text value.
-    sheet.getRangeByName('A1').setText('Hello World!');
+    for (int i = 1; i <= rows.length; i++) {
+      for (int j = 1; j <= row.length; j++) {
+        sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
+      }
+    }
 
+// sheet.getRangeByIndex(2, 1).setText('Enter a number between 10 and 20');
 // Save and dispose the document.
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
@@ -144,10 +200,11 @@ class _SdcQueryState extends State<SdcQuery> {
         if (_fromTimeStamp != null && _toTimeStamp != null) {
           data = await FirebaseFirestore.instance
               .collection("trainee")
-              .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
-              .where("doj", isLessThanOrEqualTo: _toTimeStamp)
+              .where("date of completion of ${_programDropDownValue}",
+                  isGreaterThanOrEqualTo: _fromTimeStamp)
+              .where("date of completion of ${_programDropDownValue}",
+                  isLessThanOrEqualTo: _toTimeStamp)
               .where("level", isEqualTo: _levelDropDownValue)
-              .where("completed Program", arrayContains: _programDropDownValue)
               .get();
           setState(() {
             print("in Set data");
@@ -180,9 +237,15 @@ class _SdcQueryState extends State<SdcQuery> {
     } else {
       print("showing everything");
       data = await FirebaseFirestore.instance.collection("trainee").get();
-      setState(() {
+      setState(() async {
         print("in Set data");
         _allResults = data.docs;
+        data = await FirebaseFirestore.instance
+            .collection("trainee")
+            .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
+            .where("doj", isLessThanOrEqualTo: _toTimeStamp)
+            .where("level", isEqualTo: _levelDropDownValue)
+            .get();
       });
     }
     searchResultsList();
@@ -217,6 +280,7 @@ class _SdcQueryState extends State<SdcQuery> {
       row.add(data["name"]);
       row.add(data["empId"]);
       row.add(data["age"]);
+
       rows.add(row);
     }
 

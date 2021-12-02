@@ -39,18 +39,28 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
   crudMethod _traineeRef = new crudMethod();
   List<int> completedAssesments = [];
   Future<void> getDataFromDb() async {
-    DocumentSnapshot snapshot = await _traineeRef.trainee
+    await _traineeRef.trainee
         .doc(widget.empId)
-        .collection("completed training")
+        .collection("completed on the job training")
         .doc(widget.operationNo)
-        .get();
-    Map<String, dynamic> documentData = snapshot.data();
-    List receivedList = documentData["completed assesments"];
-    print(receivedList);
-    for (var i in receivedList) {
-      passCheckBox[i] = true;
-    }
-    print(passCheckBox);
+        .get()
+        .then((DocumentSnapshot snapshot) {
+      if (snapshot.exists) {
+        Map<String, dynamic> documentData = snapshot.data();
+        List receivedList = documentData["passed assessments"];
+
+        print(receivedList);
+        for (int i = 0; i < receivedList.length; i++) {
+          setState(() {
+            if (receivedList[i] == 1)
+              passCheckBox[i] = true;
+            else if (receivedList[i] == 0) failCheckBox[i] = true;
+          });
+        }
+        print("printing the fetched array:");
+        print(passCheckBox);
+      }
+    });
   }
 
   @override
@@ -86,11 +96,20 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
       return Colors.red;
     }
 
-    String findCurrentLevel(int points) {
-      print("points:" + points.toString());
-      if (points < 8)
-        return "L1";
-      else if (points >= 8 && points < 11)
+    int points = 0;
+    String findCurrentLevel(var completedAssessments) {
+      print("pass array");
+      print(passCheckBox);
+      for (int i = 0; i < passCheckBox.length; i++) {
+        
+        if (passCheckBox[i] == true) {
+          
+          points++;
+        } else
+          break;
+      }
+      print("points-" + points.toString());
+      if (points >= 8 && points < 11)
         return "L2";
       else if (points >= 11 && points < 13)
         return "L3";
@@ -148,10 +167,14 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
               ),
               ElevatedButton(
                   onPressed: () async {
+                    List<int> dummyList =
+                        List.filled(assessmentListItems.length, -1);
                     for (int i = 0; i < passCheckBox.length; i++) {
-                      if (passCheckBox[i] == true) completedAssesments.add(i);
+                      if (passCheckBox[i] == true) dummyList[i] = 1;
+                      if (failCheckBox[i] == true) dummyList[i] = 0;
                     }
-
+                    print(dummyList);
+                    String currentLevel=findCurrentLevel(passCheckBox);
                     await _traineeRef.trainee
                         .doc(widget.empId ?? "Empty")
                         .collection("completed on the job training")
@@ -160,17 +183,14 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
                       "date of completion": widget.dateOfCompletion,
                       "operation no": widget.operationNo ?? "Empty",
                       "faculty name": widget.facultyName ?? "Empty",
-                      "Level": findCurrentLevel(completedAssesments.length) ?? "Empty"
+                      "Level": currentLevel ?? "Empty",
+                      "passed assessments": dummyList
                     });
 
                     await _traineeRef.trainee
                         .doc(widget.empId)
-                        .collection("completed on the job training")
-                        .doc(widget.operationNo)
-                        .update({
-                      "completed assessments":
-                          completedAssesments
-                    });
+                        .update({"operation ${widget.operationNo} level ${currentLevel}": widget.dateOfCompletion,
+                        "operation ${widget.operationNo} level ${currentLevel}": widget.dateOfCompletion});
                   },
                   child: Text("Submit"))
             ],

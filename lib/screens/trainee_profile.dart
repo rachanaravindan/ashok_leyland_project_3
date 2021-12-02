@@ -92,7 +92,7 @@ class _traineeProfileState extends State<traineeProfile> {
     final Stream<QuerySnapshot> _marksStream = FirebaseFirestore.instance
         .collection("trainee")
         .doc(widget.traineeID)
-        .collection("completed program")
+        .collection("completed training")
         .snapshots();
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(

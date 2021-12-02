@@ -7,10 +7,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:csv/csv.dart';
 import 'package:ext_storage/ext_storage.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart'
+    hide Column, Row, Alignment;
 
 class OnTheJobTrainingQuery extends StatefulWidget {
   @override
@@ -19,6 +22,7 @@ class OnTheJobTrainingQuery extends StatefulWidget {
 
 class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
   TextEditingController _searchController = TextEditingController();
+  var _deptController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   String _traineeName,
@@ -26,6 +30,82 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
       _search,
       _levelDropDownValue,
       _programDropDownValue;
+  Map<String, String> _operationMap = {
+    "-1": "Enter the Operation Number",
+    "10": "ENGINE NUMBER PUNCHING AND FITMENT OF PCN & Welsch Plug",
+    "20": "SUB ASSY OF CRANK SHAFT",
+    "30": "FITMENT OF CRANKSHAFT",
+    "40": "CRANKSHAFT TORQUE TIGHTENING",
+    "50": "TORQUE TO TURN AND END PLAY CHECKING",
+    "60": "FITMENT OF DOWEL AND IDLER SHAFT MOUNTING",
+    "70": "FITMENT OF OILPUMP AND TIMING BACK PLATE",
+    "80": "SUB ASSY OF CAM SHAFT",
+    "90": "FITMENT OF CAM SHAFT AND IDLER GEAR ASSY.",
+    "100": "SUB ASSY OF FLYWHEEL HOUSING",
+    "110": "SUB ASSY OF FLYWHEEL HOUSING ASSY-LA10704",
+    "120": "FITMENT OF FLYWHEEL HOUSING AND TORQUE TIGHTENING",
+    "130": "FLYWHEEL HOUSING SEAL PRESSING & LEAK CHECKING",
+    "140": "FLYWHEEL MARKING",
+    "150": "FITMENT OF FLYWHEEL AND TORQUE TIGHTENING",
+    "160": "ENGINE FLIPUP & Starter Motor Stud Fitment",
+    "170": "SUB ASSY OF FIP",
+    "180": "Fitment FIP",
+    "190": "Sub Assy of TG Case",
+    "200": "TG case Assy & Tightening",
+    "205": "FW bearing fitment,FWH support bkt fitment and Lub oil filling",
+    "210": "FITMENT OF DAMPER PULLEY",
+    "220": "FITMENT OF LUBE OIL PIPES AND BRACKET",
+    "230": "SUB ASSY OF PISTON CON ROD",
+    "240": "FITMENT OF PISTON CONROD ASSY ,STRAINER ASSY",
+    "250": "CONROD TORQUE TIGHTENING",
+    "260": "FWH add on Bolt Tightening & Metacone Bkt Tightening",
+    "270": "QG1",
+    "280": "Torque to Turn 2-IPV",
+    "290": "FITMENT OF SUMP ",
+    "300": "TORQUE TIGHTENING OF SUMP FIXING BOLTS",
+    "310": "LOAD ENGINE",
+    "320": "UNLOAD ENGINE",
+    "330": "SUB ASSY OF CYLINDER HEAD",
+    "340": "Fitment of Fuel Filter/Bearing Holder/Inline FIP timing setting",
+    "350":
+        "'Fitment of EGR Cooler bracket/Adaptor, FWH support bracket, HCI Dozer metering unit",
+    "360":
+        " FITMENT OF DOWELS, TAPPETS, GASKET & CYL HEAD MOUNTING & BOLTS PREFIT ",
+    "370":
+        "Fitment of Alternator, Coolant elbow, Prefitment of alternator and Inspection Cover ",
+    "380": "TORQUE TIGHTENING OF CYLINDER HEAD MTG BOLTS",
+    "390": "FITMENT OF ROCKER SHAFT S/A EMF studs fitment & tightening ",
+    "395":
+        "FITMENT OF EGR cooler,'HC Wiring harness plugging on HC metering unit",
+    "400": "FITMENT OF EXHAUST MANIFOLD",
+    "410":
+        "FITMENT OF THERMOSTAT HSG AND OIL LEVEL GAUGE,Oil separator & breather fitment",
+    "415": "EGR cooler fitment,Rocker cover sub assy",
+    "420": "Fitment of Oil cooler",
+    "430": "TORQUE TIGHTENING ROCKER ADDITIONAL BOLT",
+    "440": "TAPPET SETTING ",
+    "445": "Oil cooler Tightening",
+    "450": "FITMENT OF TURBOCHARGER",
+    "460": "FITMENT OF INLET MANIFOLD AND EGR Fitment",
+    "470": "Starter Motor Motor Fitment,HC Dozer & EGR pipe fitment",
+    "480":
+        "'Exhaust Brake S/a fitment - V BAND CLIP AND TIGHT AT SUPPORT BRACKET TORQUE",
+    "490": "COMPRESSOR S/A, Rocker cover Oring fitment, Harness Bracket",
+    "500": "TAPPET SETTING RECHECKING",
+    "510":
+        "TIGHTEN OF TURBO OIL INLET PIPE TORQUE ,EGR coolant inlet pipe fitment & 'Blow by outlet hose bracket fitment",
+    "520": "Fitment of Injector and scanning",
+    "530": "ROCKER COVER SA FITMENT AND TORQUE TIGHTENING AND MARKING",
+    "540":
+        "'HC dozer fuel inlet pipe fitment (At HC injector end) and torque & mark",
+    "550": "Injector clamp Torque  tightening",
+    "560":
+        "Leak off ppe fitment,'Fuel outlet & inlet pipe fitment & Wiring harness tray stiffner brt fitment",
+    "570":
+        "Alternator bracket fitment in torque,AC compressor fitment and tightening,FITMENT OF ALTERNATOR WITH LINK BOLT",
+    "580": "FITMENT OF INJECTOR PIPES & tighten fuel return pipe",
+    "590": "FITMENT OF Injector pipe, HCI coolant return line clip,WH Bracket",
+  };
   DateTime _joiningDate;
   DateTime _fromDate = new DateTime.now();
   DateTime _toDate = new DateTime.now();
@@ -33,7 +113,7 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
   Timestamp _toTimeStamp = Timestamp.fromDate(DateTime.now());
   List _allResults = [];
   List _searchResults = [];
-  List<String> LevelList = ["Select Level", "L0", "L1","L2","L3","L4"];
+  List<String> LevelList = ["Select Level", "L2", "L3", "L4"];
   List<String> ProgramList = [
     'Choose Program',
     'Ashok Leyland Overview',
@@ -48,6 +128,7 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
   Future resultsLoaded;
   List<String> respectiveLevelList = [];
   List<String> respectiveProgramList = [];
+  String operationNumber = "-1";
   @override
   void initState() {
     // TODO: implement initState
@@ -99,14 +180,16 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
     print("checking");
     if (_levelDropDownValue != "Select Level") {
       //with level and program case
-      if (_programDropDownValue != "Choose Program") {
+      if (operationNumber != "-1" || operationNumber != null) {
         if (_fromTimeStamp != null && _toTimeStamp != null) {
           data = await FirebaseFirestore.instance
               .collection("trainee")
-              .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
-              .where("doj", isLessThanOrEqualTo: _toTimeStamp)
-              .where("level", isEqualTo: _levelDropDownValue)
-              .where("completed Program", arrayContains: _programDropDownValue)
+              .where(
+                  "operation ${operationNumber} level ${_levelDropDownValue}",
+                  isGreaterThanOrEqualTo: _fromTimeStamp)
+              .where(
+                  "operation ${operationNumber} level ${_levelDropDownValue}",
+                  isLessThanOrEqualTo: _toTimeStamp)
               .get();
           setState(() {
             print("in Set data");
@@ -234,244 +317,384 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
       }
     }
 
+    Future<void> _createExcel() async {
+// Create a new Excel Document.
+      final Workbook workbook = Workbook();
+
+// Accessing worksheet via index.
+      final Worksheet sheet = workbook.worksheets[0];
+      List<List<dynamic>> rows = [];
+      List<dynamic> row = [];
+      row.add("Sno");
+      row.add("EmpId");
+      row.add("Name");
+      row.add("Age");
+      row.add("Gender");
+      row.add("Qualification");
+      row.add("Operation Number");
+      row.add("Level");
+      row.add("Date of completion");
+      row.add("Faculty Name");
+      row.add("Assesment 1");
+      row.add("Assesment 2");
+      row.add("Assesment 3");
+      row.add("Assesment 4");
+      row.add("Assesment 5");
+      row.add("Assesment 6");
+      row.add("Assesment 7");
+      row.add("Assesment 8");
+      row.add("Assesment 9");
+      row.add("Assesment 10");
+      row.add("Assesment 11");
+      row.add("Assesment 12");
+      row.add("Assesment 13");
+      rows.add(row);
+      for (int i = 0; i < _allResults.length; i++) {
+        Map<String, dynamic> data =
+            _allResults[i].data() as Map<String, dynamic>;
+        List<dynamic> row = [];
+        row.add(i + 1);
+        row.add(data["empId"]);
+        row.add(data["name"]);
+        row.add(data["age"]);
+        row.add(data["gender"]);
+        row.add(data["qualifications"]);
+        row.add(data["operation no"]);
+        row.add(data["level"]);
+        await FirebaseFirestore.instance
+            .collection("trainee")
+            .doc(data["empId"])
+            .collection("completed on the job training")
+            .doc(operationNumber)
+            .get()
+            .then((DocumentSnapshot snapshot) {
+          if (snapshot.exists) {
+            print("Im in the snapshot.exists");
+            Map<String, dynamic> documentData = snapshot.data();
+            print(documentData);
+            print(documentData["training"] ?? "Null");
+            row.add(documentData["date of completion"].toDate());
+            row.add(documentData["faculty name"]);
+            for (int i = 0;
+                i < documentData["passed assessments"].length;
+                i++) {
+              if (documentData["passed assessments"][i] == 1)
+                row.add("Pass");
+              else if (documentData["passed assessments"][i] == 0)
+                row.add("Fail");
+              else
+                row.add("NA");
+            }
+          }
+        });
+        print(row);
+        rows.add(row);
+      }
+
+// Set the text value.
+      for (int i = 1; i <= rows.length; i++) {
+        for (int j = 1; j <= row.length; j++) {
+          sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
+        }
+      }
+
+// sheet.getRangeByIndex(2, 1).setText('Enter a number between 10 and 20');
+// Save and dispose the document.
+      final List<int> bytes = workbook.saveAsStream();
+      workbook.dispose();
+
+// Get external storage directory
+      final directory = await getExternalStorageDirectory();
+
+// Get directory path
+      final path = directory.path;
+
+// Create an empty file to write Excel data
+      File file = File('$path/Output.xlsx');
+
+// Write Excel data
+      await file.writeAsBytes(bytes, flush: true);
+
+// Open the Excel document in mobile
+      OpenFile.open('$path/Output.xlsx');
+    }
+
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
           child: Scaffold(
-              resizeToAvoidBottomInset: false,
+              // resizeToAvoidBottomInset: false,
               backgroundColor: Colors.yellow[00],
               floatingActionButton: FloatingActionButton(
-                  backgroundColor: Colors.grey,
-                  child: Icon(Icons.add),
+                  backgroundColor: Colors.blue[300],
+                  child: Icon(Icons.file_download),
                   onPressed: () {
-                    _generateCsvFile();
+                    _createExcel();
                   }),
-              body: Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Container(
+              body: SingleChildScrollView(
+                child: Form(
+                    key: _formKey,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Align(
                             alignment: Alignment.topLeft,
-                            margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
-                            height: 5.0.h,
-                            width: 6.0.h,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen()));
-                              },
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: Colors.white,
-                                size: 30.0,
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                shape: CircleBorder(),
-                                padding: EdgeInsets.all(5),
-                                primary: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        Center(
-                          child: Text(
-                            "On The Job Training Query",
-                            style: Constants.boldHeading,
-                          ),
-                        ),
-
-                        //SEARCH BAR
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
-                          child: GestureDetector(
-                            onTap: () {},
                             child: Container(
-                              height: 6.h,
-                              child: TextField(
-                                controller: _searchController,
-                                decoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 10.0),
-                                    hintText: "Search",
-                                    focusColor: Colors.black,
-                                    fillColor: Colors.grey,
-                                    prefixIcon: Icon(Icons.search),
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30))),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        //SELECT LEVEL DROPDOWN
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.w),
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            dropdownColor: Colors.white,
-                            iconSize: 5.h,
-                            focusColor: Colors.red,
-                            value: _levelDropDownValue,
-                            //elevation: 5,
-                            style: TextStyle(color: Colors.black),
-                            iconEnabledColor: Colors.black,
-                            items: respectiveLevelList
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: TextStyle(
-                                      // color: Colors.black,
-                                      ),
+                              alignment: Alignment.topLeft,
+                              margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
+                              height: 5.0.h,
+                              width: 6.0.h,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => HomeScreen()));
+                                },
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                  size: 30.0,
                                 ),
-                              );
-                            }).toList(),
-                            hint: Text(respectiveLevelList[0]),
-                            onChanged: (String value) {
-                              setState(() {
-                                _levelDropDownValue = value;
-                                getData();
-                              });
-                            },
-                          ),
-                        ),
-
-                        //CHOOSE PROGRAM DROPDOWN
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.w),
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            dropdownColor: Colors.white,
-                            iconSize: 5.h,
-                            focusColor: Colors.red,
-                            value: _programDropDownValue,
-                            //elevation: 5,
-                            style: TextStyle(color: Colors.black),
-                            iconEnabledColor: Colors.black,
-                            items: respectiveProgramList
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: TextStyle(
-                                      // color: Colors.black,
-                                      ),
+                                style: ElevatedButton.styleFrom(
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(5),
+                                  primary: Colors.black,
                                 ),
-                              );
-                            }).toList(),
-                            hint: Text(respectiveProgramList[0]),
-                            onChanged: (String value) {
-                              setState(() {
-                                _programDropDownValue = value;
-                                getData();
-                              });
-                            },
-                          ),
-                        ),
-
-                        //FROM DATEPICKER
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectFromDate(context);
-                              });
-                            },
-                            child: Card(
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        selectFromDate(context);
-                                      });
-                                    },
-                                    icon: Icon(Icons.calendar_today),
-                                  ),
-                                  Text('From Date : ' +
-                                      DateFormat("dd-MM-yyyy")
-                                          .format(_fromDate)),
-                                ],
                               ),
                             ),
                           ),
-                        ),
 
-                        //TO DATEPICKER
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _selectToDate(context);
-                              });
-                            },
-                            child: Card(
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      // ignore: unnecessary_statements
-                                      (() {
-                                        _selectToDate(context);
-                                      });
-                                    },
-                                    icon: Icon(Icons.calendar_today),
-                                  ),
-                                  Text('To Date : ' +
-                                      DateFormat("dd-MM-yyyy").format(_toDate)),
-                                ],
+                          Center(
+                            child: Text(
+                              "On The Job Training Query",
+                              style: Constants.boldHeading,
+                            ),
+                          ),
+
+                          //SEARCH BAR
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                height: 6.h,
+                                child: TextField(
+                                  controller: _searchController,
+                                  decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 10.0),
+                                      hintText: "Search",
+                                      focusColor: Colors.black,
+                                      fillColor: Colors.grey,
+                                      prefixIcon: Icon(Icons.search),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30))),
+                                ),
                               ),
                             ),
                           ),
-                        ),
 
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 25.w,
+                          //SELECT LEVEL DROPDOWN
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5.w),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              dropdownColor: Colors.white,
+                              iconSize: 5.h,
+                              focusColor: Colors.red,
+                              value: _levelDropDownValue,
+                              //elevation: 5,
+                              style: TextStyle(color: Colors.black),
+                              iconEnabledColor: Colors.black,
+                              items: respectiveLevelList
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                        // color: Colors.black,
+                                        ),
+                                  ),
+                                );
+                              }).toList(),
+                              hint: Text(respectiveLevelList[0]),
+                              onChanged: (String value) {
+                                setState(() {
+                                  _levelDropDownValue = value;
+                                  getData();
+                                });
+                              },
                             ),
-                            Text(
-                              'Name',
-                              style: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black),
+                          ),
+
+                          //CHOOSE PROGRAM DROPDOWN
+                          // Padding(
+                          //   padding: EdgeInsets.symmetric(horizontal: 5.w),
+                          //   child: DropdownButton<String>(
+                          //     isExpanded: true,
+                          //     dropdownColor: Colors.white,
+                          //     iconSize: 5.h,
+                          //     focusColor: Colors.red,
+                          //     value: _programDropDownValue,
+                          //     //elevation: 5,
+                          //     style: TextStyle(color: Colors.black),
+                          //     iconEnabledColor: Colors.black,
+                          //     items: respectiveProgramList
+                          //         .map<DropdownMenuItem<String>>((String value) {
+                          //       return DropdownMenuItem<String>(
+                          //         value: value,
+                          //         child: Text(
+                          //           value,
+                          //           style: TextStyle(
+                          //               // color: Colors.black,
+                          //               ),
+                          //         ),
+                          //       );
+                          //     }).toList(),
+                          //     hint: Text(respectiveProgramList[0]),
+                          //     onChanged: (String value) {
+                          //       setState(() {
+                          //         _programDropDownValue = value;
+                          //         getData();
+                          //       });
+                          //     },
+                          //   ),
+                          // ),
+                          //OPERATION NUMBER
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5.w),
+                            child: TextField(
+                              onChanged: (input) {
+                                setState(() {
+                                  operationNumber = input;
+                                  try {
+                                    if (_operationMap
+                                        .containsKey(operationNumber))
+                                      _deptController.text =
+                                          _operationMap[operationNumber];
+                                    else
+                                      _deptController.text = "" ?? "Empty";
+                                  } catch (error) {
+                                    print("im in catch");
+                                    _deptController.text = "";
+                                  }
+                                });
+                              },
+                              decoration: InputDecoration(
+                                  labelText: 'Enter Operation Number'),
                             ),
-                            SizedBox(
-                              width: 40.w,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5.w),
+                            child: TextField(
+                              controller: _deptController,
+                              maxLines: 3,
+                              enabled: false,
+                              decoration: InputDecoration(
+                                  labelText: 'Operation Description'),
                             ),
-                            Text('Id',
+                          ),
+
+                          //FROM DATEPICKER
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectFromDate(context);
+                                });
+                              },
+                              child: Card(
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          selectFromDate(context);
+                                        });
+                                      },
+                                      icon: Icon(Icons.calendar_today),
+                                    ),
+                                    Text('From Date : ' +
+                                        DateFormat("dd-MM-yyyy")
+                                            .format(_fromDate)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          //TO DATEPICKER
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectToDate(context);
+                                });
+                              },
+                              child: Card(
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        // ignore: unnecessary_statements
+                                        (() {
+                                          _selectToDate(context);
+                                        });
+                                      },
+                                      icon: Icon(Icons.calendar_today),
+                                    ),
+                                    Text('To Date : ' +
+                                        DateFormat("dd-MM-yyyy")
+                                            .format(_toDate)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 25.w,
+                              ),
+                              Text(
+                                'Name',
                                 style: TextStyle(
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.w400,
-                                    color: Colors.black))
-                          ],
-                        ),
+                                    color: Colors.black),
+                              ),
+                              SizedBox(
+                                width: 40.w,
+                              ),
+                              Text('Id',
+                                  style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black))
+                            ],
+                          ),
 
-                        Expanded(
-                          child: ListView.builder(
+                          ListView.builder(
+                            primary: false,
                             shrinkWrap: true,
-                            itemCount: _searchResults.length ,
+                            itemCount: _searchResults.length,
                             itemBuilder: (BuildContext context, int index) =>
                                 buildCard(context, _searchResults[index]),
                           ),
-                        ),
-                      ],
-                    ),
-                  ))));
+                        ],
+                      ),
+                    )),
+              )));
     });
   }
 }

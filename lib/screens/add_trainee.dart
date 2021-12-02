@@ -232,6 +232,7 @@ class _AddTraineeState extends State<AddTrainee> {
                     Padding(
                       padding: const EdgeInsets.all(25.0),
                       child: ElevatedButton(
+                        child: Text("Submit"),
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
@@ -252,12 +253,6 @@ class _AddTraineeState extends State<AddTrainee> {
                               'gender': GenderDropDownValue ?? "Empty",
                               'age': _traineeAge ?? "Empty",
                               'level': "L0",
-                              'completed program map':[{},{},{},{},{},{},
-                                    {},
-                                    {},
-                                    {}
-                                ]
-                              
                             });
                             
                             Navigator.push(

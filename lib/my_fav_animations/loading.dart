@@ -21,8 +21,6 @@ class _LoadingState extends State<Loading> {
       print("user!=null");
       if (!user.emailVerified)
         return VerifyScreen();
-      else
-        return HomeScreen();
     } else {
       return Container(
         color: Colors.yellow[200],

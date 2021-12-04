@@ -1,3 +1,4 @@
+import 'package:ashok_leyland_project_3/screens/done_add_screen.dart';
 import 'package:ashok_leyland_project_3/services/crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -97,19 +98,26 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                   //EMPLOYEE ID
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: TextField(
+                    child: TextFormField(
                       onChanged: (input) {
                         _employeeId = input;
                         setState(() async {
                           DocumentSnapshot snapshot =
-                              await _traineeRef.trainee.doc(_employeeId).get() ??
-                              "Empty";
-                          Map<String, dynamic> documentData = snapshot.data() ?? "Empty";
+                              await _traineeRef.trainee.doc(_employeeId).get();
+                          Map<String, dynamic> documentData = snapshot.data();
                           print(documentData["name"] ?? "Null");
                           _nameController.text = documentData["name"] ?? "Null";
                         });
                       },
                       decoration: InputDecoration(labelText: 'Employee Id'),
+                      validator: (value) {
+                        if (value.isEmpty ||
+                            !RegExp(r'^[a-z A-Z 0-9]').hasMatch(value)) {
+                          return "Employee ID should contain only text and numbers";
+                        } else {
+                          return null;
+                        }
+                      },
                     ),
                   ),
 
@@ -181,11 +189,19 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                           onPrimary: Colors.white, // foreground
                         ),
                         onPressed: () {
-                          print("Submitted");
+                          final isValid = _formKey.currentState.validate();
                           // crudOperations.storeData({});
-                          _traineeRef.trainee.doc(_employeeId).update({
-                            "department": departmentDropDownValue,
-                          });
+                          if (isValid) {
+                            _traineeRef.trainee.doc(_employeeId).update({
+                              "department": departmentDropDownValue,
+                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DoneMark(
+                                          screen: false,
+                                        )));
+                          }
                         },
                         child: Text('Submit')),
                   ),

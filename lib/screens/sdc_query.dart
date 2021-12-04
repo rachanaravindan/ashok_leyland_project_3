@@ -192,39 +192,84 @@ class _SdcQueryState extends State<SdcQuery> {
   }
 
   var data;
+  // getData() async {
+  //   print("checking");
+  //   if (_levelDropDownValue != "Select Level") {
+  //     //with level and program case
+  //     if (_programDropDownValue != "Choose Program") {
+  //       if (_fromTimeStamp != null && _toTimeStamp != null) {
+  //         data = await FirebaseFirestore.instance
+  //             .collection("trainee")
+  //             .where("date of completion of ${_programDropDownValue}",
+  //                 isGreaterThanOrEqualTo: _fromTimeStamp)
+  //             .where("date of completion of ${_programDropDownValue}",
+  //                 isLessThanOrEqualTo: _toTimeStamp)
+  //             .where("level", isEqualTo: _levelDropDownValue)
+  //             .get();
+  //         setState(() {
+  //           print("in Set data");
+  //           _allResults = data.docs;
+  //         });
+  //       }
+  //     } else if (_fromTimeStamp != null && _toTimeStamp != null) {
+  //       print("with date");
+  //       data = await FirebaseFirestore.instance
+  //           .collection("trainee")
+  //           .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
+  //           .where("doj", isLessThanOrEqualTo: _toTimeStamp)
+  //           .where("level", isEqualTo: _levelDropDownValue)
+  //           .get();
+  //       setState(() {
+  //         print("in Set data");
+  //         _allResults = data.docs;
+  //       });
+  //     } else {
+  //       print("without date");
+  //       data = await FirebaseFirestore.instance
+  //           .collection("trainee")
+  //           .where("level", isEqualTo: _levelDropDownValue)
+  //           .get();
+  //       setState(() {
+  //         print("in Set data");
+  //         _allResults = data.docs;
+  //       });
+  //     }
+  //   } else {
+  //     print("showing everything");
+  //     data = await FirebaseFirestore.instance.collection("trainee").get();
+  //     setState(() async {
+  //       print("in Set data");
+  //       _allResults = data.docs;
+  //       data = await FirebaseFirestore.instance
+  //           .collection("trainee")
+  //           .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
+  //           .where("doj", isLessThanOrEqualTo: _toTimeStamp)
+  //           .where("level", isEqualTo: _levelDropDownValue)
+  //           .get();
+  //     });
+  //   }
+  //   searchResultsList();
+  //   return "complete";
+  // }
+
+  //new getData()
   getData() async {
     print("checking");
     if (_levelDropDownValue != "Select Level") {
-      //with level and program case
       if (_programDropDownValue != "Choose Program") {
-        if (_fromTimeStamp != null && _toTimeStamp != null) {
-          data = await FirebaseFirestore.instance
-              .collection("trainee")
-              .where("date of completion of ${_programDropDownValue}",
-                  isGreaterThanOrEqualTo: _fromTimeStamp)
-              .where("date of completion of ${_programDropDownValue}",
-                  isLessThanOrEqualTo: _toTimeStamp)
-              .where("level", isEqualTo: _levelDropDownValue)
-              .get();
-          setState(() {
-            print("in Set data");
-            _allResults = data.docs;
-          });
-        }
-      } else if (_fromTimeStamp != null && _toTimeStamp != null) {
-        print("with date");
+        //with level and program case
         data = await FirebaseFirestore.instance
             .collection("trainee")
-            .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
-            .where("doj", isLessThanOrEqualTo: _toTimeStamp)
             .where("level", isEqualTo: _levelDropDownValue)
+            .where("completed Program", arrayContains: _programDropDownValue)
             .get();
         setState(() {
           print("in Set data");
           _allResults = data.docs;
         });
       } else {
-        print("without date");
+        //With only level
+        print("with date");
         data = await FirebaseFirestore.instance
             .collection("trainee")
             .where("level", isEqualTo: _levelDropDownValue)
@@ -234,19 +279,6 @@ class _SdcQueryState extends State<SdcQuery> {
           _allResults = data.docs;
         });
       }
-    } else {
-      print("showing everything");
-      data = await FirebaseFirestore.instance.collection("trainee").get();
-      setState(() async {
-        print("in Set data");
-        _allResults = data.docs;
-        data = await FirebaseFirestore.instance
-            .collection("trainee")
-            .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
-            .where("doj", isLessThanOrEqualTo: _toTimeStamp)
-            .where("level", isEqualTo: _levelDropDownValue)
-            .get();
-      });
     }
     searchResultsList();
     return "complete";
@@ -411,12 +443,12 @@ class _SdcQueryState extends State<SdcQuery> {
                               ),
                             ),
                           ),
-              
+
                           Text(
                             "SDC Query",
                             style: Constants.boldHeading,
                           ),
-              
+
                           //SEARCH BAR
                           Padding(
                             padding: EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
@@ -427,8 +459,9 @@ class _SdcQueryState extends State<SdcQuery> {
                                 child: TextField(
                                   controller: _searchController,
                                   decoration: InputDecoration(
-                                      contentPadding: const EdgeInsets.symmetric(
-                                          vertical: 10.0),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 10.0),
                                       hintText: "Search",
                                       focusColor: Colors.black,
                                       fillColor: Colors.grey,
@@ -440,7 +473,7 @@ class _SdcQueryState extends State<SdcQuery> {
                               ),
                             ),
                           ),
-              
+
                           //SELECT LEVEL DROPDOWN
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -454,7 +487,8 @@ class _SdcQueryState extends State<SdcQuery> {
                               style: TextStyle(color: Colors.black),
                               iconEnabledColor: Colors.black,
                               items: respectiveLevelList
-                                  .map<DropdownMenuItem<String>>((String value) {
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(
@@ -474,7 +508,7 @@ class _SdcQueryState extends State<SdcQuery> {
                               },
                             ),
                           ),
-              
+
                           //CHOOSE PROGRAM DROPDOWN
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -488,7 +522,8 @@ class _SdcQueryState extends State<SdcQuery> {
                               style: TextStyle(color: Colors.black),
                               iconEnabledColor: Colors.black,
                               items: respectiveProgramList
-                                  .map<DropdownMenuItem<String>>((String value) {
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(
@@ -508,65 +543,6 @@ class _SdcQueryState extends State<SdcQuery> {
                               },
                             ),
                           ),
-              
-                          //FROM DATEPICKER
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectFromDate(context);
-                                });
-                              },
-                              child: Card(
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectFromDate(context);
-                                        });
-                                      },
-                                      icon: Icon(Icons.calendar_today),
-                                    ),
-                                    Text('From Date : ' +
-                                        DateFormat("dd-MM-yyyy")
-                                            .format(_fromDate)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-              
-                          //TO DATEPICKER
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectToDate(context);
-                                });
-                              },
-                              child: Card(
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        // ignore: unnecessary_statements
-                                        (() {
-                                          _selectToDate(context);
-                                        });
-                                      },
-                                      icon: Icon(Icons.calendar_today),
-                                    ),
-                                    Text('To Date : ' +
-                                        DateFormat("dd-MM-yyyy").format(_toDate)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-              
                           Row(
                             children: [
                               SizedBox(
@@ -589,7 +565,7 @@ class _SdcQueryState extends State<SdcQuery> {
                                       color: Colors.black))
                             ],
                           ),
-              
+
                           ListView.builder(
                             primary: false,
                             shrinkWrap: true,

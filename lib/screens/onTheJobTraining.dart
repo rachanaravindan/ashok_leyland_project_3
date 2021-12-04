@@ -18,10 +18,11 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
   final _formKey = GlobalKey<FormState>();
   var _nameController = TextEditingController();
   var _deptController = TextEditingController();
+  var _operationDescController = TextEditingController();
   crudMethod _traineeRef = new crudMethod();
 
   String _traineeName, _employeeId, _facultyName;
-  Map<String, String> _operationMap = {
+  Map<String, String> _HEngineAssembly = {
     "-1": "Enter the Operation Number",
     "10": "ENGINE NUMBER PUNCHING AND FITMENT OF PCN & Welsch Plug",
     "20": "SUB ASSY OF CRANK SHAFT",
@@ -97,6 +98,70 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
     "580": "FITMENT OF INJECTOR PIPES & tighten fuel return pipe",
     "590": "FITMENT OF Injector pipe, HCI coolant return line clip,WH Bracket",
   };
+
+  Map<String, String> _AEngineAssembly = {
+    "10": "Engine Number Punchining and Piston Retainer Fitment",
+    "20":
+        "PCN,Crank shaft S/A, crank shaft Fitment,crank speed Sensor Fitment & MB cap Tightening",
+    "30": "PISTON,CON ROD ASSEMBLY & TORQUE TIGHTENING",
+    "40": "Torque to Turn 1 & Quality Gate 1",
+    "50": "Pre fitment of Gear Train and Oil pump assy",
+    "60": "Gear Train Tightening and Backlash checking",
+    "70":
+        "Air compressor mtg,FIP Fitment,coolant Temp sensor fitment,Strainer fitment",
+    "80":
+        "ROS fitment,FWH LSA, FWH,Front mtg bkt,window cover & screw plug Tightening",
+    "90": "Fitment of Front cover, Starter motor assy,FW mounting",
+    "100":
+        "Torque to Turn 2,Damper fitment & Tightening, Front oil seal fitment & Aux bkt fitment",
+    "110":
+        "Assy of FW brg fitment, Rear dummy bkt fitment,sump assy ang Tightening",
+    "120": "Lift and Turn over",
+    "130": "Cylinder head mtg,Oilcooler mtg and Tightening",
+    "140": "Cylinder Head Bolt Tightening,Camshat SA & fitment",
+    "150":
+        "Cam idler gear,Trigger wheel,cam speed sensor,Valve train assy,EBS assy,Fuel filter fitment and tightening",
+    "160": "Water pump fitment and SET VALVE CLEARANCE",
+    "170": "Alternator,Fuel filter,AI maniflold and Metering unit fitment",
+    "180": "EGR,Exhaust manifold,Turbo charger fitment",
+    "190":
+        "Injector and HP connector fitment,CR Fitment,Support piece fitment for internal WH,Internal WH Fitment",
+    "200": "EGR hot pipe,Brake Flap S/A & TC Oil inlet & outlet pipe fitment ",
+    "210": "HP Pipe & HC Dozer pipe Fitment,Fuel pipes LP fit",
+    "220": "Injector Tightening and Fuel Pipes fitment",
+    "230": "HC Hozer and EGR Valve coolent pipes fitment",
+    "240": "Belt Tensioner,Idler Pulley, Belt Fitment &EGR cold pipe",
+    "250":
+        "Nox sensor,EGR to Air compressor coolant pipe and rear hook fitment",
+    "260":
+        "EGR to water pump pipe,Air compressor drain pipe fitment and Cylinder head cover sealant application",
+    "270": "Meering unit WH fitment,External WH fitment-RH & Rear side",
+    "280": "External WH fitment-LH & front side,ECOS & waterways Leak Test",
+    "290": "Quality Gate 2",
+    "300": "OIL FILLING",
+    "310": "LOADING & UNLOADING",
+    "320": "RIGGING",
+    "330": "DE RIGGING",
+    "340": "ENGINE TEST PERFORMANCE",
+    "350": "Quality Gate 3",
+    "360": "LOADING & UNLOADING",
+    "370": "DRESSING",
+    "380": "LACQUERING OF ENGINE",
+    "390": "Quality Gate 4",
+    "400": "PISTON AND CON ROD SUB-ASSEMBLY",
+    "410": "AIR INTAKE SYSTEM SUB-ASSEMBLY",
+    "420": "AIR COMPRESSOR SUB ASSY",
+    "430": "COMMON RAIL PUMP SUB ASSY",
+    "440": "Drive Housing sub assy",
+    "450": "Oil cooler Sub assy",
+    "460": "FAN SHAFT SUB-ASSEMBLY",
+    "470": "CYLINDER HEAD COVER & WH SUB-ASSEMBLY",
+    "480":
+        "CH Valve assy& leak check,Valve steam seal pressing,Retainer pressing & Oscilation ",
+    "490": "CYLINDER BLOCK & Head WASHING",
+    "500": "Camshaft & crankshaft washing",
+  };
+
   DateTime _joiningDate;
   DateTime currentDate = new DateTime.now();
   bool _isDisable = false;
@@ -105,48 +170,55 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
     'Department',
     'Chassis & Frame Assembly',
     'GB Assembly',
-    'HT'
-  ];
-  List<String> operationUnitItems1 = [
-    'Operation',
-    '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
-    '20- Sub Assy Of Crank Shaft',
-    '30- Fitment Of Crank Shaft',
-    '40- Crank Shaft Torque Tightening',
-    '50- Torque To Turn And End Play Checking',
-    '60- Fitment Of Dowel And Idler Shaft Mounting'
-  ];
-  List<String> operationUnitItems2 = [
-    'Chassis & Frame Assembly',
-    'Operation',
-    '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
-    '20- Sub Assy Of Crank Shaft',
-    '30- Fitment Of Crank Shaft',
-    '40- Crank Shaft Torque Tightening',
-    '50- Torque To Turn And End Play Checking',
-    '60- Fitment Of Dowel And Idler Shaft Mounting'
-  ];
-  List<String> operationUnitItems3 = [
-    'GB Assembly',
-    'Operation',
-    '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
-    '20- Sub Assy Of Crank Shaft',
-    '30- Fitment Of Crank Shaft',
-    '40- Crank Shaft Torque Tightening',
-    '50- Torque To Turn And End Play Checking',
-    '60- Fitment Of Dowel And Idler Shaft Mounting'
-  ];
-  List<String> operationUnitItems4 = [
     'HT',
-    'Operation',
-    '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
-    '20- Sub Assy Of Crank Shaft',
-    '30- Fitment Of Crank Shaft',
-    '40- Crank Shaft Torque Tightening',
-    '50- Torque To Turn And End Play Checking',
-    '60- Fitment Of Dowel And Idler Shaft Mounting'
+    'GB Machining',
+    'H - Engine Assembly',
+    'Engine - Machining',
+    'A - Engine Assembly',
+    'A - Engine Machining',
+    'Axle Assembly',
+    'Axle Machining'
   ];
-  List<String> respectiveDropDown = ['Assessment List'];
+  // List<String> operationUnitItems1 = [
+  //   'Operation',
+  //   '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
+  //   '20- Sub Assy Of Crank Shaft',
+  //   '30- Fitment Of Crank Shaft',
+  //   '40- Crank Shaft Torque Tightening',
+  //   '50- Torque To Turn And End Play Checking',
+  //   '60- Fitment Of Dowel And Idler Shaft Mounting'
+  // ];
+  // List<String> operationUnitItems2 = [
+  //   'Chassis & Frame Assembly',
+  //   'Operation',
+  //   '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
+  //   '20- Sub Assy Of Crank Shaft',
+  //   '30- Fitment Of Crank Shaft',
+  //   '40- Crank Shaft Torque Tightening',
+  //   '50- Torque To Turn And End Play Checking',
+  //   '60- Fitment Of Dowel And Idler Shaft Mounting'
+  // ];
+  // List<String> operationUnitItems3 = [
+  //   'GB Assembly',
+  //   'Operation',
+  //   '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
+  //   '20- Sub Assy Of Crank Shaft',
+  //   '30- Fitment Of Crank Shaft',
+  //   '40- Crank Shaft Torque Tightening',
+  //   '50- Torque To Turn And End Play Checking',
+  //   '60- Fitment Of Dowel And Idler Shaft Mounting'
+  // ];
+  // List<String> operationUnitItems4 = [
+  //   'HT',
+  //   'Operation',
+  //   '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
+  //   '20- Sub Assy Of Crank Shaft',
+  //   '30- Fitment Of Crank Shaft',
+  //   '40- Crank Shaft Torque Tightening',
+  //   '50- Torque To Turn And End Play Checking',
+  //   '60- Fitment Of Dowel And Idler Shaft Mounting'
+  // ];
+  Map<String, String> respectiveMap;
 
   bool valuefirst = false;
   bool valuesecond = false;
@@ -296,6 +368,26 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                             print(documentData["name"] ?? "Null");
                             _nameController.text =
                                 documentData["name"] ?? "Null";
+                            _deptController.text =
+                                documentData["department"] ?? "Null";
+
+                            var value = documentData["department"] ?? "Null";
+
+                            setState(() {
+                              departmentDropDownValue = value;
+                              if (value == 'H - Engine Assembly')
+                                respectiveMap = Map.from(_HEngineAssembly);
+                              else if (value == 'A - Engine Assembly')
+                                respectiveMap = Map.from(_AEngineAssembly);
+
+                              if (value != "department") {
+                                showToggleBtn = true;
+                              } else
+                                showToggleBtn = false;
+                              showTextField = false;
+                              print("Im printing");
+                              print(respectiveMap);
+                            });
                           });
                         },
                         decoration: InputDecoration(labelText: 'Employee Id'),
@@ -321,54 +413,70 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                         enableInteractiveSelection: true,
                       ),
                     ),
-
-                    //DEPARTMENT
+                    // DEPARTMENT
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        dropdownColor: Colors.white,
-                        iconSize: 5.h,
-                        focusColor: Colors.red,
-                        value: departmentDropDownValue,
-                        //elevation: 5,
-                        style: TextStyle(color: Colors.black),
-                        iconEnabledColor: Colors.black,
-                        items: departmentItems
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                  // color: Colors.black,
-                                  ),
-                            ),
-                          );
-                        }).toList(),
-                        hint: Text(departmentItems[0]),
-                        onChanged: (String value) {
+                      child: TextField(
+                        controller: _deptController,
+                        onChanged: (input) {
+                          _traineeName = input;
                           setState(() {
-                            departmentDropDownValue = value;
-                            if (value == 'Chassis & Frame Assembly')
-                              respectiveDropDown =
-                                  List.from(operationUnitItems1);
-                            else if (value == 'GB Assembly')
-                              respectiveDropDown =
-                                  List.from(operationUnitItems2);
-                            else if (value == 'HT')
-                              respectiveDropDown =
-                                  List.from(operationUnitItems3);
-
-                            if (value != "department") {
-                              showToggleBtn = true;
-                            } else
-                              showToggleBtn = false;
-                            showTextField = false;
+                            if (input.isEmpty)
+                              _isDisable = true;
+                            else
+                              _isDisable = false;
                           });
                         },
+                        decoration: InputDecoration(labelText: 'Department'),
+                        enabled: false,
+                        enableInteractiveSelection: true,
                       ),
                     ),
+
+                    //DEPARTMENT
+                    // Padding(
+                    //   padding: EdgeInsets.all(8.0),
+                    //   child: DropdownButton<String>(
+                    //     isExpanded: true,
+                    //     dropdownColor: Colors.white,
+                    //     iconSize: 5.h,
+                    //     focusColor: Colors.red,
+                    //     value: departmentDropDownValue,
+                    //     //elevation: 5,
+                    //     style: TextStyle(color: Colors.black),
+                    //     iconEnabledColor: Colors.black,
+                    //     items: departmentItems
+                    //         .map<DropdownMenuItem<String>>((String value) {
+                    //       return DropdownMenuItem<String>(
+                    //         value: value,
+                    //         child: Text(
+                    //           value,
+                    //           style: TextStyle(
+                    //               // color: Colors.black,
+                    //               ),
+                    //         ),
+                    //       );
+                    //     }).toList(),
+                    //     hint: Text(departmentItems[0]),
+                    //     onChanged: (String value) {
+                    //       setState(() {
+                    //         departmentDropDownValue = value;
+                    //         if (value == 'H - Engine Assembly')
+                    //           respectiveMap = Map.from(_HEngineAssembly);
+                    //         else if (value == 'A - Engine Assembly')
+                    //           respectiveMap = Map.from(_AEngineAssembly);
+
+                    //         if (value != "department") {
+                    //           showToggleBtn = true;
+                    //         } else
+                    //           showToggleBtn = false;
+                    //         showTextField = false;
+                    //         print("Im printing");
+                    //         print(respectiveMap);
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
 
                     //OPERATION NUMBER
                     Padding(
@@ -377,16 +485,13 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                         onChanged: (input) {
                           setState(() {
                             operationNumber = input;
-                            try {
-                              if (_operationMap.containsKey(operationNumber))
-                                _deptController.text =
-                                    _operationMap[operationNumber];
-                              else
-                                _deptController.text = "" ?? "Empty";
-                            } catch (error) {
-                              print("im in catch");
-                              _deptController.text = "";
-                            }
+
+                            if (respectiveMap.containsKey(operationNumber))
+                              _operationDescController.text =
+                                  respectiveMap[operationNumber];
+                            else
+                              _operationDescController.text = "" ?? "Empty";
+
                             if (input.isEmpty)
                               _isDisable = true;
                             else
@@ -400,7 +505,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextField(
-                        controller: _deptController,
+                        controller: _operationDescController,
                         maxLines: 3,
                         enabled: false,
                         decoration:
@@ -470,13 +575,12 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        AssesmentListScreen(
-                                          empId: _employeeId ?? "Empty",
-                                          operationNo: operationNumber ?? "Empty",
-                                          facultyName: _facultyName ?? "Empty",
-                                          dateOfCompletion: Timestamp.fromDate(currentDate)
-                                        )));
+                                    builder: (context) => AssesmentListScreen(
+                                        empId: _employeeId ?? "Empty",
+                                        operationNo: operationNumber ?? "Empty",
+                                        facultyName: _facultyName ?? "Empty",
+                                        dateOfCompletion:
+                                            Timestamp.fromDate(currentDate))));
                           },
                           child: Text('Select the assessment')),
                     ),

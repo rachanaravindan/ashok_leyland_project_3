@@ -242,25 +242,26 @@ class _AddTraineeState extends State<AddTrainee> {
                                 vertical: 1.5.h, horizontal: 11.6.h),
                             onPrimary: Colors.white, // foreground
                           ),
-                          onPressed:  _isDisable
-                              ? null :() {
-                            print("Submitted");
-                            _traineeRef.trainee.doc(_employeeId).set({
-                              'name': _traineeName ?? "Empty",
-                              'empId': _employeeId ?? "Empty",
-                              'doj': Timestamp.fromDate(currentDate),
-                              'qualifications': _traineeQualifications ?? "Empty",
-                              'gender': GenderDropDownValue ?? "Empty",
-                              'age': _traineeAge ?? "Empty",
-                              'level': "L0",
-                            });
-                            
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DoneMark()));
-                          },
-                         ),
+                          onPressed:  () {
+                            final isValid = _formKey.currentState.validate();
+                            // print(_traineeName);
+                            if (isValid) {
+                              _traineeRef.trainee.doc(_employeeId).set({
+                                'name': _traineeName ?? "Null",
+                                'empId': _employeeId ?? "Null",
+                                'doj': Timestamp.fromDate(currentDate),
+                                'qualifications':
+                                    _traineeQualifications ?? "Null",
+                                'gender': GenderDropDownValue,
+                                'age': _traineeAge ?? "Null",
+                                'level': "L0",
+                              });
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DoneMark(screen: false,)));
+                          }},
+                          ),
                     ),
                   ],
                 ),

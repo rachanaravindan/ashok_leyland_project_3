@@ -12,7 +12,7 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       return e.code;
     } catch (e) {
-      print(e);
+      print(e); 
     }
   }
 
@@ -23,13 +23,15 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       return e.code;
     } catch (e) {
-      print("Sign in page error : "+e);
+      print("Sign in page error : " + e);
     }
   }
 
   Future signOut() async {
     try {
-      return await _auth.signOut().then((_) => print("Successfully signed out !!!"));
+      return await _auth  
+          .signOut()
+          .then((_) => print("Successfully signed out !!!"));
     } catch (error) {
       print(error.toString());
       return null;

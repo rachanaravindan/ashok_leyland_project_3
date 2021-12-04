@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:sizer/sizer.dart';
+import 'done_add_screen.dart';
 import 'trainee_profile.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
@@ -29,13 +30,14 @@ class SdcTrainingScreen extends StatefulWidget {
 //bool _isDisable = false;
 double entered_pretest_mark = 0;
 double entered_posttest_mark = 0;
-double total_pretest_mark = 0;
-double total_posttest_mark = 0;
+double max_marks= 0;
+
 
 class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
   var _nameController = TextEditingController();
   var _pretestPercentage = TextEditingController();
   var _posttestPercentage = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   DateTime _currentdate = new DateTime.now();
   bool _isDisable = true;
   crudMethod _traineeRef = new crudMethod();
@@ -100,7 +102,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
     Future<void> _showMyDialog(String error) async {
       print("Im Pressed");
       return showDialog<void>(
-        context: context ?? "Empty",
+        context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
           return AlertDialog(
@@ -130,25 +132,14 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
       return double.parse(s, (e) => null) != null;
     }
 
-    Future<void> getSetData() async {
-      DocumentSnapshot snapshot = await _traineeRef.trainee
-          .doc(_employeeId)
-          .get()
-          .then((DocumentSnapshot documentSnapshot) {
-        if (documentSnapshot.exists) {
-          Map<String, dynamic> documentData = documentSnapshot.data();
-          print(documentData["name"] ?? "Null");
-          _nameController.text = documentData["name"];
-        }
-      });
-    }
-
     String _formattedate = new DateFormat.yMMMd().format(_currentdate);
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
-          child: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
+        child: Scaffold(
+         body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               children: [
@@ -207,14 +198,26 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: TextField(
+                  child: TextFormField(
                     onChanged: (input) {
                       _employeeId = input;
-                      setState(() {
-                        getSetData();
+                      setState(() async {
+                        DocumentSnapshot snapshot =
+                            await _traineeRef.trainee.doc(_employeeId).get();
+                        Map<String, dynamic> documentData = snapshot.data();
+                        print(documentData["name"] ?? "Null");
+                        _nameController.text = documentData["name"] ?? "Null";
                       });
                     },
                     decoration: InputDecoration(labelText: 'Employee Id'),
+                    validator: (value) {
+                          if (value.isEmpty ||
+                              !RegExp(r'^[a-z A-Z 0-9]').hasMatch(value)) {
+                            return "Employee ID should only contain text and numbers";
+                          } else {
+                            return null;
+                          }
+                        }
                   ),
                 ),
 
@@ -373,36 +376,50 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: TextField(
-                    decoration: InputDecoration(labelText: 'Trainer Name'),
+                  child: TextFormField(
                     onChanged: (str) {
                       setState(() {
                         if (str.isEmpty) _isDisable = true;
                         _mentorName = str;
                       });
                     },
+                    decoration: InputDecoration(labelText: 'Trainer Name'),
+                    validator: (value) {
+                          if (value.isEmpty ||
+                              !RegExp(r'^[a-z A-Z]').hasMatch(value)) {
+                            return "Enter correct trainee name";
+                          } else {
+                            return null;
+                          }
+                        }                    
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'Total Pre-Test Marks'),
+                  child: TextFormField(                    
                     onChanged: (str) {
                       setState(() {
                         if (str.isEmpty)
                           _isDisable = true;
                         else if (isNumeric(str)) _isDisable = false;
-                        total_pretest_mark = double.tryParse(str) ?? -1;
+                        max_marks = double.tryParse(str) ?? -1;
                       });
                     },
+                    decoration:
+                      InputDecoration(labelText: 'Maximum Marks'),
+                    validator: (value) {
+                          if (value.isEmpty ||
+                              !RegExp(r'^[0-9]').hasMatch(value)) {
+                            return "Enter maximum marks";
+                          } else {
+                            return null;
+                          }
+                        }
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'Enter Pre-Test Marks'),
+                  child: TextFormField(
                     onChanged: (str) {
                       setState(() {
                         if (str.isEmpty)
@@ -410,14 +427,23 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                         else if (isNumeric(str)) _isDisable = false;
                         entered_pretest_mark = double.tryParse(str) ?? -1;
                         if (entered_pretest_mark != null &&
-                            total_pretest_mark != null) {
+                            max_marks != null) {
                           _pretestPercentage.text =
-                              ((entered_pretest_mark / total_pretest_mark) *
-                                      100)
-                                  .toString();
+                              ((entered_pretest_mark / max_marks) *
+                                  100).toString();
                         }
                       });
                     },
+                    decoration:
+                        InputDecoration(labelText: 'Enter Pre-Test Marks'),
+                    validator: (value) {
+                          if (value.isEmpty ||
+                              !RegExp(r'^[0-9]').hasMatch(value)) {
+                            return "Enter correct pre-test marks";
+                          } else {
+                            return null;
+                          }
+                        }
                   ),
                 ),
                 Padding(
@@ -438,22 +464,15 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'Total Post-Test Marks'),
-                    onChanged: (str) {
-                      setState(() {
-                        if (str.isEmpty)
-                          _isDisable = true;
-                        else if (isNumeric(str)) _isDisable = false;
-                        total_posttest_mark = double.tryParse(str) ?? -1;
-                      });
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: TextField(
+                  child: TextFormField(
+                    validator: (value) {
+                          if (value.isEmpty ||
+                              !RegExp(r'^[0-9]').hasMatch(value)) {
+                            return "Enter correct post-test marks";
+                          } else {
+                            return null;
+                          }
+                        },
                     decoration:
                         InputDecoration(labelText: 'Enter Post-Test Marks'),
                     onChanged: (str) {
@@ -463,11 +482,10 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                         else if (isNumeric(str)) _isDisable = false;
                         entered_posttest_mark = double.tryParse(str) ?? -1;
                         if (entered_posttest_mark != null &&
-                            total_posttest_mark != null) {
+                            max_marks != null) {
                           _posttestPercentage.text =
-                              ((entered_posttest_mark / total_posttest_mark) *
-                                      100)
-                                  .toString();
+                              ((entered_posttest_mark / max_marks) *
+                                  100).toString();
                         }
                       });
                     },
@@ -490,8 +508,8 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(25.0),
-                  child: ElevatedButton(
+                    padding: const EdgeInsets.all(25.0),
+                    child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
@@ -501,107 +519,59 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                             vertical: 1.5.h, horizontal: 11.6.h),
                         onPrimary: Colors.white, // foreground
                       ),
-                      onPressed: _isDisable
-                          ? null
-                          : () async {
-                             _preTestMarks =
-                                  ((entered_pretest_mark / total_pretest_mark) *
-                                      100);
-                              _postTestMarks = ((entered_posttest_mark /
-                                      total_posttest_mark) *
-                                  100);
-                              // //-------Old Code-------------
-                              _traineeRef.trainee
-                                  .doc(_employeeId)
-                                  .collection("completed training")
-                                  .doc(DropDownValue)
-                                  .set({
-                                "day": DayDropDownValue,
-                                "pre_test_marks": _preTestMarks ?? "Empty",
-                                "post_test_marks": _postTestMarks ?? "Empty",
-                                "date of completion": DateFormat("dd-MM-yyyy")
-                                    .format(currentDate),
-                                "training": DropDownValue,
-                                "mentor name": _mentorName ?? "Empty",
-                              });
-
-                              _traineeRef.trainee.doc(_employeeId).update({
-                                "completed Program":
-                                    FieldValue.arrayUnion([DropDownValue]) ??
-                                        "Empty",
-                                "date of completion of ${DropDownValue}":Timestamp.fromDate(_currentdate)
-                              });
-
-                              // // ---------New Code----------------
-                             
-                              // Map<String, dynamic> completedProgramMap = {
-                              //   "day": DayDropDownValue,
-                              //   "pre_test_marks": _preTestMarks ?? "Empty",
-                              //   "post_test_marks": _postTestMarks ?? "Empty",
-                              //   "date of completion": DateFormat("dd-MM-yyyy")
-                              //       .format(currentDate),
-                              //   "training": DropDownValue,
-                              //   "mentor name": _mentorName ?? "Empty",
-                              // };
-
-                              // FirebaseFirestore.instance
-                              //     .collection("trainee")
-                              //     .doc(_employeeId)
-                              //     .get()
-                              //     .then((DocumentSnapshot documentSnapshot) {
-                              //   if (documentSnapshot.exists) {
-                              //     Map<String, dynamic> documentData =
-                              //         documentSnapshot.data();
-
-                              //     var completed_program_map = new List(9);
-                              //     print(completed_program_map);
-                              //     completed_program_map =
-                              //         documentData["completed program map"];
-                              //     for (int i = 0; i < items.length; i++)
-                              //       completed_program_map[i] =
-                              //           documentData["completed program map"]
-                              //               [i];
-                              //     completed_program_map[
-                              //             items.indexOf(DropDownValue)] =
-                              //         completedProgramMap;
-                              //     _traineeRef.trainee.doc(_employeeId).update({
-                              //       "completed program map":
-                              //           completed_program_map ?? "Empty"
-                              //     });
-                              //   } else {
-                              //     print("doesnt exist");
-                              //   }
-                              // });
-
-                              //-----------------------
-                              // try {
-                              //   var completed_program_map =
-                              //       variable['completed program map'];
-                              // completed_program_map[
-                              //         items.indexOf(DropDownValue)] =
-                              //     completedProgramMap;
-                              // _traineeRef.trainee.doc(_employeeId).update({
-                              //   "completed program map":
-                              //       completed_program_map ?? "Empty"
-                              //   });
-                              // } catch (e) {
-                              //   List completed_program_map_catch = [];
-                              //   completed_program_map_catch[
-                              //           items.indexOf(DropDownValue)] =
-                              //       completedProgramMap;
-                              //   print(completed_program_map_catch);
-                              // _traineeRef.trainee.doc(_employeeId).update({
-                              //   "completed program map":
-                              //       completed_program_map_catch ?? "Empty"
-                              // });
-                            },
-                      child: Text('Submit')),
-                ),
+                      onPressed: () {
+                        
+                        final isValid = _formKey.currentState.validate();
+                        if(isValid){
+                          _preTestMarks =
+                                  ((entered_pretest_mark / max_marks) * 100);
+                              _postTestMarks =
+                                  ((entered_posttest_mark / max_marks) * 100);
+                              if (_preTestMarks == -1 || _postTestMarks == -1) {
+                                _showMyDialog("Invalid Mark");
+                              } else {
+                                _traineeRef.trainee
+                                    .doc(_employeeId)
+                                    .collection("completed training")
+                                    .doc(DropDownValue)
+                                    .set({
+                                  "day": DayDropDownValue,
+                                  DropDownValue: true,
+                                  "pre_test_marks": _preTestMarks,
+                                  "post_test_marks": _postTestMarks,
+                                  "date of completion": DateFormat("dd-MM-yyyy")
+                                      .format(currentDate),
+                                  "training": DropDownValue,
+                                  "mentor name": _mentorName,
+                                });
+                                _traineeRef.trainee.doc(_employeeId).update({
+                                  "completed Program":
+                                      FieldValue.arrayUnion([DropDownValue]) ?? "Empty",
+                                      "date of completion of ${DropDownValue}":
+                                      Timestamp.fromDate(_currentdate)
+                                });
+                              }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DoneMark(
+                                          screen: false,
+                                        )));
+                        }  
+                      },              
+                      child: Text('Submit')
+                    )
+                    ),
               ],
             ),
+          ),
           ),
         ),
       ));
     });
   }
 }
+
+
+
+

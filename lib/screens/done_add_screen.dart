@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
-
 import 'add_trainee.dart';
+import 'home.dart';
 
 class DoneMark extends StatefulWidget {
+  final bool screen;
+
+  const DoneMark({Key key, this.screen}) : super(key: key);
   @override
   State<DoneMark> createState() => _DoneMarkState();
 }
@@ -52,8 +55,17 @@ class _DoneMarkState extends State<DoneMark> with TickerProviderStateMixin {
                     onPrimary: Colors.white, // foreground
                   ),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AddTrainee()));
+                    if (widget.screen) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddTrainee()));
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
+                    }
                   },
                   child: Text('Done')),
             ),

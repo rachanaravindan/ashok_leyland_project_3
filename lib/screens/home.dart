@@ -1,4 +1,6 @@
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
+import 'package:ashok_leyland_project_3/screens/deleteTrainee.dart';
+import 'package:ashok_leyland_project_3/widgets/exit_popup.dart';
 import 'package:ashok_leyland_project_3/screens/on_the_job_training_query.dart';
 import 'package:ashok_leyland_project_3/screens/promotion.dart';
 import 'package:ashok_leyland_project_3/screens/promotion.dart';
@@ -8,6 +10,8 @@ import 'package:ashok_leyland_project_3/screens/onTheJobTraining.dart';
 import 'package:ashok_leyland_project_3/screens/sdc_query.dart';
 import 'package:ashok_leyland_project_3/screens/signin_page.dart';
 import 'package:ashok_leyland_project_3/services/auth.dart';
+import 'package:ashok_leyland_project_3/widgets/exit_popup.dart';
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
@@ -22,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  DateTime timeBackPressed = DateTime.now();
   AuthService _authService = AuthService();
   String assetLoc;
   void setAssetName(int screen) {
@@ -65,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
               elevation: 2,
-              primary: Colors.amber, // background
+              primary: Colors.amber.shade400, // background
               onPrimary: Colors.white, // foreground
             ),
             onPressed: () {
@@ -133,73 +138,99 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  
 
   @override
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
-        child: Scaffold(
+        child: WillPopScope(
+          onWillPop: () => showExitPopup(context),
+          child: Scaffold(
             body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10.0, 20.0, 0),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: GestureDetector(
-                    onTap: () async {
-                      await FirebaseAuth.instance.signOut();
-                    },
-                    child: Icon(Icons.logout_outlined),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10.0, 20.0, 0),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: GestureDetector(
+                        onTap: () async {
+                          await FirebaseAuth.instance.signOut();
+                        },
+                        child: Icon(Icons.logout_outlined),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 5.0.h),
-                child: Center(
-                  child: Text('Home',
-                      style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black),
-                      )),
-                ),
-              ),
-              Container(
-                height: 10,
+                  Container(
+                    padding: EdgeInsets.only(top: 5.0.h),
+                    child: Center(
+                      child: Text('Home',
+                          style: GoogleFonts.montserrat(
+                            textStyle: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black),
+                          )),
+                    ),
+                  ),
+                  Container(
+                    height: 10,
 
-                // child: Demo(), //search bar
+                    // child: Demo(), //search bar
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 25),
+                    child: Wrap(
+                      spacing: 30,
+                      runSpacing: 40,
+                      alignment: WrapAlignment.start,
+                      children: [
+                        departmentButton('Add Trainee', 16.0.h, 16.0.h, 1),
+                        departmentButton('SDC Training', 16.0.h, 16.0.h, 2),
+                        departmentButton('SDC Query', 16.0.h, 16.0.h, 3),
+                        departmentButton(
+                            'Department \n Allocation', 16.0.h, 16.0.h, 4),
+                        departmentButton(
+                            'On the job \n Training', 16.0.h, 16.0.h, 5),
+                        departmentButton('On the job \n Training \n Query',
+                            16.0.h, 16.0.h, 6),
+                        departmentButton('Promotion', 16.0.h, 16.0.h, 7),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.red,
+                            shadowColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            elevation: 2,
+                            //color: Colors.amber,
+
+                            padding: EdgeInsets.symmetric(
+                                vertical: 1.5.h, horizontal: 11.6.h),
+                            onPrimary: Colors.white // foreground
+                            ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => deleteTrainee()));
+                        },
+                        child: Text('Delete Trainee'),
+                      ))
+                ],
               ),
-              SizedBox(
-                height: 40,
-              ),
-              Container(
-                padding: EdgeInsets.only(bottom: 25),
-                child: Wrap(
-                  spacing: 30,
-                  runSpacing: 40,
-                  alignment: WrapAlignment.start,
-                  children: [
-                    departmentButton('Add Trainee', 16.0.h, 16.0.h, 1),
-                    departmentButton('SDC Training', 16.0.h, 16.0.h, 2),
-                    departmentButton('SDC Query', 16.0.h, 16.0.h, 3),
-                    departmentButton(
-                        'Department \n Allocation', 16.0.h, 16.0.h, 4),
-                    departmentButton(
-                        'On the job \n Training', 16.0.h, 16.0.h, 5),
-                    departmentButton(
-                        'On the job \n Training \n Query', 16.0.h, 16.0.h, 6),
-                    departmentButton('Promotion', 16.0.h, 16.0.h, 7),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        )),
+        ),
       );
     });
   }
 }
-
-

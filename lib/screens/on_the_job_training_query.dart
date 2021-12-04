@@ -469,11 +469,16 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
 
                           Center(
                             child: Text(
-                              "On The Job Training Query",
+                              "On The Job Training",
                               style: Constants.boldHeading,
                             ),
                           ),
-
+                          Center(
+                            child: Text(
+                              "Query",
+                              style: Constants.boldHeading,
+                            ),
+                          ),
                           //SEARCH BAR
                           Padding(
                             padding: EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),

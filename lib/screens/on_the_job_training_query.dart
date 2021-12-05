@@ -339,13 +339,7 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
       row.add("Sno");
       row.add("EmpId");
       row.add("Name");
-      row.add("Age");
-      row.add("Gender");
-      row.add("Qualification");
-      row.add("Operation Number");
-      row.add("Level");
-      row.add("Date of completion");
-      row.add("Faculty Name");
+      row.add("Date of Department Allocation");
       row.add("Assesment 1");
       row.add("Assesment 2");
       row.add("Assesment 3");

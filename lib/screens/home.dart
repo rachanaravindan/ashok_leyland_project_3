@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   break;
                 case 7:
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Promotion()));
+                      MaterialPageRoute(builder: (context) => promotionPage()));
                   assetLoc = "assets/promotion.svg";
                   break;
               }

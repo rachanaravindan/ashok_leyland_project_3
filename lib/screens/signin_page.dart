@@ -1,5 +1,6 @@
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
+//import 'package:ashok_leyland_project_3/screens/forgot_password.dart';
 import 'package:ashok_leyland_project_3/services/auth.dart';
 import 'package:ashok_leyland_project_3/services/verify.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,8 +10,9 @@ import 'package:sizer/sizer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 
+import 'forget_password.dart';
+
 class SignInPage extends StatefulWidget {
-  
   @override
   _SignInPageState createState() => _SignInPageState();
 }
@@ -345,6 +347,16 @@ class _SignInPageState extends State<SignInPage> {
                                             style: Constants.ListItemHeading,
                                           ))
                               ],
+                            ),
+                            TextButton(                              
+                              child: Text(
+                                'Forgot Password?',
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 12),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ForgotPassword()));
+                              },
                             ),
                           ],
                         ),

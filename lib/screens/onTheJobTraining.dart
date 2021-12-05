@@ -356,7 +356,8 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                     //EMPLOYEE ID
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
+                      child: TextFormField(
+                        
                         onChanged: (input) {
                           _employeeId = input;
                           setState(() async {
@@ -391,6 +392,15 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                           });
                         },
                         decoration: InputDecoration(labelText: 'Employee Id'),
+                        validator: (value) {
+                          if (value.isEmpty ||
+                              !RegExp(r'^[a-z A-Z 0-9]').hasMatch(value)) {
+                            return "Employee ID should contain only text and numbers";
+                          } else {
+                            return null;
+                          }
+                        },
+                        
                       ),
                     ),
 
@@ -481,7 +491,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                     //OPERATION NUMBER
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: TextField(
+                      child: TextFormField(
                         onChanged: (input) {
                           setState(() {
                             operationNumber = input;
@@ -500,6 +510,14 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                         },
                         decoration: InputDecoration(
                             labelText: 'Enter Operation Number'),
+                        validator: (value) {
+                            if (value.isEmpty ||
+                                !RegExp(r'^[0-9]').hasMatch(value)) {
+                              return "  Enter operation no. in numbers";
+                            } else {
+                              return null;
+                            }
+                          }
                       ),
                     ),
                     Padding(
@@ -544,7 +562,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                     //FACULTY NAME
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: TextField(
+                      child: TextFormField(
                         onChanged: (input) {
                           _facultyName = input;
                           setState(() {
@@ -555,6 +573,14 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                           });
                         },
                         decoration: InputDecoration(labelText: 'Faculty Name'),
+                        validator: (value) {
+                            if (value.isEmpty ||
+                                RegExp(r'^[0-9]').hasMatch(value)) {
+                              return "Enter valid faculty name";
+                            } else {
+                              return null;
+                            }
+                          }
                       ),
                     ),
 
@@ -572,6 +598,9 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                             onPrimary: Colors.white, // foreground
                           ),
                           onPressed: () {
+                            final isValid = _formKey.currentState.validate();
+                            if(isValid)
+                            {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -579,8 +608,10 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                                         empId: _employeeId ?? "Empty",
                                         operationNo: operationNumber ?? "Empty",
                                         facultyName: _facultyName ?? "Empty",
+                                        departmentName: _deptController.text,
                                         dateOfCompletion:
                                             Timestamp.fromDate(currentDate))));
+                          }
                           },
                           child: Text('Select the assessment')),
                     ),

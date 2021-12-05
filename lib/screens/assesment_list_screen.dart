@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 class AssesmentListScreen extends StatefulWidget {
-  final String empId, operationNo, facultyName;
+  final String empId, operationNo, facultyName, departmentName;
   final Timestamp dateOfCompletion;
 
   const AssesmentListScreen(
@@ -12,7 +12,8 @@ class AssesmentListScreen extends StatefulWidget {
       this.empId,
       this.operationNo,
       this.facultyName,
-      this.dateOfCompletion})
+      this.dateOfCompletion,
+      this.departmentName})
       : super(key: key);
   @override
   _AssesmentListScreenState createState() => _AssesmentListScreenState();
@@ -101,9 +102,7 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
       print("pass array");
       print(passCheckBox);
       for (int i = 0; i < passCheckBox.length; i++) {
-        
         if (passCheckBox[i] == true) {
-          
           points++;
         } else
           break;
@@ -174,23 +173,26 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
                       if (failCheckBox[i] == true) dummyList[i] = 0;
                     }
                     print(dummyList);
-                    String currentLevel=findCurrentLevel(passCheckBox);
+                    String currentLevel = findCurrentLevel(passCheckBox);
                     await _traineeRef.trainee
                         .doc(widget.empId ?? "Empty")
                         .collection("completed on the job training")
                         .doc(widget.operationNo ?? "Empty")
                         .set({
-                      "date of completion": widget.dateOfCompletion,
-                      "operation no": widget.operationNo ?? "Empty",
-                      "faculty name": widget.facultyName ?? "Empty",
-                      "Level": currentLevel ?? "Empty",
-                      "passed assessments": dummyList
+                      "department ${widget.departmentName} date of completion": widget.dateOfCompletion,
+                      "department ${widget.departmentName} operation no": widget.operationNo ?? "Empty",
+                      "department ${widget.departmentName} faculty name": widget.facultyName ?? "Empty",
+                      "department ${widget.departmentName} level":
+                          currentLevel ?? "Empty",
+                      "department ${widget.departmentName} passed assessments": dummyList
                     });
 
-                    await _traineeRef.trainee
-                        .doc(widget.empId)
-                        .update({"operation ${widget.operationNo} level ${currentLevel}": widget.dateOfCompletion,
-                        "operation ${widget.operationNo} level ${currentLevel}": widget.dateOfCompletion});
+                    await _traineeRef.trainee.doc(widget.empId).update({
+                      "department ${widget.departmentName} operation ${widget.operationNo} level ${currentLevel}":
+                          widget.dateOfCompletion,
+                      "department ${widget.departmentName} operation ${widget.operationNo}":
+                          currentLevel
+                    });
                   },
                   child: Text("Submit"))
             ],

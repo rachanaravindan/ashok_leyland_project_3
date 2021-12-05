@@ -18,7 +18,7 @@ class AddTrainee extends StatefulWidget {
 class _AddTraineeState extends State<AddTrainee> {
   final _formKey = GlobalKey<FormState>();
   crudMethod _traineeRef = new crudMethod();
-  String _traineeName , _employeeId, _traineeQualifications, _traineeAge;
+  String _traineeName, _employeeId, _traineeQualifications, _traineeAge;
   DateTime _joiningDate;
   DateTime currentDate = new DateTime.now();
   bool _isDisable = false;
@@ -67,203 +67,216 @@ class _AddTraineeState extends State<AddTrainee> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.yellow[00],
-          body: Center(
-            child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  // mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Container(
+          body: SingleChildScrollView(
+            child: Center(
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    // mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Align(
                         alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(top: 1.h),
-                        height: 5.0.h,
-                        width: 6.0.h,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
-                          },
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 30.0,
-                          ),
-                          style: ElevatedButton.styleFrom(
-                              shape: CircleBorder(),
-                              padding: EdgeInsets.all(5),
-                              primary: Colors.black,
-                              ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      "Add Trainee",
-                      style: Constants.boldHeading,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextField(
-                        onChanged: (input) {
-                          _traineeName = input;
-                          setState(() {
-                            if (input.isEmpty)
-                              _isDisable = true;
-                            else
-                              _isDisable = false;
-                          });
-                        },
-                        decoration: InputDecoration(labelText: 'Name'),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextField(
-                        onChanged: (input) {
-                          _employeeId = input;
-                          setState(() {
-                            if (input.isEmpty)
-                              _isDisable = true;
-                            else if (isNumeric(input)) _isDisable = false;
-                          });
-                        },
-                        decoration: InputDecoration(labelText: 'Employee Id'),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 2, horizontal: 4),
-                      child: Bounce(
-                        duration: Duration(milliseconds: 110),
-                        onPressed: () {
-                          setState(() {
-                            _selectdate(context);
-                          });
-                        },
-                        child: Card(
-                          child: Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _selectdate(context);
-                                  });
-                                },
-                                icon: Icon(Icons.calendar_today),
-                              ),
-                              Text('Date Of Joining: $_formattedate'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextField(
-                        onChanged: (input) {
-                          _traineeQualifications = input;
-                          setState(() {
-                            if (input.isEmpty)
-                              _isDisable = true;
-                            else
-                              _isDisable = false;
-                          });
-                        },
-                        decoration:
-                            InputDecoration(labelText: 'Qualifications'),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        dropdownColor: Colors.white,
-                        iconSize: 5.h,
-                        focusColor: Colors.red,
-                        value: GenderDropDownValue,
-                        //elevation: 5,
-                        style: TextStyle(color: Colors.black),
-                        iconEnabledColor: Colors.black,
-                        items: GenderItems.map<DropdownMenuItem<String>>(
-                            (String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                color: Colors.black,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        hint: Text(GenderItems[0]),
-                        onChanged: (String value) {
-                          setState(() {
-                            GenderDropDownValue = value;
-                            if (value != "Gender") {
-                              showToggleBtn = true;
-                            } else
-                              showToggleBtn = false;
-                            showTextField = false;
-                          });
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextField(
-                        onChanged: (input) {
-                          _traineeAge = input;
-                          setState(() {
-                            if (input.isEmpty)
-                              _isDisable = true;
-                            else if (isNumeric(input)) _isDisable = false;
-                          });
-                        },
-                        decoration: InputDecoration(labelText: 'Age'),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: ElevatedButton(
-                        child: Text("Submit"),
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                            elevation: 2,
-
-                            padding: EdgeInsets.symmetric(
-                                vertical: 1.5.h, horizontal: 11.6.h),
-                            onPrimary: Colors.white, // foreground
-                          ),
-                          onPressed:  () {
-                            final isValid = _formKey.currentState.validate();
-                            // print(_traineeName);
-                            if (isValid) {
-                              _traineeRef.trainee.doc(_employeeId).set({
-                                'name': _traineeName ?? "Null",
-                                'empId': _employeeId ?? "Null",
-                                'doj': Timestamp.fromDate(currentDate),
-                                'qualifications':
-                                    _traineeQualifications ?? "Null",
-                                'gender': GenderDropDownValue,
-                                'age': _traineeAge ?? "Null",
-                                'level': "L0",
-                              });
+                        child: Container(
+                          alignment: Alignment.topLeft,
+                          margin: EdgeInsets.only(top: 1.h),
+                          height: 5.0.h,
+                          width: 6.0.h,
+                          child: ElevatedButton(
+                            onPressed: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => DoneMark(screen: false,)));
-                          }},
+                                      builder: (context) => HomeScreen()));
+                            },
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 30.0,
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(5),
+                              primary: Colors.black,
+                            ),
                           ),
-                    ),
-                  ],
+                        ),
+                      ),
+                      Text(
+                        "Add Trainee",
+                        style: Constants.boldHeading,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          decoration: InputDecoration(labelText: 'Name'),
+                          validator: (value) {
+                            if (value.isEmpty ||
+                                !RegExp(r'^[a-z A-Z]').hasMatch(value)) {
+                              return "enter valid name";
+                            } else {
+                              return null;
+                            }
+                          },
+                          onChanged: (value) {
+                            _traineeName = value;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          decoration: InputDecoration(labelText: 'Employee Id'),
+                          validator: (value) {
+                            if (value.isEmpty ||
+                                !RegExp(r'^[a-z A-Z 0-9]').hasMatch(value)) {
+                              return "Employee ID should contain only text and numbers";
+                            } else {
+                              return null;
+                            }
+                          },
+                          onChanged: (value) {
+                            _employeeId = value;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 4),
+                        child: Bounce(
+                          duration: Duration(milliseconds: 110),
+                          onPressed: () {
+                            setState(() {
+                              _selectdate(context);
+                            });
+                          },
+                          child: Card(
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _selectdate(context);
+                                    });
+                                  },
+                                  icon: Icon(Icons.calendar_today),
+                                ),
+                                Text('Date Of Joining: $_formattedate'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          decoration:
+                              InputDecoration(labelText: 'Qualifications'),
+                          validator: (value) {
+                            if (value.isEmpty ||
+                                !RegExp(r'^[a-z A-Z]').hasMatch(value)) {
+                              return "  Enter correct qualifications";
+                            } else {
+                              return null;
+                            }
+                          },
+                          onChanged: (value) {
+                            _traineeQualifications = value;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          dropdownColor: Colors.white,
+                          iconSize: 5.h,
+                          focusColor: Colors.red,
+                          value: GenderDropDownValue,
+                          //elevation: 5,
+                          style: TextStyle(color: Colors.black),
+                          iconEnabledColor: Colors.black,
+                          items: GenderItems.map<DropdownMenuItem<String>>(
+                              (String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          hint: Text(GenderItems[0]),
+                          onChanged: (String value) {
+                            setState(() {
+                              GenderDropDownValue = value;
+                              if (value != "Gender") {
+                                showToggleBtn = true;
+                              } else
+                                showToggleBtn = false;
+                              showTextField = false;
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          decoration: InputDecoration(labelText: 'Age'),
+                          validator: (value) {
+                            if (value.isEmpty ||
+                                !RegExp(r'^[0-9]').hasMatch(value)) {
+                              return "  Enter age in numbers";
+                            } else {
+                              return null;
+                            }
+                          },
+                          onChanged: (value) {
+                            _traineeAge = value;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(25.0),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 2,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.5.h, horizontal: 11.6.h),
+                              onPrimary: Colors.white, // foreground
+                            ),
+                            onPressed: () {
+                              final isValid = _formKey.currentState.validate();
+                              // print(_traineeName);
+                              if (isValid) {
+                                _traineeRef.trainee.doc(_employeeId).set({
+                                  'name': _traineeName ?? "Null",
+                                  'empId': _employeeId ?? "Null",
+                                  'doj': Timestamp.fromDate(currentDate),
+                                  'qualifications':
+                                      _traineeQualifications ?? "Null",
+                                  'gender': GenderDropDownValue,
+                                  'age': _traineeAge ?? "Null",
+                                  'level': "L0",
+                                });
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DoneMark(
+                                              screen: false,
+                                            )));
+                              }
+                            },
+                            child: Text('Submit')),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -21,25 +21,26 @@ class _LoadingState extends State<Loading> {
       print("user!=null");
       if (!user.emailVerified)
         return VerifyScreen();
-    } else {
-      return Container(
-        color: Colors.yellow[200],
-        child: Align(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SpinKitFoldingCube(
-                color: Colors.blueAccent,
-                size: 50.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("Loading", style: Constants.boldHeading),
-              )
-            ],
+      else {
+        return Container(
+          color: Colors.yellow[200],
+          child: Align(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SpinKitFoldingCube(
+                  color: Colors.blueAccent,
+                  size: 50.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("Loading", style: Constants.boldHeading),
+                )
+              ],
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 }

@@ -28,8 +28,10 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
   String _traineeName,
       _registerNumber,
       _search,
-      _levelDropDownValue,
+      _levelDropDownValue = "Select Level",
       _programDropDownValue;
+  bool showToggleBtn = false;
+  String departmentDropDownValue = 'Department';
   Map<String, String> _operationMap = {
     "-1": "Enter the Operation Number",
     "10": "ENGINE NUMBER PUNCHING AND FITMENT OF PCN & Welsch Plug",
@@ -114,20 +116,21 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
   List _allResults = [];
   List _searchResults = [];
   List<String> LevelList = ["Select Level", "L2", "L3", "L4"];
-  List<String> ProgramList = [
-    'Choose Program',
-    'Ashok Leyland Overview',
-    'Basics of Automobile',
-    'Safety',
-    'Cognitive',
-    'Dexterity',
-    'Parts Identification',
-    'Work Ethics and Standing Orders',
-    '5S, Gemba & TQM'
+  List<String> departmentItems = [
+    'Department',
+    'Chassis & Frame Assembly',
+    'GB Assembly',
+    'HT',
+    'GB Machining',
+    'H - Engine Assembly',
+    'Engine - Machining',
+    'A - Engine Assembly',
+    'A - Engine Machining',
+    'Axle Assembly',
+    'Axle Machining'
   ];
   Future resultsLoaded;
   List<String> respectiveLevelList = [];
-  List<String> respectiveProgramList = [];
   String operationNumber = "-1";
   @override
   void initState() {
@@ -135,7 +138,6 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
     super.initState();
     _searchController.addListener(_onSearchChanged);
     respectiveLevelList = List.from(LevelList);
-    respectiveProgramList = List.from(ProgramList);
   }
 
   @override
@@ -178,54 +180,63 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
   var data;
   getData() async {
     print("checking");
-    if (_levelDropDownValue != "Select Level") {
-      //with level and program case
-      if (operationNumber != "-1" || operationNumber != null) {
-        if (_fromTimeStamp != null && _toTimeStamp != null) {
+    //Department-Level-Operation No
+    //Department-Operation No
+    //Department-Search
+    if (departmentDropDownValue != 'Department') {
+      if (_levelDropDownValue != "Select Level") {
+        if (operationNumber != "-1" || operationNumber != null) {
+          // Department-Level-Operation No
+          print(
+              "department ${departmentDropDownValue} operation ${operationNumber}");
           data = await FirebaseFirestore.instance
               .collection("trainee")
               .where(
-                  "operation ${operationNumber} level ${_levelDropDownValue}",
-                  isGreaterThanOrEqualTo: _fromTimeStamp)
-              .where(
-                  "operation ${operationNumber} level ${_levelDropDownValue}",
-                  isLessThanOrEqualTo: _toTimeStamp)
+                  "department ${departmentDropDownValue} operation ${operationNumber}",
+                  isEqualTo: _levelDropDownValue)
               .get();
+          // data = await FirebaseFirestore.instance
+          //     .collection("trainee")
+          //     .where(
+          //         "department H - Engine Assembly operation 20",
+          //         isEqualTo: _levelDropDownValue)
+          //     .get();
           setState(() {
             print("in Set data");
             _allResults = data.docs;
           });
         }
-      } else if (_fromTimeStamp != null && _toTimeStamp != null) {
-        print("with date");
+      } else if (operationNumber != "-1" || operationNumber != null) {
+        //Department-Operation No
         data = await FirebaseFirestore.instance
             .collection("trainee")
-            .where("doj", isGreaterThanOrEqualTo: _fromTimeStamp)
-            .where("doj", isLessThanOrEqualTo: _toTimeStamp)
-            .where("level", isEqualTo: _levelDropDownValue)
+            .where(
+                "department ${departmentDropDownValue} operation ${operationNumber}",
+                isNull: false)
             .get();
         setState(() {
           print("in Set data");
           _allResults = data.docs;
         });
-      } else {
-        print("without date");
+      } else if (_searchController.text != null) {
+        print("showing everything");
         data = await FirebaseFirestore.instance
             .collection("trainee")
-            .where("level", isEqualTo: _levelDropDownValue)
+            .doc(_searchController.text)
+            .collection("completed on the job training")
+            .where("department $departmentDropDownValue level", isNull: false)
             .get();
         setState(() {
           print("in Set data");
-          _allResults = data.docs;
+          for (int i = 0; i < data.docs.length; i++) {
+            Map<String, dynamic> data =
+                _allResults[i].data() as Map<String, dynamic>;
+            print(data["department $departmentDropDownValue operation no"] +
+                ":" +
+                data["department $departmentDropDownValue level"]);
+          }
         });
       }
-    } else {
-      print("showing everything");
-      data = await FirebaseFirestore.instance.collection("trainee").get();
-      setState(() {
-        print("in Set data");
-        _allResults = data.docs;
-      });
     }
     searchResultsList();
     return "complete";
@@ -503,7 +514,42 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
                               ),
                             ),
                           ),
-
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5.h),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              dropdownColor: Colors.white,
+                              iconSize: 5.h,
+                              focusColor: Colors.red,
+                              value: departmentDropDownValue,
+                              //elevation: 5,
+                              style: TextStyle(color: Colors.black),
+                              iconEnabledColor: Colors.black,
+                              items: departmentItems
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                        // color: Colors.black,
+                                        ),
+                                  ),
+                                );
+                              }).toList(),
+                              hint: Text(departmentItems[0]),
+                              onChanged: (String value) {
+                                setState(() {
+                                  departmentDropDownValue = value;
+                                  if (value != "department") {
+                                    showToggleBtn = true;
+                                  } else
+                                    showToggleBtn = false;
+                                });
+                              },
+                            ),
+                          ),
                           //SELECT LEVEL DROPDOWN
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -579,6 +625,8 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
                               onChanged: (input) {
                                 setState(() {
                                   operationNumber = input;
+                                  getData();
+                                  print(operationNumber);
                                   try {
                                     if (_operationMap
                                         .containsKey(operationNumber))
@@ -607,64 +655,64 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
                             ),
                           ),
 
-                          //FROM DATEPICKER
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectFromDate(context);
-                                });
-                              },
-                              child: Card(
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectFromDate(context);
-                                        });
-                                      },
-                                      icon: Icon(Icons.calendar_today),
-                                    ),
-                                    Text('From Date : ' +
-                                        DateFormat("dd-MM-yyyy")
-                                            .format(_fromDate)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          // //FROM DATEPICKER
+                          // Padding(
+                          //   padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
+                          //   child: GestureDetector(
+                          //     onTap: () {
+                          //       setState(() {
+                          //         selectFromDate(context);
+                          //       });
+                          //     },
+                          //     child: Card(
+                          //       child: Row(
+                          //         children: [
+                          //           IconButton(
+                          //             onPressed: () {
+                          //               setState(() {
+                          //                 selectFromDate(context);
+                          //               });
+                          //             },
+                          //             icon: Icon(Icons.calendar_today),
+                          //           ),
+                          //           Text('From Date : ' +
+                          //               DateFormat("dd-MM-yyyy")
+                          //                   .format(_fromDate)),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
 
-                          //TO DATEPICKER
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectToDate(context);
-                                });
-                              },
-                              child: Card(
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        // ignore: unnecessary_statements
-                                        (() {
-                                          _selectToDate(context);
-                                        });
-                                      },
-                                      icon: Icon(Icons.calendar_today),
-                                    ),
-                                    Text('To Date : ' +
-                                        DateFormat("dd-MM-yyyy")
-                                            .format(_toDate)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          // //TO DATEPICKER
+                          // Padding(
+                          //   padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
+                          //   child: GestureDetector(
+                          //     onTap: () {
+                          //       setState(() {
+                          //         _selectToDate(context);
+                          //       });
+                          //     },
+                          //     child: Card(
+                          //       child: Row(
+                          //         children: [
+                          //           IconButton(
+                          //             onPressed: () {
+                          //               // ignore: unnecessary_statements
+                          //               (() {
+                          //                 _selectToDate(context);
+                          //               });
+                          //             },
+                          //             icon: Icon(Icons.calendar_today),
+                          //           ),
+                          //           Text('To Date : ' +
+                          //               DateFormat("dd-MM-yyyy")
+                          //                   .format(_toDate)),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
 
                           Row(
                             children: [

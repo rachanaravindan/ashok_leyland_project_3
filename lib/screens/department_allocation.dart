@@ -29,7 +29,14 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
     'Department',
     'Chassis & Frame Assembly',
     'GB Assembly',
-    'HT'
+    'HT',
+    'GB Machining',
+    'H - Engine Assembly',
+    'Engine - Machining',
+    'A - Engine Assembly',
+    'A - Engine Machining',
+    'Axle Assembly',
+    'Axle Machining'
   ];
   String departmentDropDownValue;
   crudMethod crudOperations = new crudMethod();

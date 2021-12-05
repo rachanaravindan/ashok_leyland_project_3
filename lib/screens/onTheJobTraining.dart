@@ -1,3 +1,4 @@
+import 'package:ashok_leyland_project_3/screens/done_add_screen.dart';
 import 'package:ashok_leyland_project_3/services/crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -277,36 +278,36 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
     }
 
     String _formattedate = new DateFormat.yMMMd().format(currentDate);
-    Widget AssessmentList(int a) {
-      return Row(
-        children: <Widget>[
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(child: Text(assessmentListItems[a])),
-          Checkbox(
-            checkColor: Colors.green,
-            activeColor: Colors.green,
-            value: this.valuefirst,
-            onChanged: (bool value) {
-              setState(() {
-                this.valuefirst = value ?? "Empty";
-              });
-            },
-          ),
-          Checkbox(
-            checkColor: Colors.red,
-            activeColor: Colors.red,
-            value: this.valuesecond,
-            onChanged: (bool value) {
-              setState(() {
-                this.valuesecond = value;
-              });
-            },
-          ),
-        ],
-      );
-    }
+    // Widget AssessmentList(int a) {
+    //   return Row(
+    //     children: <Widget>[
+    //       SizedBox(
+    //         width: 10,
+    //       ),
+    //       Expanded(child: Text(assessmentListItems[a])),
+    //       Checkbox(
+    //         checkColor: Colors.green,
+    //         activeColor: Colors.green,
+    //         value: this.valuefirst,
+    //         onChanged: (bool value) {
+    //           setState(() {
+    //             this.valuefirst = value ?? "Empty";
+    //           });
+    //         },
+    //       ),
+    //       Checkbox(
+    //         checkColor: Colors.red,
+    //         activeColor: Colors.red,
+    //         value: this.valuesecond,
+    //         onChanged: (bool value) {
+    //           setState(() {
+    //             this.valuesecond = value;
+    //           });
+    //         },
+    //       ),
+    //     ],
+    //   );
+    // }
 
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
@@ -357,7 +358,6 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                        
                         onChanged: (input) {
                           _employeeId = input;
                           setState(() async {
@@ -386,8 +386,8 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                               } else
                                 showToggleBtn = false;
                               showTextField = false;
-                              print("Im printing");
-                              print(respectiveMap);
+                              // print("Im printing");
+                              // print(respectiveMap);
                             });
                           });
                         },
@@ -400,7 +400,6 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                             return null;
                           }
                         },
-                        
                       ),
                     ),
 
@@ -511,13 +510,13 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                         decoration: InputDecoration(
                             labelText: 'Enter Operation Number'),
                         validator: (value) {
-                            if (value.isEmpty ||
-                                !RegExp(r'^[0-9]').hasMatch(value)) {
-                              return "  Enter operation no. in numbers";
-                            } else {
-                              return null;
-                            }
+                          if (value.isEmpty ||
+                              !RegExp(r'^[0-9]').hasMatch(value)) {
+                            return "Operation Number should contain only numbers";
+                          } else {
+                            return null;
                           }
+                        },
                       ),
                     ),
                     Padding(
@@ -559,7 +558,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                       ),
                     ),
 
-                    //FACULTY NAME
+                    //TRAINER NAME
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
@@ -572,49 +571,59 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                               _isDisable = false;
                           });
                         },
-                        decoration: InputDecoration(labelText: 'Faculty Name'),
+                        decoration: InputDecoration(labelText: 'Trainer Name'),
                         validator: (value) {
-                            if (value.isEmpty ||
-                                RegExp(r'^[0-9]').hasMatch(value)) {
-                              return "Enter valid faculty name";
-                            } else {
-                              return null;
-                            }
+                          if (value.isEmpty ||
+                              !RegExp(r'^[a-z A-Z]').hasMatch(value)) {
+                            return "Trainer Name should contain only text";
+                          } else {
+                            return null;
                           }
+                        },
                       ),
                     ),
 
-                    //BUTTON
+                    //SUBMIT BUTTON
                     Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: ElevatedButton(
+                        padding: const EdgeInsets.all(25.0),
+                        child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                            elevation: 2,
+                              primary: Colors.blue,
+                              shadowColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 2,
+                              //color: Colors.amber,
 
-                            padding: EdgeInsets.symmetric(
-                                vertical: 1.5.h, horizontal: 10.w),
-                            onPrimary: Colors.white, // foreground
-                          ),
-                          onPressed: () {
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.5.h, horizontal: 11.6.h),
+                              onPrimary: Colors.white // foreground
+                              ),
+                          onPressed: () async {
                             final isValid = _formKey.currentState.validate();
-                            if(isValid)
-                            {
+                            if (isValid) {
+                              await _traineeRef.trainee
+                                  .doc(_employeeId ?? "Empty")
+                                  .collection("completed on the job training")
+                                  .doc(operationNumber ?? "Empty")
+                                  .set({
+                                "department ${_deptController.text} date of completion":
+                                    currentDate,
+                                "department ${_deptController.text} operation no":
+                                    operationNumber ?? "Empty",
+                                "department ${_deptController.text} faculty name":
+                                    _facultyName ?? "Empty",
+                              });
+                            }
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AssesmentListScreen(
-                                        empId: _employeeId ?? "Empty",
-                                        operationNo: operationNumber ?? "Empty",
-                                        facultyName: _facultyName ?? "Empty",
-                                        departmentName: _deptController.text,
-                                        dateOfCompletion:
-                                            Timestamp.fromDate(currentDate))));
-                          }
+                                    builder: (context) => DoneMark(
+                                          screen: false,
+                                        )));
                           },
-                          child: Text('Select the assessment')),
-                    ),
+                          child: Text('SUBMIT'),
+                        ))
                   ],
                 ),
               ),

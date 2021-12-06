@@ -2,6 +2,7 @@ import 'package:ashok_leyland_project_3/screens/done_add_screen.dart';
 import 'package:ashok_leyland_project_3/services/crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:ashok_leyland_project_3/constants.dart';
@@ -43,6 +44,51 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
   void initState() {
     var departmentDropDownValue = departmentItems[0];
     super.initState();
+  }
+
+  Future<void> _showMyDialog(String error) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[Text(error)],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<Null> _selectdate(BuildContext floatcontext) async {
+    final DateTime _seldate = await showDatePicker(
+        context: floatcontext,
+        initialDate: currentDate,
+        firstDate: DateTime(1990),
+        lastDate: DateTime(2100),
+        builder: (context, child) {
+          return SingleChildScrollView(
+            child: child,
+          );
+        });
+    if (_seldate != null && _seldate != currentDate) {
+      setState(() {
+        print(_seldate);
+        currentDate = _seldate;
+        _selectdate(context);
+      });
+    }
   }
 
   @override
@@ -109,11 +155,18 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                       onChanged: (input) {
                         _employeeId = input;
                         setState(() async {
-                          DocumentSnapshot snapshot =
-                              await _traineeRef.trainee.doc(_employeeId).get();
-                          Map<String, dynamic> documentData = snapshot.data();
-                          print(documentData["name"] ?? "Null");
-                          _nameController.text = documentData["name"] ?? "Null";
+                          await _traineeRef.trainee
+                              .doc(_employeeId)
+                              .get()
+                              .then((DocumentSnapshot snapshot) {
+                            if (snapshot.exists) {
+                              Map<String, dynamic> documentData =
+                                  snapshot.data();
+                              print(documentData["name"] ?? "Null");
+                              _nameController.text =
+                                  documentData["name"] ?? "Null";
+                            }
+                          });
                         });
                       },
                       decoration: InputDecoration(labelText: 'Employee Id'),
@@ -144,6 +197,33 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                       decoration: InputDecoration(labelText: 'Name'),
                       enabled: false,
                       enableInteractiveSelection: true,
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                    child: Bounce(
+                      duration: Duration(milliseconds: 110),
+                      onPressed: () {
+                        setState(() {
+                          _selectdate(context);
+                        });
+                      },
+                      child: Card(
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _selectdate(context);
+                                });
+                              },
+                              icon: Icon(Icons.calendar_today),
+                            ),
+                            Text('Date Of Allocation: $_formattedate'),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
 
@@ -195,20 +275,35 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                               vertical: 1.5.h, horizontal: 11.6.h),
                           onPrimary: Colors.white, // foreground
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           final isValid = _formKey.currentState.validate();
                           // crudOperations.storeData({});
                           if (isValid) {
-                            _traineeRef.trainee.doc(_employeeId).update({
-                              "department": departmentDropDownValue,
+                            await FirebaseFirestore.instance
+                                .collection("trainee")
+                                .doc(_employeeId)
+                                .get()
+                                .then((DocumentSnapshot snapshot) {
+                              if (snapshot.exists) {
+                                Map<String, dynamic> documentData =
+                                    snapshot.data();
+                                if (documentData["level"] == "L0") {
+                                  _showMyDialog(
+                                      "$_employeeId is not promoted to L1");
+                                } else {
+                                  _traineeRef.trainee.doc(_employeeId).update({
+                                    "department": departmentDropDownValue,
+                                    "department $departmentDropDownValue allocated date":currentDate,
+                                  });
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DoneMark(
+                                                screen: false,
+                                              )));
+                                }
+                              }
                             });
-                            
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DoneMark(
-                                          screen: false,
-                                        )));
                           }
                         },
                         child: Text('Submit')),

@@ -193,6 +193,33 @@ class _promotionPageState extends State<promotionPage> {
     "490": "CYLINDER BLOCK & Head WASHING",
     "500": "Camshaft & crankshaft washing",
   };
+  Future<void> _showMyDialog(String error) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[Text(error)],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   void initState() {
     var promotionDropDownValue = promotionItems[0];
@@ -282,6 +309,18 @@ class _promotionPageState extends State<promotionPage> {
                               _deptController.text =
                                   documentData["department"] ?? "Null";
                               var value = documentData["department"] ?? "Null";
+                              if (value == "Null") {
+                                _showMyDialog(
+                                    "Department is not allocated for $_employeeId ");
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => HomeScreen())
+                                );
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => HomeScreen())
+                                );
+                              }
 
                               setState(() {
                                 departmentDropDownValue = value;

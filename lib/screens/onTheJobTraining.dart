@@ -308,6 +308,31 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
     //     ],
     //   );
     // }
+    Future<void> _showMyDialog(String error) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[Text(error)],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(context,MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
@@ -373,6 +398,11 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                                 documentData["department"] ?? "Null";
 
                             var value = documentData["department"] ?? "Null";
+                            
+                            if (value == "Null") {
+                              _showMyDialog(
+                                  "Department is not allocated for $_employeeId ");
+                            }
 
                             setState(() {
                               departmentDropDownValue = value;
@@ -601,7 +631,20 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                               ),
                           onPressed: () async {
                             final isValid = _formKey.currentState.validate();
-                            if (isValid) {
+                            await FirebaseFirestore.instance
+                                .collection("trainee")
+                                .doc(_employeeId)
+                                .get()
+                                .then((DocumentSnapshot snapshot) async {
+                              if (snapshot.exists) {
+                                Map<String, dynamic> documentData =
+                                    snapshot.data();
+                                if (documentData["department"] == null) {
+                                  _showMyDialog(
+                                      "Department is not allocated for $_employeeId ");
+                                } else {
+                                  
+                              
                               await _traineeRef.trainee
                                   .doc(_employeeId ?? "Empty")
                                   .collection("completed on the job training")
@@ -609,6 +652,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                                   .get()
                                   .then((DocumentSnapshot snapshot) async {
                                 if (snapshot.exists) {
+                                  
                                   await _traineeRef.trainee
                                       .doc(_employeeId ?? "Empty")
                                       .collection(
@@ -642,13 +686,18 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                                   });
                                 }
                               });
-                            }
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DoneMark(
-                                          screen: false,
-                                        )));
+                              Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => DoneMark(
+                                screen:false,
+                              )
+                              ));
+                            
+                                }
+                              }
+                            });
+                            
+                            
                           },
                           child: Text('SUBMIT'),
                         ))

@@ -1,22 +1,13 @@
 //original
 import 'dart:io';
-
 import 'package:ashok_leyland_project_3/Constants.dart';
 import 'package:ashok_leyland_project_3/models/card.dart';
-import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
-import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
 import 'package:ashok_leyland_project_3/screens/home.dart';
-import 'package:ashok_leyland_project_3/screens/trainee_profile.dart';
 import 'package:ashok_leyland_project_3/services/crud.dart';
-import 'package:ashok_leyland_project_3/widgets/custom_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
-import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:csv/csv.dart';
@@ -33,6 +24,7 @@ class _SdcQueryState extends State<SdcQuery> {
   TextEditingController _searchController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  var _promotionDate;
   String _traineeName,
       _registerNumber,
       _search,
@@ -102,56 +94,88 @@ class _SdcQueryState extends State<SdcQuery> {
     row.add("Sno");
     row.add("EmpId");
     row.add("Name");
-    row.add("Age");
-    row.add("Gender");
+    row.add("Date of Joining");
     row.add("Qualification");
-    row.add("Level");
-    row.add("Program");
-    row.add("date of completion");
-    row.add("day");
-    row.add("pre-Test Percentage");
-    row.add("post-Test Percentage");
+    row.add("Age");
+    row.add('Ashok Leyland Overview');
+    row.add("Basics of Automobile");
+    row.add('Safety');
+    row.add('Cognitive');
+    row.add('Dexterity');
+    row.add('Parts Identification');
+    row.add('Work Ethics and Standing Orders');
+    row.add('5S, Gemba & TQM');
+    row.add("Promotion Status");
+    row.add("Date of Promotion");
+    row.add("Skill Level");
+    row.add("Alloted Department");
     rows.add(row);
     for (int i = 0; i < _allResults.length; i++) {
       Map<String, dynamic> data = _allResults[i].data() as Map<String, dynamic>;
       List<dynamic> row = [];
       row.add(i + 1);
-      row.add(data["empId"]);
-      row.add(data["name"]);
-      row.add(data["age"]);
-      row.add(data["gender"]);
-      row.add(data["qualifications"]);
-      row.add(data["level"]);
-      await FirebaseFirestore.instance
-          .collection("trainee")
-          .doc(data["empId"])
-          .collection("completed training")
-          .doc(_programDropDownValue)
-          .get()
-          .then((DocumentSnapshot snapshot) {
-        if (snapshot.exists) {
-          print("Im in the snapshot.exists");
-          Map<String, dynamic> documentData = snapshot.data();
-          print(documentData);
-          print(documentData["training"] ?? "Null");
-          row.add(documentData["training"].toString());
-          row.add(documentData["date of completion"].toString());
-          row.add(documentData["day"].toString());
-          row.add(documentData["mentor name"].toString());
-          row.add(documentData["post_test_marks"].toString());
-          row.add(documentData["pre_test_marks"].toString());
-        }
-      });
+
+      row.add(data["empId"] ?? "NA");
+      row.add(data["name"] ?? "NA");
+      row.add((data["doj"]).toDate().toString() ?? "NA");
+      row.add(data["qualifications"] ?? "NA");
+      row.add(data["age"] ?? "NA");
+      for (int i = 1; i < ProgramList.length; i++) {
+        print(i);
+        await FirebaseFirestore.instance
+            .collection("trainee")
+            .doc(data["empId"])
+            .collection("completed training")
+            .doc(ProgramList[i])
+            .get()
+            .then((DocumentSnapshot snapshot) {
+          if (snapshot.exists) {
+            print("Im in the snapshot.exists");
+            Map<String, dynamic> documentData = snapshot.data();
+            print(documentData);
+            if (documentData.isEmpty) {
+              row.add("N/A");
+            } else {
+              row.add(documentData["post_test_marks"].toString() ?? "NA");
+            }
+            // print(documentData["training"] ?? "Null");
+            // row.add(documentData["training"].toString() ?? "NA");
+            // row.add(documentData["date of completion"].toString() ?? "NA");
+            // row.add(documentData["day"].toString() ?? "NA");
+            // row.add(documentData["mentor name"].toString() ?? "NA");
+            try {
+              row.add(documentData["post_test_marks"].toString() ?? "NA");
+            } catch (e) {
+              row.add("N/A");
+            }
+
+            // row.add(documentData["pre_test_marks"].toString() ?? "NA");
+            _promotionDate = documentData["date of completion"];
+          } else {
+            row.add("N/A");
+          }
+        });
+      }
+      if (data["level"] == "L1") {
+        row.add("PASS");
+      } else {
+        row.add("FAIL");
+      }
+      row.add(_promotionDate);
+      row.add(data["level"] ?? "NA");
+      row.add(data["department"] ?? "NA");
       print(row);
       rows.add(row);
     }
-
 // Set the text value.
     for (int i = 1; i <= rows.length; i++) {
       for (int j = 1; j <= row.length; j++) {
         sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
       }
     }
+    // for (var i in rows) {
+    //   print(i);
+    // }
 
 // sheet.getRangeByIndex(2, 1).setText('Enter a number between 10 and 20');
 // Save and dispose the document.

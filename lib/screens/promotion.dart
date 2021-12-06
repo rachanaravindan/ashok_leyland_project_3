@@ -402,7 +402,7 @@ class _promotionPageState extends State<promotionPage> {
                         padding: EdgeInsets.all(8.0),
                         child: TextField(
                           controller: _skillController,
-                          onChanged: (input) {                            
+                          onChanged: (input) {
                             setState(() {
                               if (input.isEmpty)
                                 _isDisable = true;
@@ -434,13 +434,14 @@ class _promotionPageState extends State<promotionPage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => AssesmentListScreen(
-                                          empId: _employeeId ?? "Empty",
-                                          operationNo:
-                                              operationNumber ?? "Empty",
-                                          dateOfCompletion: Timestamp.fromDate(
-                                              currentDate),
-                                              departmentName: _deptController.text
-                                              )));
+                                            empId: _employeeId ?? "Empty",
+                                            operationNo:
+                                                operationNumber ?? "Empty",
+                                            dateOfCompletion:
+                                                Timestamp.fromDate(currentDate),
+                                            departmentName:
+                                                _deptController.text,
+                                          )));
                             },
                             child: Text('Select the assessment')),
                       ),
@@ -455,4 +456,3 @@ class _promotionPageState extends State<promotionPage> {
     );
   }
 }
-

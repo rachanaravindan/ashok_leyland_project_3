@@ -202,6 +202,7 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                             _traineeRef.trainee.doc(_employeeId).update({
                               "department": departmentDropDownValue,
                             });
+                            
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

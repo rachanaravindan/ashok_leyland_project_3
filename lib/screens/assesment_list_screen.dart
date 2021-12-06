@@ -253,18 +253,16 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
                       builder: (BuildContext context) => popupDialog(context),
                     );
                     print(dummyList);
-                    String currentLevel = findCurrentLevel(passCheckBox);
+                    print("current level" + currentLevel);
                     await _traineeRef.trainee
                         .doc(widget.empId ?? "Empty")
                         .collection("completed on the job training")
                         .doc(widget.operationNo ?? "Empty")
-                        .set({
+                        .update({
                       "department ${widget.departmentName} date of completion":
                           widget.dateOfCompletion,
                       "department ${widget.departmentName} operation no":
                           widget.operationNo ?? "Empty",
-                      "department ${widget.departmentName} faculty name":
-                          widget.facultyName ?? "Empty",
                       "department ${widget.departmentName} level":
                           currentLevel ?? "Empty",
                       "department ${widget.departmentName} passed assessments":

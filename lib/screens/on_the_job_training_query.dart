@@ -403,19 +403,15 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
       row.add("EmpId");
       row.add("Name");
       row.add("Date of Department Allocation");
-      row.add("Assesment 1");
-      row.add("Assesment 2");
-      row.add("Assesment 3");
-      row.add("Assesment 4");
-      row.add("Assesment 5");
-      row.add("Assesment 6");
-      row.add("Assesment 7");
-      row.add("Assesment 8");
-      row.add("Assesment 9");
-      row.add("Assesment 10");
-      row.add("Assesment 11");
-      row.add("Assesment 12");
-      row.add("Assesment 13");
+      if (departmentDropDownValue == "H - Engine Assembly") {
+        _HEngineAssembly.keys.forEach((k) {
+          row.add("Op $k");
+        });
+      } else if (departmentDropDownValue == "A - Engine Assembly") {
+        _AEngineAssembly.keys.forEach((k) {
+          row.add("Op $k");
+        });
+      }
       rows.add(row);
       for (int i = 0; i < _allResults.length; i++) {
         Map<String, dynamic> data =
@@ -424,46 +420,55 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
         row.add(i + 1);
         row.add(data["empId"]);
         row.add(data["name"]);
-        row.add(data["age"]);
-        row.add(data["gender"]);
-        row.add(data["qualifications"]);
-        row.add(data["operation no"]);
-        row.add(data["level"]);
-        await FirebaseFirestore.instance
-            .collection("trainee")
-            .doc(data["empId"])
-            .collection("completed on the job training")
-            .doc(operationNumber)
-            .get()
-            .then((DocumentSnapshot snapshot) {
-          if (snapshot.exists) {
-            print("Im in the snapshot.exists");
-            Map<String, dynamic> documentData = snapshot.data();
-            print(documentData);
-            print(documentData["training"] ?? "Null");
-            row.add(documentData["date of completion"].toDate());
-            row.add(documentData["faculty name"]);
-            for (int i = 0;
-                i < documentData["passed assessments"].length;
-                i++) {
-              if (documentData["passed assessments"][i] == 1)
-                row.add("Pass");
-              else if (documentData["passed assessments"][i] == 0)
-                row.add("Fail");
-              else
-                row.add("NA");
-            }
-          }
-        });
-        print(row);
-        rows.add(row);
+        // row.add(data["age"]);
+        // row.add(data["gender"]);
+        // row.add(data["qualifications"]);
+        row.add("06-12-21");
+        if (departmentDropDownValue == "H - Engine Assembly") {
+          List<String> tempRow = List<String>.empty(growable: true);
+          print("inside h engine assembly");
+          _HEngineAssembly.keys.forEach((k) async {
+            await FirebaseFirestore.instance
+                .collection("trainee")
+                .doc(data["empId"])
+                .collection("completed on the job training")
+                .doc(k.toString())
+                .get()
+                .then((DocumentSnapshot snapshot) {
+              if (snapshot.exists) {
+                print("Im in the snapshot.exists");
+                Map<String, dynamic> documentData = snapshot.data();
+                row.add(
+                    documentData["department $departmentDropDownValue level"] ??
+                        "Empty");
+                print(
+                    documentData["department $departmentDropDownValue level"] ??
+                        "Empty level");
+                tempRow.add(
+                    documentData["department $departmentDropDownValue level"] ??
+                        "Empty level");
+              } else {
+                print("Im in else block");
+                tempRow.add("N/A");
+              }
+            });
+          });
+          print(tempRow);
+          print(row);
+          rows.add(row);
+        }
       }
 
 // Set the text value.
-      for (int i = 1; i <= rows.length; i++) {
-        for (int j = 1; j <= row.length; j++) {
-          sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
+      try {
+        print("Im trying to print it");
+        for (int i = 1; i <= rows.length; i++) {
+          for (int j = 1; j <= rows[i].length; j++) {
+            sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
+          }
         }
+      } catch (e) {
+        print("Im not trying to print it");
       }
 
 // sheet.getRangeByIndex(2, 1).setText('Enter a number between 10 and 20');
@@ -604,6 +609,7 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
                                   } else
                                     showToggleBtn = false;
                                 });
+                                getData();
                               },
                             ),
                           ),
@@ -695,7 +701,7 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
                                         _operationDescController.text =
                                             "" ?? "Empty";
                                     }
-                                  if (departmentDropDownValue ==
+                                    if (departmentDropDownValue ==
                                         "A - Engine Assembly") {
                                       if (_AEngineAssembly.containsKey(
                                           operationNumber))
@@ -705,12 +711,12 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
                                         _operationDescController.text =
                                             "" ?? "Empty";
                                     }
-                                  }
-                                   catch (error) {
+                                  } catch (error) {
                                     print("im in catch");
                                     _operationDescController.text = "";
                                   }
                                 });
+                                getData();
                               },
                               decoration: InputDecoration(
                                   labelText: 'Enter Operation Number'),

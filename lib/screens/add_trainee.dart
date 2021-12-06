@@ -263,7 +263,7 @@ class _AddTraineeState extends State<AddTrainee> {
                                       _traineeQualifications ?? "Null",
                                   'gender': GenderDropDownValue,
                                   'age': _traineeAge ?? "Null",
-                                  'level': "L0",
+                                  'level': "L0", 
                                 });
                                 Navigator.push(
                                     context,

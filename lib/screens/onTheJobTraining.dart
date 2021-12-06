@@ -606,13 +606,41 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                                   .doc(_employeeId ?? "Empty")
                                   .collection("completed on the job training")
                                   .doc(operationNumber ?? "Empty")
-                                  .set({
-                                "department ${_deptController.text} date of completion":
-                                    currentDate,
-                                "department ${_deptController.text} operation no":
-                                    operationNumber ?? "Empty",
-                                "department ${_deptController.text} faculty name":
-                                    _facultyName ?? "Empty",
+                                  .get()
+                                  .then((DocumentSnapshot snapshot) async {
+                                if (snapshot.exists) {
+                                  await _traineeRef.trainee
+                                      .doc(_employeeId ?? "Empty")
+                                      .collection(
+                                          "completed on the job training")
+                                      .doc(operationNumber ?? "Empty")
+                                      .update({
+                                    "department ${_deptController.text} date of completion":
+                                        currentDate,
+                                    "department ${_deptController.text} operation no":
+                                        operationNumber ?? "Empty",
+                                    "department ${_deptController.text} faculty name":
+                                        _facultyName ?? "Empty",
+                                    "department ${_deptController.text} level":
+                                        "L1",
+                                  });
+                                } else {
+                                  await _traineeRef.trainee
+                                      .doc(_employeeId ?? "Empty")
+                                      .collection(
+                                          "completed on the job training")
+                                      .doc(operationNumber ?? "Empty")
+                                      .set({
+                                    "department ${_deptController.text} date of completion":
+                                        currentDate,
+                                    "department ${_deptController.text} operation no":
+                                        operationNumber ?? "Empty",
+                                    "department ${_deptController.text} faculty name":
+                                        _facultyName ?? "Empty",
+                                    "department ${_deptController.text} level":
+                                        "L1",
+                                  });
+                                }
                               });
                             }
                             Navigator.push(

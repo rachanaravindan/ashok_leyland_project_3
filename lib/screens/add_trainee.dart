@@ -108,26 +108,12 @@ class _AddTraineeState extends State<AddTrainee> {
                         "Add Trainee",
                         style: Constants.boldHeading,
                       ),
+
+                      //EMPLOYEE ID
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
-                          decoration: InputDecoration(labelText: 'Name'),
-                          validator: (value) {
-                            if (value.isEmpty ||
-                                !RegExp(r'^[a-z A-Z]').hasMatch(value)) {
-                              return "enter valid name";
-                            } else {
-                              return null;
-                            }
-                          },
-                          onChanged: (value) {
-                            _traineeName = value;
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: TextFormField(
+                          textInputAction: TextInputAction.next,
                           decoration: InputDecoration(labelText: 'Employee Id'),
                           validator: (value) {
                             if (value.isEmpty ||
@@ -142,6 +128,28 @@ class _AddTraineeState extends State<AddTrainee> {
                           },
                         ),
                       ),
+
+                      //NAME
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(labelText: 'Name'),
+                          validator: (value) {
+                            if (value.isEmpty ||
+                                !RegExp(r'^[a-z A-Z]').hasMatch(value)) {
+                              return "enter valid name";
+                            } else {
+                              return null;
+                            }
+                          },
+                          onChanged: (value) {
+                            _traineeName = value;
+                          },
+                        ),
+                      ),
+
+                      //DATE OF JOINING
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 2, horizontal: 4),
@@ -169,9 +177,12 @@ class _AddTraineeState extends State<AddTrainee> {
                           ),
                         ),
                       ),
+
+                      //QUALIFICATIONS
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
+                          textInputAction: TextInputAction.next,
                           decoration:
                               InputDecoration(labelText: 'Qualifications'),
                           validator: (value) {
@@ -187,6 +198,8 @@ class _AddTraineeState extends State<AddTrainee> {
                           },
                         ),
                       ),
+
+                      //GENDER
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: DropdownButton<String>(
@@ -223,9 +236,12 @@ class _AddTraineeState extends State<AddTrainee> {
                           },
                         ),
                       ),
+
+                      //AGE
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
+                          textInputAction: TextInputAction.done,
                           decoration: InputDecoration(labelText: 'Age'),
                           validator: (value) {
                             if (value.isEmpty ||
@@ -251,26 +267,98 @@ class _AddTraineeState extends State<AddTrainee> {
                                   vertical: 1.5.h, horizontal: 11.6.h),
                               onPrimary: Colors.white, // foreground
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               final isValid = _formKey.currentState.validate();
-                              // print(_traineeName);
+
                               if (isValid) {
-                                _traineeRef.trainee.doc(_employeeId).set({
-                                  'name': _traineeName ?? "Null",
-                                  'empId': _employeeId ?? "Null",
-                                  'doj': Timestamp.fromDate(currentDate),
-                                  'qualifications':
-                                      _traineeQualifications ?? "Null",
-                                  'gender': GenderDropDownValue,
-                                  'age': _traineeAge ?? "Null",
-                                  'level': "L0", 
+                                print("inside isvalid");
+                                await _traineeRef.trainee
+                                    .doc(_employeeId)
+                                    .get()
+                                    .then((DocumentSnapshot snapshot) {
+                                  if (snapshot.exists) {
+                                    print('im inside snapshot.exists');
+                                    Map<String, dynamic> documentData =
+                                        snapshot.data();
+                                    if (documentData["empId"] != null) {
+                                      print('im inside docdata empid');
+                                      showDialog<void>(
+                                        context: context,
+                                        barrierDismissible:
+                                            false, // user must tap button!
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            content: SingleChildScrollView(
+                                              child: ListBody(
+                                                children: <Widget>[
+                                                  Text(
+                                                      '$_employeeId already exists. Do you want to overwrite?')
+                                                ],
+                                              ),
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: const Text('Overwrite'),
+                                                onPressed: () {
+                                                  _traineeRef.trainee
+                                                      .doc(_employeeId)
+                                                      .update({
+                                                    // .set({
+                                                    'name':
+                                                        _traineeName ?? "Null",
+                                                    'empId':
+                                                        _employeeId ?? "Null",
+                                                    'doj': Timestamp.fromDate(
+                                                        currentDate),
+                                                    'qualifications':
+                                                        _traineeQualifications ??
+                                                            "Null",
+                                                    'gender':
+                                                        GenderDropDownValue,
+                                                    'age':
+                                                        _traineeAge ?? "Null",
+                                                    'level': "L0",
+                                                  });
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              DoneMark(
+                                                                screen: false,
+                                                              )));
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: const Text('No'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
+                                  } else {
+                                    print('im inside else 2');
+                                    _traineeRef.trainee.doc(_employeeId).set({
+                                      'name': _traineeName ?? "Null",
+                                      'empId': _employeeId ?? "Null",
+                                      'doj': Timestamp.fromDate(currentDate),
+                                      'qualifications':
+                                          _traineeQualifications ?? "Null",
+                                      'gender': GenderDropDownValue,
+                                      'age': _traineeAge ?? "Null",
+                                      'level': "L0",
+                                    });
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => DoneMark(
+                                                  screen: false,
+                                                )));
+                                  }
                                 });
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DoneMark(
-                                              screen: false,
-                                            )));
                               }
                             },
                             child: Text('Submit')),

@@ -293,7 +293,8 @@ class _promotionPageState extends State<promotionPage> {
                       //EMPLOYEE ID
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextField(
+                        child: TextFormField(
+                           textInputAction: TextInputAction.next,
                           onChanged: (input) {
                             _employeeId = input;
                             setState(() async {
@@ -346,7 +347,8 @@ class _promotionPageState extends State<promotionPage> {
                       // NAME
                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: TextField(
+                        child: TextFormField(
+                           textInputAction: TextInputAction.next,
                           controller: _nameController,
                           onChanged: (input) {
                             _traineeName = input;
@@ -366,7 +368,8 @@ class _promotionPageState extends State<promotionPage> {
                       // DEPARTMENT
                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: TextField(
+                        child: TextFormField(
+                           textInputAction: TextInputAction.next,
                           controller: _deptController,
                           onChanged: (input) {
                             _traineeName = input;
@@ -386,7 +389,8 @@ class _promotionPageState extends State<promotionPage> {
                       //OPERATION NUMBER
                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: TextField(
+                        child: TextFormField(
+                           textInputAction: TextInputAction.next,
                           onChanged: (input) {
                             operationNumber = input;
                             setState(() async {
@@ -427,7 +431,8 @@ class _promotionPageState extends State<promotionPage> {
                       ),
                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: TextField(
+                        child: TextFormField(
+                           textInputAction: TextInputAction.next,
                           controller: _operationDescController,
                           maxLines: 3,
                           enabled: false,
@@ -439,7 +444,8 @@ class _promotionPageState extends State<promotionPage> {
                       //CURRENT SKILL LEVEL
                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: TextField(
+                        child: TextFormField(
+                           textInputAction: TextInputAction.done,
                           controller: _skillController,
                           onChanged: (input) {
                             setState(() {

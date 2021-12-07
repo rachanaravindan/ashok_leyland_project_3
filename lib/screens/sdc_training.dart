@@ -595,12 +595,12 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                   "date of completion of ${DropDownValue}":
                                       Timestamp.fromDate(_currentdate)
                                 });
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) => DoneMark(
-                                //               screen: false,
-                                //             )));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DoneMark(
+                                              screen: false,
+                                            )));
                               }
                               
                             }

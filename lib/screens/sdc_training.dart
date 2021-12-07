@@ -199,6 +199,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                     textInputAction: TextInputAction.next,
                     onChanged: (input) {
                       _employeeId = input;
                       setState(() async {
@@ -377,6 +378,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextFormField(
+                     textInputAction: TextInputAction.next,
                     onChanged: (str) {
                       setState(() {
                         if (str.isEmpty) _isDisable = true;
@@ -396,7 +398,8 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: TextFormField(                    
+                  child: TextFormField(  
+                     textInputAction: TextInputAction.next,                  
                     onChanged: (str) {
                       setState(() {
                         if (str.isEmpty)
@@ -420,6 +423,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextFormField(
+                     textInputAction: TextInputAction.next,
                     onChanged: (str) {
                       setState(() {
                         if (str.isEmpty)
@@ -465,6 +469,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextFormField(
+                     textInputAction: TextInputAction.done,
                     validator: (value) {
                           if (value.isEmpty ||
                               !RegExp(r'^[0-9]').hasMatch(value)) {

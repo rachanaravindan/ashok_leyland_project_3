@@ -111,6 +111,7 @@ class _AddTraineeState extends State<AddTrainee> {
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
+                           textInputAction: TextInputAction.next,
                           decoration: InputDecoration(labelText: 'Name'),
                           validator: (value) {
                             if (value.isEmpty ||
@@ -128,6 +129,7 @@ class _AddTraineeState extends State<AddTrainee> {
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
+                           textInputAction: TextInputAction.next,
                           decoration: InputDecoration(labelText: 'Employee Id'),
                           validator: (value) {
                             if (value.isEmpty ||
@@ -172,6 +174,7 @@ class _AddTraineeState extends State<AddTrainee> {
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
+                          textInputAction: TextInputAction.next,
                           decoration:
                               InputDecoration(labelText: 'Qualifications'),
                           validator: (value) {
@@ -226,6 +229,7 @@ class _AddTraineeState extends State<AddTrainee> {
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
+                          textInputAction: TextInputAction.done,
                           decoration: InputDecoration(labelText: 'Age'),
                           validator: (value) {
                             if (value.isEmpty ||

@@ -383,6 +383,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
+                         textInputAction: TextInputAction.next,
                         onChanged: (input) {
                           _employeeId = input;
                           setState(() async {
@@ -521,6 +522,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
+                         textInputAction: TextInputAction.next,
                         onChanged: (input) {
                           setState(() {
                             operationNumber = input;
@@ -592,6 +594,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
+                         textInputAction: TextInputAction.done,
                         onChanged: (input) {
                           _facultyName = input;
                           setState(() {

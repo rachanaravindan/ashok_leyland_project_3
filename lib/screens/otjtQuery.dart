@@ -228,7 +228,9 @@ class _OtjtQueryState extends State<OtjtQuery> {
     var showResults = [];
     if (_searchController.text != "") {
       for (var item in _allResults) {
-        var empId = item["name"].toLowerCase();
+        //var empId = item["name"].toLowerCase();
+        var empId = item["empId"];
+
         if (empId.contains(_searchController.text.toLowerCase())) {
           showResults.add(item);
         }
@@ -393,7 +395,6 @@ class _OtjtQueryState extends State<OtjtQuery> {
     }
 
     // void openExcel(var rows) async {
-      
 
     //   final Workbook workbook = Workbook();
     //   // Accessing worksheet via index.
@@ -443,6 +444,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
         row.add(i + 1);
         row.add(data["empId"]);
         row.add(data["name"]);
+        //row.add(data["department"]);
         row.add("06-12-21");
         mapp.keys.forEach((k) async {
           await FirebaseFirestore.instance
@@ -478,10 +480,11 @@ class _OtjtQueryState extends State<OtjtQuery> {
       var lock = new Lock();
       List<List<dynamic>> rows = [];
       List<dynamic> row = [];
-
+      //HEADING
       row.add("Sno");
       row.add("EmpId");
       row.add("Name");
+      row.add("Department");
       row.add("Date of Department Allocation");
       if (departmentDropDownValue == "H - Engine Assembly") {
         _HEngineAssembly.keys.forEach((k) {
@@ -500,19 +503,16 @@ class _OtjtQueryState extends State<OtjtQuery> {
         row.add(i + 1);
         row.add(data["empId"]);
         row.add(data["name"]);
+        row.add(data["department"]);
         // row.add(data["age"]);
         // row.add(data["gender"]);
         // row.add(data["qualifications"]);
         row.add("07-12-21");
-        _HEngineAssembly.keys.forEach((k) {
-          if (data[
-                  "department $departmentDropDownValue operation $k"] !=
-              null)
-            row.add(data[
-                    "department $departmentDropDownValue operation $k"]
+        mapp.keys.forEach((k) {
+          if (data["department $departmentDropDownValue operation $k"] != null)
+            row.add(data["department $departmentDropDownValue operation $k"]
                 .toString());
-          else
-            row.add("NA");
+          else if (k != "-1") row.add("NA");
         });
         rows.add(row);
       }
@@ -557,7 +557,10 @@ class _OtjtQueryState extends State<OtjtQuery> {
                   backgroundColor: Colors.blue[300],
                   child: Icon(Icons.file_download),
                   onPressed: () {
-                    _createExcel(_AEngineAssembly);
+                    if (departmentDropDownValue == 'A - Engine Assembly')
+                      _createExcel(_AEngineAssembly);
+                    else if (departmentDropDownValue == 'H - Engine Assembly')
+                      _createExcel(_HEngineAssembly);
                   }),
               body: SingleChildScrollView(
                 child: Form(
@@ -633,8 +636,8 @@ class _OtjtQueryState extends State<OtjtQuery> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5.h),
-                            child: DropdownButton<String>(
+                            padding: EdgeInsets.symmetric(horizontal: 5.w),
+                            child:DropdownButtonFormField<String>(
                               isExpanded: true,
                               dropdownColor: Colors.white,
                               iconSize: 5.h,
@@ -657,6 +660,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
                                 );
                               }).toList(),
                               hint: Text(departmentItems[0]),
+                               validator: (value) => value == "Department" ? 'field required' : null,
                               onChanged: (String value) {
                                 setState(() {
                                   departmentDropDownValue = value;
@@ -665,7 +669,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
                                   } else
                                     showToggleBtn = false;
                                 });
-                                getData();
+                                // getData();
                               },
                             ),
                           ),
@@ -698,7 +702,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
                               onChanged: (String value) {
                                 setState(() {
                                   _levelDropDownValue = value;
-                                  getData();
+                                  //getData();
                                 });
                               },
                             ),
@@ -744,7 +748,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
                               onChanged: (input) {
                                 setState(() {
                                   operationNumber = input;
-                                  getData();
+                                  //getData();
                                   print(operationNumber);
                                   try {
                                     if (departmentDropDownValue ==
@@ -772,7 +776,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
                                     _operationDescController.text = "";
                                   }
                                 });
-                                getData();
+                                //getData();
                               },
                               decoration: InputDecoration(
                                   labelText: 'Enter Operation Number'),
@@ -787,6 +791,27 @@ class _OtjtQueryState extends State<OtjtQuery> {
                               decoration: InputDecoration(
                                   labelText: 'Operation Description'),
                             ),
+                          ),
+                          
+                          //SUBMIT BUTTON
+                          Padding(
+                            padding: const EdgeInsets.all(25.0),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  elevation: 2,
+
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 1.5.h, horizontal: 11.6.h),
+                                  onPrimary: Colors.white, // foreground
+                                ),
+                                onPressed: () async {
+                                  final isValid = _formKey.currentState.validate();
+
+
+                                },
+                                child: Text('Submit')),
                           ),
 
                           // //FROM DATEPICKER

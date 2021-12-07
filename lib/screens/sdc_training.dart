@@ -277,7 +277,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
+                    child:  DropdownButtonFormField<String>(
                       isExpanded: true,
                       dropdownColor: Colors.white,
                       iconSize: 5.h,
@@ -299,6 +299,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                         );
                       }).toList(),
                       hint: Text(DayItems[0]),
+                      validator: (value) => value == "Training Day" ? 'field required' : null,
                       onChanged: (String value) {
                         setState(() {
                           DayDropDownValue = value;
@@ -337,7 +338,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
+                    child: DropdownButtonFormField<String>(
                       isExpanded: true,
                       dropdownColor: Colors.white,
                       iconSize: 5.h,
@@ -359,6 +360,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                         );
                       }).toList(),
                       hint: Text(items[0]),
+                      validator: (value) => value == "Choose Program" ? 'field required' : null,
                       onChanged: (String value) {
                         setState(() {
                           DropDownValue = value;
@@ -559,8 +561,14 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                   ((entered_pretest_mark / max_marks) * 100);
                               _postTestMarks =
                                   ((entered_posttest_mark / max_marks) * 100);
-                              if (_preTestMarks == -1 || _postTestMarks == -1) {
+                              if (_preTestMarks == -1 || _postTestMarks == -1 ) {
                                 _showMyDialog("Invalid Mark");
+                              }
+                              if(entered_pretest_mark > max_marks ){
+                                _showMyDialog("Pretest mark exceeds maximum mark");
+                              }
+                              else if(entered_posttest_mark > max_marks){
+                                _showMyDialog("Posttest mark exceeds maximum mark");
                               }
                               if (_nameController.text==
                                   "Enter Valid Employee ID") {

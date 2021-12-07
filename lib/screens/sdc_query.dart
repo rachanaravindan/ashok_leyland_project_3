@@ -121,7 +121,7 @@ class _SdcQueryState extends State<SdcQuery> {
       row.add(data["qualifications"] ?? "NA");
       row.add(data["age"] ?? "NA");
       for (int i = 1; i < ProgramList.length; i++) {
-        print(i);
+        
         await FirebaseFirestore.instance
             .collection("trainee")
             .doc(data["empId"])
@@ -130,9 +130,9 @@ class _SdcQueryState extends State<SdcQuery> {
             .get()
             .then((DocumentSnapshot snapshot) {
           if (snapshot.exists) {
-            print("Im in the snapshot.exists");
+            
             Map<String, dynamic> documentData = snapshot.data();
-            print(documentData);
+            
             if (documentData.isEmpty) {
               row.add("N/A");
             } else {
@@ -143,11 +143,7 @@ class _SdcQueryState extends State<SdcQuery> {
             // row.add(documentData["date of completion"].toString() ?? "NA");
             // row.add(documentData["day"].toString() ?? "NA");
             // row.add(documentData["mentor name"].toString() ?? "NA");
-            try {
-              row.add(documentData["post_test_marks"].toString() ?? "NA");
-            } catch (e) {
-              row.add("N/A");
-            }
+            
 
             // row.add(documentData["pre_test_marks"].toString() ?? "NA");
             _promotionDate = documentData["date of completion"];

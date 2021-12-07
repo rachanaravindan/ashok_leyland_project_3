@@ -1,5 +1,6 @@
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
 import 'package:ashok_leyland_project_3/screens/deleteTrainee.dart';
+import 'package:ashok_leyland_project_3/screens/otjtQuery.dart';
 import 'package:ashok_leyland_project_3/widgets/exit_popup.dart';
 import 'package:ashok_leyland_project_3/screens/on_the_job_training_query.dart';
 import 'package:ashok_leyland_project_3/screens/promotion.dart';
@@ -110,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => OnTheJobTrainingQuery()));
+                          builder: (context) => OtjtQuery()));
                   assetLoc = "assets/on_the_job_query.svg";
                   break;
                 case 7:

@@ -16,12 +16,12 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart'
     hide Column, Row, Alignment;
 import 'package:synchronized/synchronized.dart';
 
-class OnTheJobTrainingQuery extends StatefulWidget {
+class OtjtQuery extends StatefulWidget {
   @override
-  _OnTheJobTrainingQueryState createState() => _OnTheJobTrainingQueryState();
+  _OtjtQueryState createState() => _OtjtQueryState();
 }
 
-class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
+class _OtjtQueryState extends State<OtjtQuery> {
   TextEditingController _searchController = TextEditingController();
   var _operationDescController = TextEditingController();
 
@@ -392,9 +392,90 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
       }
     }
 
-    Future<List<List>> _createExcel() async {
-      // Create a new Excel Document.
+    // void openExcel(var rows) async {
+      
 
+    //   final Workbook workbook = Workbook();
+    //   // Accessing worksheet via index.
+    //   final Worksheet sheet = workbook.worksheets[0];
+    //   try {
+    //     print("Im trying to print it");
+    //     for (int i = 1; i <= rows.length; i++) {
+    //       for (int j = 1; j <= row.length; j++) {
+    //         print(rows[i - 1]);
+    //         // sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
+    //       }
+    //     }
+    //     for (var roww in rows) {
+    //       print(roww);
+    //     }
+    //   } catch (e) {
+    //     print("Im not trying to print it");
+    //   }
+    //   // Set the text value.
+
+    //   sheet.getRangeByIndex(2, 1).setText('Enter a number between 10 and 20');
+    //   // Save and dispose the document.
+    //   final List<int> bytes = workbook.saveAsStream();
+    //   workbook.dispose();
+
+    //   // Get external storage directory
+    //   final directory = await getExternalStorageDirectory();
+
+    //   // Get directory path
+    //   final path = directory.path;
+
+    //   // Create an empty file to write Excel data
+    //   File file = File('$path/Output.xlsx');
+
+    //   // Write Excel data
+    //   await file.writeAsBytes(bytes, flush: true);
+
+    //   // Open the Excel document in mobile
+    //   OpenFile.open('$path/Output.xlsx');
+    // }
+
+    Future<List> iterate(List row, Map<String, String> mapp) async {
+      for (int i = 0; i < _allResults.length; i++) {
+        Map<String, dynamic> data =
+            _allResults[i].data() as Map<String, dynamic>;
+        List<dynamic> row = [];
+        row.add(i + 1);
+        row.add(data["empId"]);
+        row.add(data["name"]);
+        row.add("06-12-21");
+        mapp.keys.forEach((k) async {
+          await FirebaseFirestore.instance
+              .collection("trainee")
+              .doc(data["empId"])
+              .collection("completed on the job training")
+              .doc(k.toString())
+              .get()
+              .then((DocumentSnapshot snapshot) {
+            if (snapshot.exists) {
+              print("Im in the snapshot.exists");
+              Map<String, dynamic> documentData = snapshot.data();
+              row.add(
+                  documentData["department $departmentDropDownValue level"] ??
+                      "Empty");
+            } else {
+              print("Im in else");
+              row.add("Na");
+            }
+            // print(tempRow);
+            // print(row);
+          });
+        });
+      }
+    }
+
+    Future<void> _createExcel(Map<String, String> mapp) async {
+      final Workbook workbook = Workbook();
+
+// Accessing worksheet via index.
+      final Worksheet sheet = workbook.worksheets[0];
+      // Create a new Excel Document.
+      var lock = new Lock();
       List<List<dynamic>> rows = [];
       List<dynamic> row = [];
 
@@ -422,121 +503,49 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
         // row.add(data["age"]);
         // row.add(data["gender"]);
         // row.add(data["qualifications"]);
-        // row.add(DateTime.fromMillisecondsSinceEpoch(data["department $departmentDropDownValue operation $operationNumber"]*1000));
         row.add("07-12-21");
-        // if (departmentDropDownValue == "H - Engine Assembly") {
-        //   _HEngineAssembly.keys.forEach((k) {
-        //     row.add("Op $k");
-        //   });
-        // } else if (departmentDropDownValue == "A - Engine Assembly") {
-        //   _AEngineAssembly.keys.forEach((k) {
-        //     row.add("Op $k");
-        //   });
-        // }
+        _HEngineAssembly.keys.forEach((k) {
+          if (data[
+                  "department $departmentDropDownValue operation $k"] !=
+              null)
+            row.add(data[
+                    "department $departmentDropDownValue operation $k"]
+                .toString());
+          else
+            row.add("NA");
+        });
+        rows.add(row);
+      }
+      print(rows);
 
-        if (departmentDropDownValue == "H - Engine Assembly") {
-          List<String> tempRow = List<String>.empty(growable: true);
-          print("inside h engine assembly");
-          _HEngineAssembly.keys.forEach((k) async {
-            await FirebaseFirestore.instance
-                .collection("trainee")
-                .doc(data["empId"])
-                .collection("completed on the job training")
-                .doc(k.toString())
-                .get()
-                .then((DocumentSnapshot snapshot) {
-              if (snapshot.exists) {
-                print("Im in the snapshot.exists");
-                Map<String, dynamic> documentData = snapshot.data();
-                row.add(
-                    documentData["department $departmentDropDownValue level"] ??
-                        "Empty");
-              } else {
-                row.add("Na");
-              }
-            });
-          });
-
-          rows.add(row);
-        }
-        if (departmentDropDownValue == "A - Engine Assembly") {
-          print("inside h engine assembly");
-          _AEngineAssembly.keys.forEach((k) async {
-            await FirebaseFirestore.instance
-                .collection("trainee")
-                .doc(data["empId"])
-                .collection("completed on the job training")
-                .doc(k.toString())
-                .get()
-                .then((DocumentSnapshot snapshot) {
-              if (snapshot.exists) {
-                print("Im in the snapshot.exists");
-                Map<String, dynamic> documentData = snapshot.data();
-                row.add(
-                    documentData["department $departmentDropDownValue level"] ??
-                        "Empty");
-              } else {
-                print("Im in else");
-                row.add("Na");
-              }
-              // print(tempRow);
-              // print(row);
-              rows.add(row);
-            });
-          });
-        }
-        for (int i = 0; i < rows.length; i++) {
-          print(rows[i]);
+      for (int i = 1; i <= rows.length; i++) {
+        for (int j = 1; j <= row.length; j++) {
+          sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
         }
       }
-      // await Future.wait(rows);
-      return Future.delayed(const Duration(seconds: 5), () => rows);
-    }
+      // for (var i in rows) {
+      //   print(i);
+      // }
 
-    Future<void> openExcel() async {
-      // print("rows:" + rows);
-      List<List> rows = await _createExcel();
-      await _createExcel().whenComplete(() {
-        final Workbook workbook = Workbook();
-        // Accessing worksheet via index.
-        final Worksheet sheet = workbook.worksheets[0];
-        try {
-          print("Im trying to print it");
-          // for (int i = 1; i <= rows.length; i++) {
-          //   for (int j = 1; j <= row.length; j++) {
-          //     print(rows[i - 1]);
-          //     // sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
-          //   }
-          // }
-          for (var roww in rows) {
-            print(roww);
-          }
-        } catch (e) {
-          print("Im not trying to print it");
-        }
-      });
+// sheet.getRangeByIndex(2, 1).setText('Enter a number between 10 and 20');
+// Save and dispose the document.
+      final List<int> bytes = workbook.saveAsStream();
+      workbook.dispose();
 
-      // Set the text value.
+// Get external storage directory
+      final directory = await getExternalStorageDirectory();
 
-      // sheet.getRangeByIndex(2, 1).setText('Enter a number between 10 and 20');
-      // Save and dispose the document.
-      // final List<int> bytes = workbook.saveAsStream();
-      // workbook.dispose();
+// Get directory path
+      final path = directory.path;
 
-      // // Get external storage directory
-      // final directory = await getExternalStorageDirectory();
+// Create an empty file to write Excel data
+      File file = File('$path/Output.xlsx');
 
-      // // Get directory path
-      // final path = directory.path;
+// Write Excel data
+      await file.writeAsBytes(bytes, flush: true);
 
-      // // Create an empty file to write Excel data
-      // File file = File('$path/Output.xlsx');
-
-      // // Write Excel data
-      // await file.writeAsBytes(bytes, flush: true);
-
-      // // Open the Excel document in mobile
-      // OpenFile.open('$path/Output.xlsx');
+// Open the Excel document in mobile
+      OpenFile.open('$path/Output.xlsx');
     }
 
     return Sizer(builder: (context, orientation, deviceType) {
@@ -547,8 +556,8 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
               floatingActionButton: FloatingActionButton(
                   backgroundColor: Colors.blue[300],
                   child: Icon(Icons.file_download),
-                  onPressed: () async {
-                    print(await _createExcel());
+                  onPressed: () {
+                    _createExcel(_AEngineAssembly);
                   }),
               body: SingleChildScrollView(
                 child: Form(

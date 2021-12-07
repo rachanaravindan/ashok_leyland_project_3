@@ -4,7 +4,6 @@ import 'package:ashok_leyland_project_3/screens/otjtQuery.dart';
 import 'package:ashok_leyland_project_3/widgets/exit_popup.dart';
 import 'package:ashok_leyland_project_3/screens/on_the_job_training_query.dart';
 import 'package:ashok_leyland_project_3/screens/promotion.dart';
-import 'package:ashok_leyland_project_3/screens/promotion.dart';
 import 'package:ashok_leyland_project_3/screens/sdc_training.dart';
 import 'package:ashok_leyland_project_3/screens/department_allocation.dart';
 import 'package:ashok_leyland_project_3/screens/onTheJobTraining.dart';

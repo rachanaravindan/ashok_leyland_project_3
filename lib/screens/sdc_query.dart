@@ -121,7 +121,6 @@ class _SdcQueryState extends State<SdcQuery> {
       row.add(data["qualifications"] ?? "NA");
       row.add(data["age"] ?? "NA");
       for (int i = 1; i < ProgramList.length; i++) {
-        
         await FirebaseFirestore.instance
             .collection("trainee")
             .doc(data["empId"])
@@ -130,9 +129,8 @@ class _SdcQueryState extends State<SdcQuery> {
             .get()
             .then((DocumentSnapshot snapshot) {
           if (snapshot.exists) {
-            
             Map<String, dynamic> documentData = snapshot.data();
-            
+
             if (documentData.isEmpty) {
               row.add("N/A");
             } else {
@@ -143,7 +141,6 @@ class _SdcQueryState extends State<SdcQuery> {
             // row.add(documentData["date of completion"].toString() ?? "NA");
             // row.add(documentData["day"].toString() ?? "NA");
             // row.add(documentData["mentor name"].toString() ?? "NA");
-            
 
             // row.add(documentData["pre_test_marks"].toString() ?? "NA");
             _promotionDate = documentData["date of completion"];
@@ -198,7 +195,8 @@ class _SdcQueryState extends State<SdcQuery> {
     var showResults = [];
     if (_searchController.text != "") {
       for (var item in _allResults) {
-        var empId = item["name"].toLowerCase();
+        //var empId = item["name"].toLowerCase();
+        var empId = item["empId"];
         if (empId.contains(_searchController.text.toLowerCase())) {
           showResults.add(item);
         }
@@ -563,6 +561,7 @@ class _SdcQueryState extends State<SdcQuery> {
                               },
                             ),
                           ),
+                          
                           Row(
                             children: [
                               SizedBox(

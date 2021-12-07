@@ -401,6 +401,8 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
       row.add("Sno");
       row.add("EmpId");
       row.add("Name");
+      //row.add("Department");
+      
       row.add("Date of Department Allocation");
       if (departmentDropDownValue == "H - Engine Assembly") {
         _HEngineAssembly.keys.forEach((k) {
@@ -419,6 +421,7 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
         row.add(i + 1);
         row.add(data["empId"]);
         row.add(data["name"]);
+
         // row.add(data["age"]);
         // row.add(data["gender"]);
         // row.add(data["qualifications"]);

@@ -71,6 +71,7 @@ Widget buildCard(BuildContext context, DocumentSnapshot document) {
               builder: (context) => traineeProfile(
                     traineeName: data["name"] ??= "null",
                     traineeID: data["empId"] ??= "null",
+                    department:data["department"]??="null"
                     // joiningDate: "19/03/2001",
                   )));
     },

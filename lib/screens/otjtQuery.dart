@@ -637,7 +637,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 5.w),
-                            child:DropdownButtonFormField<String>(
+                            child: DropdownButtonFormField<String>(
                               isExpanded: true,
                               dropdownColor: Colors.white,
                               iconSize: 5.h,
@@ -660,7 +660,9 @@ class _OtjtQueryState extends State<OtjtQuery> {
                                 );
                               }).toList(),
                               hint: Text(departmentItems[0]),
-                               validator: (value) => value == "Department" ? 'field required' : null,
+                              validator: (value) => value == "Department"
+                                  ? 'field required'
+                                  : null,
                               onChanged: (String value) {
                                 setState(() {
                                   departmentDropDownValue = value;
@@ -792,7 +794,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
                                   labelText: 'Operation Description'),
                             ),
                           ),
-                          
+
                           //SUBMIT BUTTON
                           Padding(
                             padding: const EdgeInsets.all(25.0),
@@ -807,9 +809,9 @@ class _OtjtQueryState extends State<OtjtQuery> {
                                   onPrimary: Colors.white, // foreground
                                 ),
                                 onPressed: () async {
-                                  final isValid = _formKey.currentState.validate();
-
-
+                                  final isValid =
+                                      _formKey.currentState.validate();
+                                  getData();
                                 },
                                 child: Text('Submit')),
                           ),

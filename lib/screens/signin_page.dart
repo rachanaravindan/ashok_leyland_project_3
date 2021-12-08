@@ -1,5 +1,6 @@
 import 'package:ashok_leyland_project_3/constants.dart';
 import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
+import 'package:ashok_leyland_project_3/screens/home.dart';
 //import 'package:ashok_leyland_project_3/screens/forgot_password.dart';
 import 'package:ashok_leyland_project_3/services/auth.dart';
 import 'package:ashok_leyland_project_3/services/verify.dart';
@@ -9,6 +10,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'forget_password.dart';
 
@@ -128,18 +132,20 @@ class _SignInPageState extends State<SignInPage> {
                           key: formKey,
                           child: Column(
                             // mainAxisAlignment: MainAxisAlignment.center,
+
+                            //LOGO, IMAGE
                             children: [
                               Container(
                                 padding:
-                                    EdgeInsets.only(left: 20.0.h, right: 1.0.h),
+                                    EdgeInsets.only(left: 27.0.h, right: 0.4.h),
                                 child: Image.asset(
                                   "assets/logo.png",
-                                  width: 35.0.w,
+                                  width: 25.0.w,
                                   height: 10.0.h,
                                 ),
                               ),
                               SizedBox(
-                                height: 2.0.h,
+                                height: 0.5.h,
                               ),
                               Text(
                                 buttonText,
@@ -147,9 +153,10 @@ class _SignInPageState extends State<SignInPage> {
                                 textAlign: TextAlign.left,
                               ),
                               Container(
-                                height: 35.0.h,
+                                height: 32.0.h,
                                 child: SvgPicture.asset("assets/workplace.svg"),
                               ),
+                              //EMAIL
                               Container(
                                 width: MediaQuery.of(context).size.width - 70,
                                 child: TextFormField(
@@ -181,7 +188,7 @@ class _SignInPageState extends State<SignInPage> {
                                             BorderRadius.circular(10.0),
                                         borderSide: BorderSide(
                                           color: Colors.cyan,
-                                          width: 2.0,
+                                          width: 2.5,
                                         ),
                                       ),
                                       focusedBorder: OutlineInputBorder(
@@ -208,7 +215,7 @@ class _SignInPageState extends State<SignInPage> {
                                 ),
                               ),
                               SizedBox(
-                                height: 15,
+                                height: 13,
                               ),
                             ],
                           ),
@@ -218,6 +225,7 @@ class _SignInPageState extends State<SignInPage> {
                         key: formPassKey,
                         child: Column(
                           children: [
+                            //PASSWORD
                             Container(
                               width: MediaQuery.of(context).size.width - 70,
                               child: TextFormField(
@@ -285,7 +293,7 @@ class _SignInPageState extends State<SignInPage> {
                               ),
                             ),
                             SizedBox(
-                              height: 15,
+                              height: 13,
                             ),
                             AnimatedSwitcher(
                               duration: const Duration(milliseconds: 1000),
@@ -323,7 +331,7 @@ class _SignInPageState extends State<SignInPage> {
                               }),
                             ),
                             SizedBox(
-                              height: 0.5.h,
+                              height: 1.0.h,
                             ),
                             Column(
                               children: [
@@ -348,14 +356,17 @@ class _SignInPageState extends State<SignInPage> {
                                           ))
                               ],
                             ),
-                            TextButton(                              
+                            TextButton(
                               child: Text(
                                 'Forgot Password?',
                                 style:
                                     TextStyle(color: Colors.grey, fontSize: 12),
                               ),
                               onPressed: () {
-                                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ForgotPassword()));
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ForgotPassword()));
                               },
                             ),
                           ],
@@ -370,6 +381,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 }
 
+//SIGN IN BUTTON
 Widget colorbutton(String hintText, Function onTapFunction) {
   return Sizer(builder: (context, orientation, deviceType) {
     return Container(

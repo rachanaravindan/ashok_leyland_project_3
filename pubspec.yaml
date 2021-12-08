@@ -7,6 +7,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
+  #sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   cloud_firestore: ^2.5.4
@@ -14,6 +15,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_auth: ^3.2.0
   firebase_core: ^1.10.0
+  google_sign_in: ^5.2.1
+
   flutter:
     sdk: flutter
   flutter_bounce: ^1.1.0

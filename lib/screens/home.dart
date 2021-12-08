@@ -107,10 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   assetLoc = "assets/onthejobbb.svg";
                   break;
                 case 6:
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => OtjtQuery()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => OtjtQuery()));
                   assetLoc = "assets/on_the_job_query.svg";
                   break;
                 case 7:
@@ -138,7 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +154,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: GestureDetector(
                         onTap: () async {
                           await FirebaseAuth.instance.signOut();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignInPage()));
                         },
                         child: Icon(Icons.logout_outlined),
                       ),

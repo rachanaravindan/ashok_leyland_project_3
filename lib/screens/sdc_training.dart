@@ -577,6 +577,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                 _showMyDialog(
                                     "Posttest mark exceeds maximum mark");
                               } else {
+
                                 if (_nameController.text ==
                                     "Enter Valid Employee ID") {
                                   _showMyHomeDialog("Enter Valid Employee ID");
@@ -628,6 +629,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                                 screen: false,
                                               )));
                                 }
+
                               }
                             }
                           },

@@ -24,3 +24,52 @@ IconButton(
                       icon: Icon(Icons.calendar_today),
                     ),
                     Center(child: Text('Date: $_formattedate '))
+
+
+
+
+
+
+                     AlertDialog(
+                                        title: const Text('Error'),
+                                        content: Column(
+                                          children: [
+                                            Text(
+                                                '$_employeeId already exists. Do you want to overwrite?')
+                                          ],
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('Overwrite'),
+                                            onPressed: () {
+                                              _traineeRef.trainee
+                                                  .doc(_employeeId)
+                                                  .set({
+                                                'name': _traineeName ?? "Null",
+                                                'empId': _employeeId ?? "Null",
+                                                'doj': Timestamp.fromDate(
+                                                    currentDate),
+                                                'qualifications':
+                                                    _traineeQualifications ??
+                                                        "Null",
+                                                'gender': GenderDropDownValue,
+                                                'age': _traineeAge ?? "Null",
+                                                'level': "L0",
+                                              });
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DoneMark(
+                                                            screen: false,
+                                                          )));
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text('No'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                      );

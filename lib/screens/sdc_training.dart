@@ -277,7 +277,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(8.0),
-                    child:  DropdownButtonFormField<String>(
+                    child: DropdownButtonFormField<String>(
                       isExpanded: true,
                       dropdownColor: Colors.white,
                       iconSize: 5.h,
@@ -299,7 +299,8 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                         );
                       }).toList(),
                       hint: Text(DayItems[0]),
-                      validator: (value) => value == "Training Day" ? 'field required' : null,
+                      validator: (value) =>
+                          value == "Training Day" ? 'field required' : null,
                       onChanged: (String value) {
                         setState(() {
                           DayDropDownValue = value;
@@ -360,7 +361,8 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                         );
                       }).toList(),
                       hint: Text(items[0]),
-                      validator: (value) => value == "Choose Program" ? 'field required' : null,
+                      validator: (value) =>
+                          value == "Choose Program" ? 'field required' : null,
                       onChanged: (String value) {
                         setState(() {
                           DropDownValue = value;
@@ -561,48 +563,74 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                   ((entered_pretest_mark / max_marks) * 100);
                               _postTestMarks =
                                   ((entered_posttest_mark / max_marks) * 100);
-                              if (_preTestMarks == -1 || _postTestMarks == -1 ) {
+                              if (_preTestMarks == -1 || _postTestMarks == -1) {
                                 _showMyDialog("Invalid Mark");
                               }
-                              if(entered_pretest_mark > max_marks ){
-                                _showMyDialog("Pretest mark exceeds maximum mark");
-                              }
-                              else if(entered_posttest_mark > max_marks){
-                                _showMyDialog("Posttest mark exceeds maximum mark");
-                              }
-                              if (_nameController.text==
-                                  "Enter Valid Employee ID") {
-                                _showMyHomeDialog("Enter Valid Employee ID");
+                              print('entered pretest marks ' +
+                                  entered_pretest_mark.toString());
+                              print('entered posttest marks ' +
+                                  entered_posttest_mark.toString());
+                              if (entered_pretest_mark > max_marks) {
+                                _showMyDialog(
+                                    "Pretest mark exceeds maximum mark");
+                              } else if (entered_posttest_mark > max_marks) {
+                                _showMyDialog(
+                                    "Posttest mark exceeds maximum mark");
                               } else {
-                                _traineeRef.trainee
-                                    .doc(_employeeId)
-                                    .collection("completed training")
-                                    .doc(DropDownValue)
-                                    .set({
-                                  "day": DayDropDownValue,
-                                  DropDownValue: true,
-                                  "pre_test_marks": _preTestMarks,
-                                  "post_test_marks": _postTestMarks,
-                                  "date of completion": DateFormat("dd-MM-yyyy")
-                                      .format(currentDate),
-                                  "training": DropDownValue,
-                                  "mentor name": _mentorName,
-                                });
-                                _traineeRef.trainee.doc(_employeeId).update({
-                                  "completed Program":
-                                      FieldValue.arrayUnion([DropDownValue]) ??
-                                          "Empty",
-                                  "date of completion of ${DropDownValue}":
-                                      Timestamp.fromDate(_currentdate)
-                                });
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DoneMark(
-                                              screen: false,
-                                            )));
+
+                                if (_nameController.text ==
+                                    "Enter Valid Employee ID") {
+                                  _showMyHomeDialog("Enter Valid Employee ID");
+                                } else {
+                                  _traineeRef.trainee
+                                      .doc(_employeeId)
+                                      .collection("completed training")
+                                      .doc(DropDownValue)
+                                      .set({
+                                    "day": DayDropDownValue,
+                                    DropDownValue: true,
+                                    "pre_test_marks": _preTestMarks,
+                                    "post_test_marks": _postTestMarks,
+                                    "date of completion":
+                                        DateFormat("dd-MM-yyyy")
+                                            .format(currentDate),
+                                    "training": DropDownValue,
+                                    "mentor name": _mentorName,
+                                  });
+                                  _traineeRef.trainee.doc(_employeeId).update({
+                                    "completed Program": FieldValue.arrayUnion(
+                                            [DropDownValue]) ??
+                                        "Empty",
+                                    "date of completion of ${DropDownValue}":
+                                        Timestamp.fromDate(_currentdate)
+                                  });
+                                  _traineeRef.trainee
+                                      .doc(_employeeId)
+                                      .get()
+                                      .then((DocumentSnapshot snapshot) {
+                                    if (snapshot.exists) {
+                                      Map<String, dynamic> documentData =
+                                          snapshot.data();
+                                      if (documentData["completed Program"]
+                                              .length ==
+                                          8) {
+                                        _traineeRef.trainee
+                                            .doc(_employeeId)
+                                            .update({
+                                          "level": "L1"
+                                        });
+                                      }
+                                    }
+                                  });
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DoneMark(
+                                                screen: false,
+                                              )));
+                                }
+
                               }
-                              
                             }
                           },
                           child: Text('Submit'))),

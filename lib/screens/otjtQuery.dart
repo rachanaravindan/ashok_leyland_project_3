@@ -246,9 +246,26 @@ class _OtjtQueryState extends State<OtjtQuery> {
   var data;
   getData() async {
     print("checking");
+    //Employee number only
     //Department-Level-Operation No
     //Department-Operation No
     //Department-Search
+    if (_searchController.text != null &&
+            departmentDropDownValue == "Department" &&
+            _levelDropDownValue == "Select Level" &&
+            operationNumber != "-1" ||
+        operationNumber != null) {
+          print("inside emp only if");
+      //Employee Number
+      data = await FirebaseFirestore.instance
+          .collection("trainee")
+          .where("empId", isEqualTo: _searchController.text)
+          .where("department", isNull: false)
+          .get();
+      setState(() {
+        _allResults = data.docs;
+      });
+    }
     if (departmentDropDownValue != 'Department') {
       if (_levelDropDownValue != "Select Level") {
         if (operationNumber != "-1" || operationNumber != null) {
@@ -272,13 +289,13 @@ class _OtjtQueryState extends State<OtjtQuery> {
             _allResults = data.docs;
           });
         }
-      } else if (operationNumber != "-1" || operationNumber != null) {
+      }
+      if (operationNumber.length == 0) {
+        print("inside this if");
         //Department-Operation No
         data = await FirebaseFirestore.instance
             .collection("trainee")
-            .where(
-                "department ${departmentDropDownValue} operation ${operationNumber}",
-                isNull: false)
+            .where("department", isEqualTo: departmentDropDownValue)
             .get();
         setState(() {
           print("in Set data");

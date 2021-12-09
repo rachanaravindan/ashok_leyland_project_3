@@ -246,6 +246,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
 
   var data;
   getData() async {
+    print(searchText);
     print("checking");
     //Employee number only
     //Department-Level-Operation No

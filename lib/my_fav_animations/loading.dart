@@ -20,9 +20,10 @@ class _LoadingState extends State<Loading> {
     if (user != null) {
       print("user!=null");
       if (!user.emailVerified)
+      {
         return VerifyScreen();
-      else {
-        return Container(
+      }
+      return Container(
           color: Colors.yellow[200],
           child: Align(
             child: Column(
@@ -43,4 +44,3 @@ class _LoadingState extends State<Loading> {
       }
     }
   }
-}

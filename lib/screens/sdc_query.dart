@@ -11,7 +11,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:csv/csv.dart';
-import 'package:ext_storage/ext_storage.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart'
     hide Column, Row, Alignment;
 
@@ -302,74 +301,6 @@ class _SdcQueryState extends State<SdcQuery> {
     return "complete";
   }
 
-  void _generateCsvFile() async {
-    // ignore: unused_local_variable
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-
-    List<dynamic> associateList = [
-      {"number": 1, "lat": "14.97534313396318", "lon": "101.22998536005622"},
-      {"number": 2, "lat": "14.97534313396318", "lon": "101.22998536005622"},
-      {"number": 3, "lat": "14.97534313396318", "lon": "101.22998536005622"},
-      {"number": 4, "lat": "14.97534313396318", "lon": "101.22998536005622"}
-    ];
-
-    List<List<dynamic>> rows = [];
-
-    List<dynamic> row = [];
-    row.add("Sno");
-    row.add("EmpId");
-    row.add("Name");
-    row.add("Age");
-    rows.add(row);
-    for (int i = 0; i < _allResults.length; i++) {
-      Map<String, dynamic> data = _allResults[i].data() as Map<String, dynamic>;
-      List<dynamic> row = [];
-      row.add(i + 1);
-      row.add(data["name"]);
-      row.add(data["empId"]);
-      row.add(data["age"]);
-
-      rows.add(row);
-    }
-
-    // String csv = const ListToCsvConverter().convert(rows);
-
-    // String dir = await ExtStorage.getExternalStoragePublicDirectory(
-    //     ExtStorage.DIRECTORY_DOWNLOADS);
-    // print("dir $dir");
-    // String file = "$dir";
-    // File f = File(file + "/filename.csv");
-    // f.writeAsString(csv);
-    // OpenFile.open(file + "/filename.csv");
-
-    String csv = const ListToCsvConverter().convert(rows);
-
-    String dir = await ExtStorage.getExternalStoragePublicDirectory(
-        ExtStorage.DIRECTORY_DOWNLOADS);
-    print("dir $dir");
-    String file = "$dir";
-
-    File f = File(file + "/filename.csv");
-
-    f.writeAsString(csv);
-
-    // var excel = Excel.createExcel();
-    // Sheet sheetObject = excel[excel.getDefaultSheet()];
-    // sheetObject.appendRow(["Flutter", "till", "Eternity"]);
-
-    // var fileBytes = excel.save();
-    // var directory = await getApplicationDocumentsDirectory();
-    // File("$directory/output_file_name.xlsx")
-    //   ..createSync(recursive: true)
-    //   ..writeAsBytesSync(fileBytes);
-
-    // // File("$directory/output_file_name.xlsx")
-    // //   ..createSync(recursive: true)
-    // //   ..writeAsBytesSync(fileBytes);
-    // OpenFile.open("$directory/output_file_name.xlsx");
-  }
 
   @override
   Widget build(BuildContext context) {

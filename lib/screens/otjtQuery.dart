@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:csv/csv.dart';
-import 'package:ext_storage/ext_storage.dart';
+// import 'package:ext_storage/ext_storage.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart'
     hide Column, Row, Alignment;
 import 'package:synchronized/synchronized.dart';
@@ -180,6 +180,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
   List _allResults = [];
   List _searchResults = [];
   List<String> LevelList = ["Select Level", "L2", "L3", "L4"];
+  String searchText = "-1";
   List<String> departmentItems = [
     'Department',
     'Chassis & Frame Assembly',
@@ -250,123 +251,100 @@ class _OtjtQueryState extends State<OtjtQuery> {
     //Department-Level-Operation No
     //Department-Operation No
     //Department-Search
-    if (_searchController.text != null &&
+    if ((!searchText.isEmpty &&
             departmentDropDownValue == "Department" &&
-            _levelDropDownValue == "Select Level" &&
-            operationNumber != "-1" ||
-        operationNumber != null) {
-          print("inside emp only if");
+            _levelDropDownValue == "Select Level") &&
+        (operationNumber == "-1" || operationNumber == null)) {
+      print("inside emp only if");
       //Employee Number
       data = await FirebaseFirestore.instance
           .collection("trainee")
-          .where("empId", isEqualTo: _searchController.text)
+          .where("empId", isEqualTo: searchText)
           .where("department", isNull: false)
           .get();
       setState(() {
         _allResults = data.docs;
       });
+    } else if ((searchText=="-1"||searchText.isEmpty) &&
+        departmentDropDownValue != "Department" &&
+        _levelDropDownValue == "Select Level") {
+      print("inside department only");
+      data = await FirebaseFirestore.instance
+          .collection("trainee")
+          .where("department", isEqualTo: departmentDropDownValue)
+          .get();
+      setState(() {
+        _allResults = data.docs;
+      });
+    } else if (searchText.isEmpty && departmentDropDownValue != "Department") {
+      print("inside department + level + op no");
+      data = await FirebaseFirestore.instance
+          .collection("trainee")
+          .where(
+              "department ${departmentDropDownValue} operation ${operationNumber}",
+              isEqualTo: _levelDropDownValue)
+          .get();
+      setState(() {
+        _allResults = data.docs;
+      });
     }
-    if (departmentDropDownValue != 'Department') {
-      if (_levelDropDownValue != "Select Level") {
-        if (operationNumber != "-1" || operationNumber != null) {
-          // Department-Level-Operation No
-          print(
-              "department ${departmentDropDownValue} operation ${operationNumber}");
-          data = await FirebaseFirestore.instance
-              .collection("trainee")
-              .where(
-                  "department ${departmentDropDownValue} operation ${operationNumber}",
-                  isEqualTo: _levelDropDownValue)
-              .get();
-          // data = await FirebaseFirestore.instance
-          //     .collection("trainee")
-          //     .where(
-          //         "department H - Engine Assembly operation 20",
-          //         isEqualTo: _levelDropDownValue)
-          //     .get();
-          setState(() {
-            print("in Set data");
-            _allResults = data.docs;
-          });
-        }
-      }
-      if (operationNumber.length == 0) {
-        print("inside this if");
-        //Department-Operation No
-        data = await FirebaseFirestore.instance
-            .collection("trainee")
-            .where("department", isEqualTo: departmentDropDownValue)
-            .get();
-        setState(() {
-          print("in Set data");
-          _allResults = data.docs;
-        });
-      } else if (_searchController.text != null) {
-        print("showing everything");
-        data = await FirebaseFirestore.instance
-            .collection("trainee")
-            .doc(_searchController.text)
-            .collection("completed on the job training")
-            .where("department $departmentDropDownValue level", isNull: false)
-            .get();
-        setState(() {
-          print("in Set data");
-          for (int i = 0; i < data.docs.length; i++) {
-            Map<String, dynamic> data =
-                _allResults[i].data() as Map<String, dynamic>;
-            print(data["department $departmentDropDownValue operation no"] +
-                ":" +
-                data["department $departmentDropDownValue level"]);
-          }
-        });
-      }
-    }
+    // if (departmentDropDownValue != 'Department') {
+    //   if (_levelDropDownValue != "Select Level") {
+    //     if (operationNumber != "-1" || operationNumber != null) {
+    //       // Department-Level-Operation No
+    //       print(
+    //           "department ${departmentDropDownValue} operation ${operationNumber}");
+    //       data = await FirebaseFirestore.instance
+    //           .collection("trainee")
+    //           .where(
+    //               "department ${departmentDropDownValue} operation ${operationNumber}",
+    //               isEqualTo: _levelDropDownValue)
+    //           .get();
+    //       // data = await FirebaseFirestore.instance
+    //       //     .collection("trainee")
+    //       //     .where(
+    //       //         "department H - Engine Assembly operation 20",
+    //       //         isEqualTo: _levelDropDownValue)
+    //       //     .get();
+    //       setState(() {
+    //         print("in Set data");
+    //         _allResults = data.docs;
+    //       });
+    //     }
+    //   }
+    //   if (operationNumber == "") {
+    //     print("inside this if");
+    //     //Department
+    //     data = await FirebaseFirestore.instance
+    //         .collection("trainee")
+    //         .where("department", isEqualTo: departmentDropDownValue)
+    //         .get();
+    //     setState(() {
+    //       print("in Set data");
+    //       _allResults = data.docs;
+    //     });
+    //   } else if (_searchController.text != null) {
+    //     print("showing everything");
+    //     data = await FirebaseFirestore.instance
+    //         .collection("trainee")
+    //         .doc(_searchController.text)
+    //         .collection("completed on the job training")
+    //         .where("department $departmentDropDownValue level", isNull: false)
+    //         .get();
+    //     setState(() {
+    //       print("in Set data");
+    //       for (int i = 0; i < data.docs.length; i++) {
+    //         Map<String, dynamic> data =
+    //             _allResults[i].data() as Map<String, dynamic>;
+    //         print(data["department $departmentDropDownValue operation no"] +
+    //             ":" +
+    //             data["department $departmentDropDownValue level"]);
+    //       }
+    //     });
+    //   }
+    // }
     searchResultsList();
     return "complete";
-  }
-
-  void _generateCsvFile() async {
-    // ignore: unused_local_variable
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-
-    List<dynamic> associateList = [
-      {"number": 1, "lat": "14.97534313396318", "lon": "101.22998536005622"},
-      {"number": 2, "lat": "14.97534313396318", "lon": "101.22998536005622"},
-      {"number": 3, "lat": "14.97534313396318", "lon": "101.22998536005622"},
-      {"number": 4, "lat": "14.97534313396318", "lon": "101.22998536005622"}
-    ];
-
-    List<List<dynamic>> rows = [];
-
-    List<dynamic> row = [];
-    row.add("Sno");
-    row.add("EmpId");
-    row.add("Name");
-    row.add("Age");
-    rows.add(row);
-    for (int i = 0; i < _allResults.length; i++) {
-      Map<String, dynamic> data = _allResults[i].data() as Map<String, dynamic>;
-      List<dynamic> row = [];
-      row.add(i + 1);
-      row.add(data["name"]);
-      row.add(data["empId"]);
-      row.add(data["age"]);
-      rows.add(row);
-    }
-
-    String csv = const ListToCsvConverter().convert(rows);
-
-    String dir = await ExtStorage.getExternalStoragePublicDirectory(
-        ExtStorage.DIRECTORY_DOWNLOADS);
-    print("dir $dir");
-    String file = "$dir";
-
-    File f = File(file + "/filename.csv");
-
-    f.writeAsString(csv);
-    OpenFile.open(file + "/filename.csv");
   }
 
   @override
@@ -637,6 +615,9 @@ class _OtjtQueryState extends State<OtjtQuery> {
                                 height: 6.h,
                                 child: TextField(
                                   controller: _searchController,
+                                  onChanged: (input) {
+                                    searchText = input;
+                                  },
                                   decoration: InputDecoration(
                                       contentPadding:
                                           const EdgeInsets.symmetric(

@@ -5,6 +5,7 @@ import 'package:ashok_leyland_project_3/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'sdc_query.dart';
 
@@ -26,11 +27,17 @@ class traineeProfile extends StatefulWidget {
 }
 
 class _traineeProfileState extends State<traineeProfile> {
-  Future<void> _showMyDialog(Map<String, String> mapp) async {
+  // String formatTimestamp(Timestamp timestamp) {
+  //   var format = new DateFormat('d MMM, hh:mm a');
+  //   var date = new DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  //   return format.format(date);
+  // }
+  Future<void> _showMyDialog(Map<String, dynamic> mapp) async {
     return showGeneralDialog<void>(
       context: context,
       barrierDismissible: false,
       pageBuilder: (_, __, ___) {
+        
         return SizedBox.expand(
             child: Center(
           child: Container(
@@ -79,6 +86,7 @@ class _traineeProfileState extends State<traineeProfile> {
                 //   DataCell(Text("Mentor")),
                 //   DataCell(Text(mapp["mentor"])),
                 // ]),
+                
                 DataRow(cells: [
                   DataCell(Text("Date of Completion",
                       style: TextStyle(fontWeight: FontWeight.bold))),
@@ -97,7 +105,8 @@ class _traineeProfileState extends State<traineeProfile> {
     );
   }
 
-  Future<void> _showMyOTJTDialog(Map<String, String> mapp) async {
+  Future<void> _showMyOTJTDialog(Map<String, dynamic> mapp) async {
+    DateTime date = mapp["doj"].toDate();
     return showGeneralDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -143,7 +152,8 @@ class _traineeProfileState extends State<traineeProfile> {
                 DataRow(cells: [
                   DataCell(Text("Date of Completion",
                       style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataCell(Text(mapp["doj"])),
+                  DataCell(Text(date.toString()))
+                  // DataCell(Text(mapp["doj"].toDate())),
                 ]),
                 DataRow(cells: [
                   DataCell(
@@ -287,6 +297,7 @@ class _traineeProfileState extends State<traineeProfile> {
                               elevation: 0.7.h,
                               child: InkWell(
                                 onTap: () {
+                                 
                                   _showMyDialog({
                                     "name": widget.traineeName,
                                     "empId": widget.traineeID,
@@ -360,12 +371,12 @@ class _traineeProfileState extends State<traineeProfile> {
                               elevation: 0.7.h,
                               child: InkWell(
                                 onTap: () {
-                                  _showMyDialog({
+                                  _showMyOTJTDialog({
                                     "name": widget.traineeName,
                                     "empId": widget.traineeID,
                                     "doj":
                                         data["department ${widget.department} date of completion"]
-                                                .toString() ??
+                                                ??
                                             "Empty",
                                     "mentor": data[
                                             "department ${widget.department} faculty name"] ??

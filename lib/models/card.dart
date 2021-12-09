@@ -85,7 +85,7 @@ Widget buildCard(BuildContext context, DocumentSnapshot document) {
           Center(
             child: Expanded(
                 child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: CircleAvatar(
                 child: Icon(Icons.person),
               ),
@@ -94,7 +94,7 @@ Widget buildCard(BuildContext context, DocumentSnapshot document) {
           Expanded(
               flex: 1,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(5.w, 0, 0, 1.2.h),
+                padding: EdgeInsets.fromLTRB(6.w, 0, 0, 1.2.h),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Text(

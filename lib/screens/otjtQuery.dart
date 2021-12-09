@@ -266,7 +266,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
       setState(() {
         _allResults = data.docs;
       });
-    } else if ((searchText=="-1"||searchText.isEmpty) &&
+    } else if ((searchText == "-1" || searchText.isEmpty) &&
         departmentDropDownValue != "Department" &&
         _levelDropDownValue == "Select Level") {
       print("inside department only");
@@ -468,6 +468,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
     }
 
     Future<void> _createExcel(Map<String, String> mapp) async {
+      print("Im trying to print");
       final Workbook workbook = Workbook();
 
 // Accessing worksheet via index.
@@ -484,11 +485,15 @@ class _OtjtQueryState extends State<OtjtQuery> {
       row.add("Date of Department Allocation");
       if (departmentDropDownValue == "H - Engine Assembly") {
         _HEngineAssembly.keys.forEach((k) {
-          row.add("Op $k");
+          if (k != "-1") {
+            row.add("Op $k");
+          }
         });
       } else if (departmentDropDownValue == "A - Engine Assembly") {
         _AEngineAssembly.keys.forEach((k) {
-          row.add("Op $k");
+          if (k != "-1") {
+            row.add("Op $k");
+          }
         });
       }
       rows.add(row);
@@ -496,6 +501,9 @@ class _OtjtQueryState extends State<OtjtQuery> {
         Map<String, dynamic> data =
             _allResults[i].data() as Map<String, dynamic>;
         List<dynamic> row = [];
+        DateTime date =
+            data["department $departmentDropDownValue allocated date"].toDate();
+        String StringDate = DateFormat('dd-MM-yyyy').format(date);
         row.add(i + 1);
         row.add(data["empId"]);
         row.add(data["name"]);
@@ -503,12 +511,12 @@ class _OtjtQueryState extends State<OtjtQuery> {
         // row.add(data["age"]);
         // row.add(data["gender"]);
         // row.add(data["qualifications"]);
-        row.add("07-12-21");
+        row.add(StringDate);
         mapp.keys.forEach((k) {
           if (data["department $departmentDropDownValue operation $k"] != null)
             row.add(data["department $departmentDropDownValue operation $k"]
                 .toString());
-          else if (k != "-1") row.add("NA");
+          else if (k != "-1") row.add("L1");
         });
         rows.add(row);
       }
@@ -516,7 +524,12 @@ class _OtjtQueryState extends State<OtjtQuery> {
 
       for (int i = 1; i <= rows.length; i++) {
         for (int j = 1; j <= row.length; j++) {
-          sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
+          print(i.toString() + " " + j.toString());
+          try {
+            sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
+          } catch (e) {
+            sheet.getRangeByIndex(i, j).setText("NA");
+          }
         }
       }
       // for (var i in rows) {

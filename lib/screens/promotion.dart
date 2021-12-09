@@ -220,7 +220,6 @@ class _promotionPageState extends State<promotionPage> {
     );
   }
 
-
   void initState() {
     var promotionDropDownValue = promotionItems[0];
     var departmentDropDownValue = departmentItems[0];
@@ -294,7 +293,7 @@ class _promotionPageState extends State<promotionPage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                           textInputAction: TextInputAction.next,
+                          textInputAction: TextInputAction.next,
                           onChanged: (input) {
                             _employeeId = input;
                             setState(() async {
@@ -314,13 +313,13 @@ class _promotionPageState extends State<promotionPage> {
                                 _showMyDialog(
                                     "Department is not allocated for $_employeeId ");
                                 Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => HomeScreen())
-                                );
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()));
                                 Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => HomeScreen())
-                                );
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()));
                               }
 
                               setState(() {
@@ -335,8 +334,6 @@ class _promotionPageState extends State<promotionPage> {
                                 } else
                                   showToggleBtn = false;
                                 showTextField = false;
-                                print("Im printing");
-                                print(respectiveMap);
                               });
                             });
                           },
@@ -348,7 +345,7 @@ class _promotionPageState extends State<promotionPage> {
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
-                           textInputAction: TextInputAction.next,
+                          textInputAction: TextInputAction.next,
                           controller: _nameController,
                           onChanged: (input) {
                             _traineeName = input;
@@ -369,7 +366,7 @@ class _promotionPageState extends State<promotionPage> {
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
-                           textInputAction: TextInputAction.next,
+                          textInputAction: TextInputAction.next,
                           controller: _deptController,
                           onChanged: (input) {
                             _traineeName = input;
@@ -390,7 +387,7 @@ class _promotionPageState extends State<promotionPage> {
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
-                           textInputAction: TextInputAction.next,
+                          textInputAction: TextInputAction.next,
                           onChanged: (input) {
                             operationNumber = input;
                             setState(() async {
@@ -408,8 +405,7 @@ class _promotionPageState extends State<promotionPage> {
                                   // print('im in query ');
                                   // print('level' + documentData["Level"]);
                                 } else {
-                                  _skillController.text =
-                                      "Enter valid operation number";
+                                  _skillController.text = "L1";
                                 }
                               });
 
@@ -432,7 +428,7 @@ class _promotionPageState extends State<promotionPage> {
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
-                           textInputAction: TextInputAction.next,
+                          textInputAction: TextInputAction.next,
                           controller: _operationDescController,
                           maxLines: 3,
                           enabled: false,
@@ -445,7 +441,7 @@ class _promotionPageState extends State<promotionPage> {
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(
-                           textInputAction: TextInputAction.done,
+                          textInputAction: TextInputAction.done,
                           controller: _skillController,
                           onChanged: (input) {
                             setState(() {
@@ -474,19 +470,33 @@ class _promotionPageState extends State<promotionPage> {
                                   vertical: 1.5.h, horizontal: 10.w),
                               onPrimary: Colors.white, // foreground
                             ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AssesmentListScreen(
-                                            empId: _employeeId ?? "Empty",
-                                            operationNo:
-                                                operationNumber ?? "Empty",
-                                            dateOfCompletion:
-                                                Timestamp.fromDate(currentDate),
-                                            departmentName:
-                                                _deptController.text,
-                                          )));
+                            onPressed: () async {
+                              await _traineeRef.trainee
+                                  .doc(_employeeId)
+                                  .collection('completed on the job training')
+                                  .doc(operationNumber)
+                                  .get()
+                                  .then((DocumentSnapshot snapshot) {
+                                if (snapshot.exists) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AssesmentListScreen(
+                                                empId: _employeeId ?? "Empty",
+                                                operationNo:
+                                                    operationNumber ?? "Empty",
+                                                dateOfCompletion:
+                                                    Timestamp.fromDate(
+                                                        currentDate),
+                                                departmentName:
+                                                    _deptController.text,
+                                              )));
+                                } else {
+                                  _showMyDialog(
+                                      "$_employeeId is not trained for operation number $operationNumber");
+                                }
+                              });
                             },
                             child: Text('Select the assessment')),
                       ),

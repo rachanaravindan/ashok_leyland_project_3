@@ -233,9 +233,18 @@ class _traineeProfileState extends State<traineeProfile> {
                   Container(
                     padding: EdgeInsets.only(left: 3.h, top: 1.h),
                     alignment: Alignment.topLeft,
-                    child: Text(
-                      'Employee Id :  ' + widget.traineeID,
-                      style: Constants.ListItemSubHeading,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Employee Id :  ' + widget.traineeID,
+                          style: Constants.ListItemSubHeading,
+                        ),
+                        Text(
+                          'Department :  ' + widget.department??"Not Allocated",
+                          style: Constants.ListItemSubHeading,
+                        ),
+                      ],
                     ),
                   ),
                   // Container(
@@ -256,7 +265,7 @@ class _traineeProfileState extends State<traineeProfile> {
                       Expanded(
                           flex: 2,
                           child: Padding(
-                            padding: const EdgeInsets.all(6),
+                            padding:  EdgeInsets.only(left:6.w),
                             child: Text('Training'),
                           )),
                       Expanded(child: Text('Pre Test')),
@@ -342,6 +351,18 @@ class _traineeProfileState extends State<traineeProfile> {
                   SizedBox(
                     height: 3.h,
                   ),
+                  Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 6.w),
+                            child: Text('Operation No'),
+                          )),
+                      Expanded(child: Text('Current Skill Level')),
+                    ],
+                  ),
                   Expanded(
                     child: StreamBuilder<QuerySnapshot>(
                       stream: _levelStream,
@@ -362,6 +383,7 @@ class _traineeProfileState extends State<traineeProfile> {
                             Map<String, dynamic> data =
                                 document.data() as Map<String, dynamic>;
                             return Card(
+                              color: Colors.yellow[400],
                               shape: BeveledRectangleBorder(
                                 borderRadius: BorderRadius.circular(0.8.h),
                               ),

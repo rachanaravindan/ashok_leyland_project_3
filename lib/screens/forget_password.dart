@@ -100,7 +100,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           borderRadius: BorderRadius.circular(12)),
                       elevation: 2,
                       padding: EdgeInsets.symmetric(
-                          vertical: 1.5.h, horizontal: 11.6.h),
+                          vertical: 1.5.h, horizontal: 7.h),
                       onPrimary: Colors.white, // foreground
                     ),
                     onPressed: () {

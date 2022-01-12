@@ -317,6 +317,10 @@ class _SignInPageState extends State<SignInPage> {
                                     } else if (e == 'email-already-in-use') {
                                       _showMyDialog(
                                           'The account already exists for that email.');
+                                    } else {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
                                     }
                                   } else {
                                     String e = await _authObj.signIn(
@@ -325,6 +329,13 @@ class _SignInPageState extends State<SignInPage> {
                                     print(e);
                                     if (e != null) {
                                       _showMyDialog(getMessageFromErrorCode(e));
+                                    } else {
+                                      setState(() {
+                                        Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => HomeScreen())
+                                        );
+                                      });
                                     }
                                   }
                                 }

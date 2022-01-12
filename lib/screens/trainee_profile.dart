@@ -146,7 +146,7 @@ class _traineeProfileState extends State<traineeProfile> {
                   DataCell(Text(mapp["empId"])),
                 ]),
                 DataRow(cells: [
-                  DataCell(Text("Mentor")),
+                  DataCell(Text("Mentor",style: TextStyle(fontWeight: FontWeight.bold))),
                   DataCell(Text(mapp["mentor"])),
                 ]),
                 DataRow(cells: [
@@ -294,7 +294,7 @@ class _traineeProfileState extends State<traineeProfile> {
                             Map<String, dynamic> data =
                                 document.data() as Map<String, dynamic>;
                             return Card(
-                              color: data["pre_test_marks"] < 50
+                              color: data["post_test_marks"] < 50
                                   ? Colors.red.shade400
                                   : Colors.green,
                               shape: BeveledRectangleBorder(
@@ -354,13 +354,14 @@ class _traineeProfileState extends State<traineeProfile> {
                   Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 6.w),
-                            child: Text('Operation No'),
-                          )),
-                      Expanded(child: Text('Current Skill Level')),
+                      Padding(
+                        padding: EdgeInsets.only(left: 6.w),
+                        child: Text('Operation No'),
+                      ),
+                      Expanded(child: Padding(
+                        padding: EdgeInsets.only(left: 25.w),
+                        child: Text('Current Skill Level'),
+                      )),
                     ],
                   ),
                   Expanded(
@@ -410,7 +411,7 @@ class _traineeProfileState extends State<traineeProfile> {
                                     Expanded(
                                       flex: 3,
                                       child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
+                                        padding: EdgeInsets.fromLTRB(13.w,1.h,0,1.h),
                                         child: Text(
                                           data["department ${widget.department} operation no"] ??
                                               "Empty",

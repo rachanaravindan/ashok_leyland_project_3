@@ -196,8 +196,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         departmentButton(
                             'Department \n Allocation', 16.0.h, 16.0.h, 4),
                         departmentButton(
-                            'On the job \n Training', 16.0.h, 16.0.h, 5),
-                        departmentButton('On the job \n Training \n Query',
+                            'On the Job \n Training', 16.0.h, 16.0.h, 5),
+                        departmentButton('Skill Query',
                             16.0.h, 16.0.h, 6),
                         departmentButton('Promotion', 16.0.h, 16.0.h, 7),
                       ],

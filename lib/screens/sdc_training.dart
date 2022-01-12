@@ -577,7 +577,6 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                 _showMyDialog(
                                     "Posttest mark exceeds maximum mark");
                               } else {
-
                                 if (_nameController.text ==
                                     "Enter Valid Employee ID") {
                                   _showMyHomeDialog("Enter Valid Employee ID");
@@ -597,13 +596,18 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                     "training": DropDownValue,
                                     "mentor name": _mentorName,
                                   });
-                                  _traineeRef.trainee.doc(_employeeId).update({
-                                    "completed Program": FieldValue.arrayUnion(
-                                            [DropDownValue]) ??
-                                        "Empty",
-                                    "date of completion of ${DropDownValue}":
-                                        Timestamp.fromDate(_currentdate)
-                                  });
+                                  if (_postTestMarks >= 60) {
+                                    _traineeRef.trainee
+                                        .doc(_employeeId)
+                                        .update({
+                                      "completed Program":
+                                          FieldValue.arrayUnion(
+                                                  [DropDownValue]) ??
+                                              "Empty",
+                                      "date of completion of ${DropDownValue}":
+                                          Timestamp.fromDate(_currentdate)
+                                    });
+                                  }
                                   _traineeRef.trainee
                                       .doc(_employeeId)
                                       .get()
@@ -616,9 +620,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                           8) {
                                         _traineeRef.trainee
                                             .doc(_employeeId)
-                                            .update({
-                                          "level": "L1"
-                                        });
+                                            .update({"level": "L1"});
                                       }
                                     }
                                   });
@@ -629,7 +631,6 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                                 screen: false,
                                               )));
                                 }
-
                               }
                             }
                           },

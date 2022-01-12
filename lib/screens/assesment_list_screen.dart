@@ -224,7 +224,7 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
           ),
           //SUBMIT BUTTON
           Padding(
-              padding: EdgeInsets.fromLTRB(25.0, 20.0, 25.0, 10.0),
+              padding: EdgeInsets.all(4.w),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     primary: Colors.blue,
@@ -235,7 +235,7 @@ class _AssesmentListScreenState extends State<AssesmentListScreen> {
                     //color: Colors.amber,
 
                     padding: EdgeInsets.symmetric(
-                        vertical: 1.5.h, horizontal: 11.6.h),
+                        vertical: 1.5.h, horizontal: 7.h),
                     onPrimary: Colors.white // foreground
                     ),
                 onPressed: () async {

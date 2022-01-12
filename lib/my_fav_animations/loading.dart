@@ -23,7 +23,31 @@ class _LoadingState extends State<Loading> {
       {
         return VerifyScreen();
       }
-      return Container(
+      return Scaffold(
+        body: Container(
+            color: Colors.yellow[200],
+            child: Align(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SpinKitFoldingCube(
+                    color: Colors.blueAccent,
+                    size: 50.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Loading", style: Constants.boldHeading),
+                  )
+                ],
+              ),
+            ),
+          ),
+      );
+      }
+      if (user == null) {
+      print("user==null");
+      return Scaffold(
+        body:Container(
           color: Colors.yellow[200],
           child: Align(
             child: Column(
@@ -40,7 +64,8 @@ class _LoadingState extends State<Loading> {
               ],
             ),
           ),
-        );
-      }
+        ),
+      );
+    }
     }
   }

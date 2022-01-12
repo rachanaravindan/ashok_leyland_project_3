@@ -36,6 +36,7 @@ class _SdcQueryState extends State<SdcQuery> {
   Timestamp _toTimeStamp = Timestamp.fromDate(DateTime.now());
   List _allResults = [];
   List _searchResults = [];
+  String searchText = "-1";
   List<String> LevelList = ["Select Level", "L0", "L1"];
   List<String> ProgramList = [
     'Choose Program',
@@ -271,8 +272,22 @@ class _SdcQueryState extends State<SdcQuery> {
 
   //new getData()
   getData() async {
-    print("checking");
-    if (_levelDropDownValue != "Select Level") {
+    print("checking" + _searchController.text);
+    if (_searchController.text.length != 0 &&
+        _levelDropDownValue == "Select Level" &&
+        _programDropDownValue == "Choose Program") {
+      print("Inside EmpId search");
+      data = await FirebaseFirestore.instance
+          .collection("trainee")
+          .where("empId", isEqualTo: searchText)
+          .get();
+      setState(() {
+        _allResults = data.docs;
+        if (_allResults.length == 0) {
+          _allResults = [];
+        }
+      });
+    } else if (_levelDropDownValue != "Select Level") {
       if (_programDropDownValue != "Choose Program") {
         //with level and program case
         data = await FirebaseFirestore.instance
@@ -283,10 +298,13 @@ class _SdcQueryState extends State<SdcQuery> {
         setState(() {
           print("in Set data");
           _allResults = data.docs;
+          if (_allResults.length == 0) {
+            _allResults = [];
+          }
         });
       } else {
         //With only level
-        print("with date");
+        print("with level");
         data = await FirebaseFirestore.instance
             .collection("trainee")
             .where("level", isEqualTo: _levelDropDownValue)
@@ -294,13 +312,17 @@ class _SdcQueryState extends State<SdcQuery> {
         setState(() {
           print("in Set data");
           _allResults = data.docs;
+          if (_allResults.length == 0) {
+            _allResults = [];
+          }
         });
       }
+    } else {
+      _allResults = [];
     }
     searchResultsList();
     return "complete";
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -418,6 +440,9 @@ class _SdcQueryState extends State<SdcQuery> {
                                       border: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(30))),
+                                  onChanged: (input) {
+                                    searchText = input;
+                                  },
                                 ),
                               ),
                             ),
@@ -452,7 +477,6 @@ class _SdcQueryState extends State<SdcQuery> {
                               onChanged: (String value) {
                                 setState(() {
                                   _levelDropDownValue = value;
-                                  getData();
                                 });
                               },
                             ),
@@ -487,43 +511,66 @@ class _SdcQueryState extends State<SdcQuery> {
                               onChanged: (String value) {
                                 setState(() {
                                   _programDropDownValue = value;
-                                  getData();
                                 });
                               },
                             ),
                           ),
-                          
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 25.w,
-                              ),
-                              Text(
-                                'Name',
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black),
-                              ),
-                              SizedBox(
-                                width: 40.w,
-                              ),
-                              Text('Id',
-                                  style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black))
-                            ],
-                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(25.0),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  elevation: 2,
 
-                          ListView.builder(
-                            primary: false,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: _searchResults.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                buildCard(context, _searchResults[index]),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 1.5.h, horizontal: 11.6.h),
+                                  onPrimary: Colors.white, // foreground
+                                ),
+                                onPressed: () async {
+                                  getData();
+                                },
+                                child: Text('Submit')),
                           ),
+                          _allResults.length > 0
+                              ? Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 25.w),
+                                      child: Text(
+                                        'Name',
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 31.w),
+                                      child: Text('Id',
+                                          style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black)),
+                                    )
+                                  ],
+                                )
+                              : Text(""),
+                          _searchResults.length > 0
+                              ? ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: _searchResults.length,
+                                  itemBuilder: (BuildContext context,
+                                          int index) =>
+                                      buildCard(context, _searchResults[index]),
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.only(top: 5.w),
+                                  child: Text("No Results",
+                                      style: Constants.regularHeading),
+                                ),
                         ],
                       ),
                     )),

@@ -37,6 +37,11 @@ class _deleteTraineeState extends State<deleteTrainee> {
   Widget continueButton = TextButton(
     child: Text("Delete"),
     onPressed: () async {
+    await FirebaseFirestore.instance.collection('trainee').doc(_employeeId).collection("completed training").get().then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.docs){
+        ds.reference.delete();
+      }});
+    
       await FirebaseFirestore.instance.collection('trainee').doc(_employeeId).delete();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => DoneMark(screen: false
@@ -193,7 +198,7 @@ class _deleteTraineeState extends State<deleteTrainee> {
                           //color: Colors.amber,
 
                           padding: EdgeInsets.symmetric(
-                              vertical: 1.5.h, horizontal: 11.6.h),
+                              vertical: 1.5.h, horizontal: 7.h),
                           onPrimary: Colors.white // foreground
                           ),
                       onPressed: () async {

@@ -72,7 +72,7 @@ class _AddTraineeState extends State<AddTrainee> {
               child: Form(
                 key: _formKey,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
                   child: Column(
                     // mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -81,7 +81,7 @@ class _AddTraineeState extends State<AddTrainee> {
                         alignment: Alignment.topLeft,
                         child: Container(
                           alignment: Alignment.topLeft,
-                          margin: EdgeInsets.only(top: 1.h),
+                          margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
                           height: 5.0.h,
                           width: 6.0.h,
                           child: ElevatedButton(

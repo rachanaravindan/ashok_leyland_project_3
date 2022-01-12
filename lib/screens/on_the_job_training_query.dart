@@ -463,7 +463,7 @@ class _OnTheJobTrainingQueryState extends State<OnTheJobTrainingQuery> {
           rows.add(row);
         }
         if (departmentDropDownValue == "A - Engine Assembly") {
-          print("inside h engine assembly");
+          print("inside A engine assembly");
           _AEngineAssembly.keys.forEach((k) async {
             await FirebaseFirestore.instance
                 .collection("trainee")

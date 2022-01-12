@@ -222,7 +222,6 @@ class _OtjtQueryState extends State<OtjtQuery> {
 
   _onSearchChanged() {
     searchResultsList();
-    print(_searchController.text);
   }
 
   searchResultsList() {
@@ -246,14 +245,13 @@ class _OtjtQueryState extends State<OtjtQuery> {
 
   var data;
   getData() async {
-    print(searchText);
     print("checking");
     //Employee number only
     //Department-Level-Operation No
     //Department-Operation No
     //Department-Search
-    if ((!searchText.isEmpty &&
-            departmentDropDownValue == "Department" &&
+    if (((searchText != "-1" && searchText.length != 0) &&
+            departmentDropDownValue != "Department" &&
             _levelDropDownValue == "Select Level") &&
         (operationNumber == "-1" || operationNumber == null)) {
       print("inside emp only if");
@@ -268,7 +266,8 @@ class _OtjtQueryState extends State<OtjtQuery> {
       });
     } else if ((searchText == "-1" || searchText.isEmpty) &&
         departmentDropDownValue != "Department" &&
-        _levelDropDownValue == "Select Level") {
+        _levelDropDownValue == "Select Level" &&
+        (operationNumber == "-1" || operationNumber.length == 0)) {
       print("inside department only");
       data = await FirebaseFirestore.instance
           .collection("trainee")
@@ -277,13 +276,29 @@ class _OtjtQueryState extends State<OtjtQuery> {
       setState(() {
         _allResults = data.docs;
       });
-    } else if (searchText.isEmpty && departmentDropDownValue != "Department") {
+    } else if ((searchText == "-1" || searchText.isEmpty) &&
+        _levelDropDownValue != "Select Level" &&
+        departmentDropDownValue != "Department") {
       print("inside department + level + op no");
       data = await FirebaseFirestore.instance
           .collection("trainee")
           .where(
               "department ${departmentDropDownValue} operation ${operationNumber}",
               isEqualTo: _levelDropDownValue)
+          .get();
+      setState(() {
+        _allResults = data.docs;
+      });
+    } else if ((searchText == "-1" || searchText.isEmpty) &&
+        departmentDropDownValue != "Department" &&
+        _levelDropDownValue == "Select Level" &&
+        (operationNumber != "-1" && operationNumber.length != 0)) {
+      print("inside department + op no");
+      data = await FirebaseFirestore.instance
+          .collection("trainee")
+          .where(
+              "department ${departmentDropDownValue} operation ${operationNumber}",
+              isNull: false)
           .get();
       setState(() {
         _allResults = data.docs;
@@ -501,9 +516,16 @@ class _OtjtQueryState extends State<OtjtQuery> {
         Map<String, dynamic> data =
             _allResults[i].data() as Map<String, dynamic>;
         List<dynamic> row = [];
-        DateTime date =
-            data["department $departmentDropDownValue allocated date"].toDate();
-        String StringDate = DateFormat('dd-MM-yyyy').format(date);
+        String StringDate;
+        try {
+          DateTime date =
+              data["department $departmentDropDownValue allocated date"]
+                  .toDate();
+          StringDate = DateFormat('dd-MM-yyyy').format(date);
+        } catch (e) {
+          StringDate = "Empty";
+        }
+
         row.add(i + 1);
         row.add(data["empId"]);
         row.add(data["name"]);
@@ -520,11 +542,10 @@ class _OtjtQueryState extends State<OtjtQuery> {
         });
         rows.add(row);
       }
-      print(rows);
+      // print(rows);
 
       for (int i = 1; i <= rows.length; i++) {
         for (int j = 1; j <= row.length; j++) {
-          print(i.toString() + " " + j.toString());
           try {
             sheet.getRangeByIndex(i, j).setText(rows[i - 1][j - 1].toString());
           } catch (e) {
@@ -610,16 +631,11 @@ class _OtjtQueryState extends State<OtjtQuery> {
 
                           Center(
                             child: Text(
-                              "On The Job Training",
+                              "Skill Query",
                               style: Constants.boldHeading,
                             ),
                           ),
-                          Center(
-                            child: Text(
-                              "Query",
-                              style: Constants.boldHeading,
-                            ),
-                          ),
+
                           //SEARCH BAR
                           Padding(
                             padding: EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
@@ -823,7 +839,17 @@ class _OtjtQueryState extends State<OtjtQuery> {
                                 onPressed: () async {
                                   final isValid =
                                       _formKey.currentState.validate();
-                                  getData();
+                                  if (isValid == true) {
+                                    print(searchText);
+                                    print(searchText == "-1");
+                                    print("im inside isValid");
+                                    getData();
+                                  } else {
+                                    setState(() {
+                                      _allResults = [];
+                                      _searchResults = [];
+                                    });
+                                  }
                                 },
                                 child: Text('Submit')),
                           ),
@@ -886,37 +912,44 @@ class _OtjtQueryState extends State<OtjtQuery> {
                           //     ),
                           //   ),
                           // ),
-
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 25.w,
-                              ),
-                              Text(
-                                'Name',
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black),
-                              ),
-                              SizedBox(
-                                width: 40.w,
-                              ),
-                              Text('Id',
-                                  style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black))
-                            ],
-                          ),
-
-                          ListView.builder(
-                            primary: false,
-                            shrinkWrap: true,
-                            itemCount: _searchResults.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                buildCard(context, _searchResults[index]),
-                          ),
+                          _searchResults.length > 0
+                              ? Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 25.w,
+                                    ),
+                                    Text(
+                                      'Name',
+                                      style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black),
+                                    ),
+                                    SizedBox(
+                                      width: 40.w,
+                                    ),
+                                    Text('Id',
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.black))
+                                  ],
+                                )
+                              : Text(""),
+                          _searchResults.length > 0
+                              ? ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  itemCount: _searchResults.length,
+                                  itemBuilder: (BuildContext context,
+                                          int index) =>
+                                      buildCard(context, _searchResults[index]),
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.only(top: 5.w),
+                                  child: Text("No Results",
+                                      style: Constants.regularHeading),
+                                ),
                         ],
                       ),
                     )),

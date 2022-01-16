@@ -45,7 +45,7 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
     var departmentDropDownValue = departmentItems[0];
     super.initState();
   }
-
+  
   Future<void> _showMyDialog(String error) async {
     return showDialog<void>(
       context: context,
@@ -290,7 +290,56 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                                 if (documentData["level"] == "L0") {
                                   _showMyDialog(
                                       "$_employeeId is not promoted to L1");
-                                } else {
+                                } 
+                                else if(documentData["department"]!=null){
+                                   showDialog<void>(
+                                    context: context,
+                                    barrierDismissible:
+                                        false, // user must tap button!
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: SingleChildScrollView(
+                                          child: ListBody(
+                                            children: <Widget>[
+                                              Text(
+                                                  '$_employeeId already allocated to a department, Do you want to overwrite?')
+                                            ],
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('Overwrite'),
+                                            onPressed: () {
+                                              _traineeRef.trainee
+                                                  .doc(_employeeId)
+                                                  .update({
+                                                "department":
+                                                    departmentDropDownValue,
+                                                "department $departmentDropDownValue allocated date":
+                                                    currentDate,
+                                              });
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DoneMark(
+                                                            screen: false,
+                                                          )));
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text('No'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                    
+                                }
+                                else {
                                   _traineeRef.trainee.doc(_employeeId).update({
                                     "department": departmentDropDownValue,
                                     "department $departmentDropDownValue allocated date":currentDate,

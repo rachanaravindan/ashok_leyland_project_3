@@ -193,6 +193,7 @@ class _promotionPageState extends State<promotionPage> {
     "490": "CYLINDER BLOCK & Head WASHING",
     "500": "Camshaft & crankshaft washing",
   };
+  var value;
   Future<void> _showMyDialog(String error) async {
     return showDialog<void>(
       context: context,
@@ -308,18 +309,10 @@ class _promotionPageState extends State<promotionPage> {
                                   documentData["name"] ?? "Null";
                               _deptController.text =
                                   documentData["department"] ?? "Null";
-                              var value = documentData["department"] ?? "Null";
+                              value = documentData["department"] ?? "Null";
                               if (value == "Null") {
                                 _showMyDialog(
                                     "Department is not allocated for $_employeeId ");
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen()));
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen()));
                               }
 
                               setState(() {
@@ -471,32 +464,38 @@ class _promotionPageState extends State<promotionPage> {
                               onPrimary: Colors.white, // foreground
                             ),
                             onPressed: () async {
-                              await _traineeRef.trainee
-                                  .doc(_employeeId)
-                                  .collection('completed on the job training')
-                                  .doc(operationNumber)
-                                  .get()
-                                  .then((DocumentSnapshot snapshot) {
-                                if (snapshot.exists) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AssesmentListScreen(
-                                                empId: _employeeId ?? "Empty",
-                                                operationNo:
-                                                    operationNumber ?? "Empty",
-                                                dateOfCompletion:
-                                                    Timestamp.fromDate(
-                                                        currentDate),
-                                                departmentName:
-                                                    _deptController.text,
-                                              )));
-                                } else {
-                                  _showMyDialog(
-                                      "$_employeeId is not trained for operation number $operationNumber");
-                                }
-                              });
+                              if (value == "Null") {
+                                _showMyDialog(
+                                    "Department is not allocated for $_employeeId ");
+                              } else {
+                                await _traineeRef.trainee
+                                    .doc(_employeeId)
+                                    .collection('completed on the job training')
+                                    .doc(operationNumber)
+                                    .get()
+                                    .then((DocumentSnapshot snapshot) {
+                                  if (snapshot.exists) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AssesmentListScreen(
+                                                  empId: _employeeId ?? "Empty",
+                                                  operationNo:
+                                                      operationNumber ??
+                                                          "Empty",
+                                                  dateOfCompletion:
+                                                      Timestamp.fromDate(
+                                                          currentDate),
+                                                  departmentName:
+                                                      _deptController.text,
+                                                )));
+                                  } else {
+                                    _showMyDialog(
+                                        "$_employeeId is not trained for operation number $operationNumber");
+                                  }
+                                });
+                              }
                             },
                             child: Text('Select the assessment')),
                       ),

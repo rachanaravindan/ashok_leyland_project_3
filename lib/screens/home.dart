@@ -1,5 +1,8 @@
 import 'package:ashok_leyland_project_3/screens/add_trainee.dart';
 import 'package:ashok_leyland_project_3/screens/deleteTrainee.dart';
+import 'package:ashok_leyland_project_3/screens/manning.dart';
+import 'package:ashok_leyland_project_3/screens/manning_query.dart';
+// import 'package:ashok_leyland_project_3/screens/manningQuery.dart';
 import 'package:ashok_leyland_project_3/screens/otjtQuery.dart';
 import 'package:ashok_leyland_project_3/widgets/exit_popup.dart';
 import 'package:ashok_leyland_project_3/screens/on_the_job_training_query.dart';
@@ -51,6 +54,12 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case 7:
         assetLoc = "assets/promotion.svg";
+        break;
+      case 8:
+        assetLoc = "assets/manning.svg";
+        break;
+      case 9:
+        assetLoc = "assets/manningQuery.svg";
         break;
       default:
         Navigator.push(
@@ -116,12 +125,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(builder: (context) => promotionPage()));
                   assetLoc = "assets/promotion.svg";
                   break;
+                case 8:
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Manning()));
+                  assetLoc = "assets/manning.svg";
+                  break;
+                case 9:
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ManningQuery()));
+                  assetLoc = "assets/manningQuery.svg";
+                  break;
               }
             },
             child: Container(
               height: heightVar,
               width: widthVar,
               child: SvgPicture.asset(assetLoc, width: 5.h, height: 10.h),
+              
               // padding: EdgeInsets.symmetric(vertical: 55, horizontal: 5),
             ),
           ),
@@ -200,6 +220,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         departmentButton('Skill Query',
                             16.0.h, 16.0.h, 6),
                         departmentButton('Promotion', 16.0.h, 16.0.h, 7),
+                        departmentButton('Manning', 16.0.h, 16.0.h, 8),
+                        departmentButton('Manning Query', 16.0.h, 16.0.h, 9),
                       ],
                     ),
                   ),

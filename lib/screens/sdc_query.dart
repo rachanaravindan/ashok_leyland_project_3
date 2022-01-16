@@ -6,6 +6,7 @@ import 'package:ashok_leyland_project_3/screens/home.dart';
 import 'package:ashok_leyland_project_3/services/crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
@@ -83,7 +84,7 @@ class _SdcQueryState extends State<SdcQuery> {
 
   crudMethod crudObj = new crudMethod();
 
-  Future<void> _createExcel() async {
+  Future<int> _createExcel() async {
 // Create a new Excel Document.
     final Workbook workbook = Workbook();
 
@@ -117,7 +118,9 @@ class _SdcQueryState extends State<SdcQuery> {
 
       row.add(data["empId"] ?? "NA");
       row.add(data["name"] ?? "NA");
-      row.add((data["doj"]).toDate().toString() ?? "NA");
+      row.add((DateFormat('dd/MM/yyyy')
+              .format((data["doj"] as Timestamp).toDate())) ??
+          "NA");
       row.add(data["qualifications"] ?? "NA");
       row.add(data["age"] ?? "NA");
       for (int i = 1; i < ProgramList.length; i++) {
@@ -134,7 +137,7 @@ class _SdcQueryState extends State<SdcQuery> {
             if (documentData.isEmpty) {
               row.add("N/A");
             } else {
-              row.add(documentData["post_test_marks"].toString() ?? "NA");
+              row.add(documentData["post_test_marks"].toString() ?? "N/A");
             }
             // print(documentData["training"] ?? "Null");
             // row.add(documentData["training"].toString() ?? "NA");
@@ -143,7 +146,17 @@ class _SdcQueryState extends State<SdcQuery> {
             // row.add(documentData["mentor name"].toString() ?? "NA");
 
             // row.add(documentData["pre_test_marks"].toString() ?? "NA");
-            _promotionDate = documentData["date of completion"];
+            FirebaseFirestore.instance
+                .collection("trainee")
+                .doc(data["empId"])
+                .get()
+                .then((DocumentSnapshot snapshot) {
+              if (snapshot.exists) {
+                Map<String, dynamic> documentMapData = snapshot.data();
+                _promotionDate = (DateFormat('dd/MM/yyyy')
+              .format((documentMapData["date of promotion"] as Timestamp).toDate())) ?? "N/A";
+              }
+            });
           } else {
             row.add("N/A");
           }
@@ -155,9 +168,8 @@ class _SdcQueryState extends State<SdcQuery> {
         row.add("FAIL");
       }
       row.add(_promotionDate);
-      row.add(data["level"] ?? "NA");
-      row.add(data["department"] ?? "NA");
-      print(row);
+      row.add(data["level"] ?? "N/A");
+      row.add(data["department"] ?? "N/A");
       rows.add(row);
     }
 // Set the text value.
@@ -189,6 +201,7 @@ class _SdcQueryState extends State<SdcQuery> {
 
 // Open the Excel document in mobile
     OpenFile.open('$path/Output.xlsx');
+    return 1;
   }
 
   searchResultsList() {
@@ -564,7 +577,8 @@ class _SdcQueryState extends State<SdcQuery> {
                                   itemCount: _searchResults.length,
                                   itemBuilder: (BuildContext context,
                                           int index) =>
-                                      buildCard(context, _searchResults[index]),
+                                      buildCard(
+                                          context, _searchResults[index], 1),
                                 )
                               : Padding(
                                   padding: EdgeInsets.only(top: 5.w),

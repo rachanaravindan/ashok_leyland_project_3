@@ -9,12 +9,12 @@ import 'assesment_list_screen.dart';
 import 'home.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
-class OnTheJobTraining extends StatefulWidget {
+class Manning extends StatefulWidget {
   @override
-  _OnTheJobTrainingState createState() => _OnTheJobTrainingState();
+  _ManningState createState() => _ManningState();
 }
 
-class _OnTheJobTrainingState extends State<OnTheJobTraining> {
+class _ManningState extends State<Manning> {
   // FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   var _nameController = TextEditingController();
@@ -22,7 +22,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
   var _operationDescController = TextEditingController();
   crudMethod _traineeRef = new crudMethod();
 
-  String _traineeName, _employeeId, _facultyName;
+  String _traineeName, _employeeId;
   Map<String, String> _HEngineAssembly = {
     "-1": "Enter the Operation Number",
     "10": "ENGINE NUMBER PUNCHING AND FITMENT OF PCN & Welsch Plug",
@@ -167,6 +167,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
   DateTime currentDate = new DateTime.now();
   bool _isDisable = false;
   bool showToggleBtn = false, showTextField = false;
+
   List<String> departmentItems = [
     'Department',
     'Chassis & Frame Assembly',
@@ -180,45 +181,6 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
     'Axle Assembly',
     'Axle Machining'
   ];
-  // List<String> operationUnitItems1 = [
-  //   'Operation',
-  //   '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
-  //   '20- Sub Assy Of Crank Shaft',
-  //   '30- Fitment Of Crank Shaft',
-  //   '40- Crank Shaft Torque Tightening',
-  //   '50- Torque To Turn And End Play Checking',
-  //   '60- Fitment Of Dowel And Idler Shaft Mounting'
-  // ];
-  // List<String> operationUnitItems2 = [
-  //   'Chassis & Frame Assembly',
-  //   'Operation',
-  //   '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
-  //   '20- Sub Assy Of Crank Shaft',
-  //   '30- Fitment Of Crank Shaft',
-  //   '40- Crank Shaft Torque Tightening',
-  //   '50- Torque To Turn And End Play Checking',
-  //   '60- Fitment Of Dowel And Idler Shaft Mounting'
-  // ];
-  // List<String> operationUnitItems3 = [
-  //   'GB Assembly',
-  //   'Operation',
-  //   '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
-  //   '20- Sub Assy Of Crank Shaft',
-  //   '30- Fitment Of Crank Shaft',
-  //   '40- Crank Shaft Torque Tightening',
-  //   '50- Torque To Turn And End Play Checking',
-  //   '60- Fitment Of Dowel And Idler Shaft Mounting'
-  // ];
-  // List<String> operationUnitItems4 = [
-  //   'HT',
-  //   'Operation',
-  //   '10- Engine Number Punching And Fitment Of PCN & Welsch Plug ',
-  //   '20- Sub Assy Of Crank Shaft',
-  //   '30- Fitment Of Crank Shaft',
-  //   '40- Crank Shaft Torque Tightening',
-  //   '50- Torque To Turn And End Play Checking',
-  //   '60- Fitment Of Dowel And Idler Shaft Mounting'
-  // ];
   Map<String, String> respectiveMap;
 
   bool valuefirst = false;
@@ -278,36 +240,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
     }
 
     String _formattedate = new DateFormat.yMMMd().format(currentDate);
-    // Widget AssessmentList(int a) {
-    //   return Row(
-    //     children: <Widget>[
-    //       SizedBox(
-    //         width: 10,
-    //       ),
-    //       Expanded(child: Text(assessmentListItems[a])),
-    //       Checkbox(
-    //         checkColor: Colors.green,
-    //         activeColor: Colors.green,
-    //         value: this.valuefirst,
-    //         onChanged: (bool value) {
-    //           setState(() {
-    //             this.valuefirst = value ?? "Empty";
-    //           });
-    //         },
-    //       ),
-    //       Checkbox(
-    //         checkColor: Colors.red,
-    //         activeColor: Colors.red,
-    //         value: this.valuesecond,
-    //         onChanged: (bool value) {
-    //           setState(() {
-    //             this.valuesecond = value;
-    //           });
-    //         },
-    //       ),
-    //     ],
-    //   );
-    // }
+
     Future<void> _showMyDialog(String error) async {
       return showDialog<void>(
         context: context,
@@ -325,7 +258,8 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                 child: const Text('Ok'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.push(context,MaterialPageRoute(builder: (context) => HomeScreen()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()));
                 },
               ),
             ],
@@ -375,7 +309,7 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                       ),
                     ),
                     Text(
-                      "On The Job Training",
+                      "Manning",
                       style: Constants.boldHeading,
                     ),
 
@@ -473,51 +407,6 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                       ),
                     ),
 
-                    //DEPARTMENT
-                    // Padding(
-                    //   padding: EdgeInsets.all(8.0),
-                    //   child: DropdownButton<String>(
-                    //     isExpanded: true,
-                    //     dropdownColor: Colors.white,
-                    //     iconSize: 5.h,
-                    //     focusColor: Colors.red,
-                    //     value: departmentDropDownValue,
-                    //     //elevation: 5,
-                    //     style: TextStyle(color: Colors.black),
-                    //     iconEnabledColor: Colors.black,
-                    //     items: departmentItems
-                    //         .map<DropdownMenuItem<String>>((String value) {
-                    //       return DropdownMenuItem<String>(
-                    //         value: value,
-                    //         child: Text(
-                    //           value,
-                    //           style: TextStyle(
-                    //               // color: Colors.black,
-                    //               ),
-                    //         ),
-                    //       );
-                    //     }).toList(),
-                    //     hint: Text(departmentItems[0]),
-                    //     onChanged: (String value) {
-                    //       setState(() {
-                    //         departmentDropDownValue = value;
-                    //         if (value == 'H - Engine Assembly')
-                    //           respectiveMap = Map.from(_HEngineAssembly);
-                    //         else if (value == 'A - Engine Assembly')
-                    //           respectiveMap = Map.from(_AEngineAssembly);
-
-                    //         if (value != "department") {
-                    //           showToggleBtn = true;
-                    //         } else
-                    //           showToggleBtn = false;
-                    //         showTextField = false;
-                    //         print("Im printing");
-                    //         print(respectiveMap);
-                    //       });
-                    //     },
-                    //   ),
-                    // ),
-
                     //OPERATION NUMBER
                     Padding(
                       padding: EdgeInsets.all(8.0),
@@ -583,37 +472,10 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                                 },
                                 icon: Icon(Icons.calendar_today),
                               ),
-                              Text('Date Of Training: $_formattedate'),
+                              Text('Date: $_formattedate'),
                             ],
                           ),
                         ),
-                      ),
-                    ),
-
-                    //TRAINER NAME
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        textCapitalization: TextCapitalization.sentences,
-                        textInputAction: TextInputAction.done,
-                        onChanged: (input) {
-                          _facultyName = input;
-                          setState(() {
-                            if (input.isEmpty)
-                              _isDisable = true;
-                            else
-                              _isDisable = false;
-                          });
-                        },
-                        decoration: InputDecoration(labelText: 'Trainer Name'),
-                        validator: (value) {
-                          if (value.isEmpty ||
-                              !RegExp(r'^[a-z A-Z]').hasMatch(value)) {
-                            return "Trainer Name should contain only text";
-                          } else {
-                            return null;
-                          }
-                        },
                       ),
                     ),
 
@@ -636,99 +498,43 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                           onPressed: () async {
                             final isValid = _formKey.currentState.validate();
                             if (isValid) {
+                              
+                              print(currentDate.toString());
                               await FirebaseFirestore.instance
-                                  .collection("trainee")
-                                  .doc(_employeeId)
+                                  .collection("manning")
+                                  .doc(_employeeId.toString() +" "+
+                                      DateFormat("dd-MM-yyyy").format(currentDate))
                                   .get()
                                   .then((DocumentSnapshot snapshot) async {
-                                if (snapshot.exists) {
-                                  Map<String, dynamic> documentData =
-                                      snapshot.data();
-                                  if (documentData["department"] == null) {
-                                    _showMyDialog(
-                                        "Department is not allocated for $_employeeId ");
-                                  } else {
-                                    await _traineeRef.trainee
-                                        .doc(_employeeId ?? "Empty")
-                                        .collection(
-                                            "completed on the job training")
-                                        .doc(operationNumber ?? "Empty")
-                                        .get()
-                                        .then(
-                                            (DocumentSnapshot snapshot) async {
-                                      if (snapshot.exists) {
-                                         showDialog<void>(
-                                          context: context,
-                                          barrierDismissible:
-                                              false, // user must tap button!
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              content: SingleChildScrollView(
-                                                child: ListBody(
-                                                  children: <Widget>[
-                                                    Text(
-                                                        '$_employeeId already trained for $operationNumber . Do you want to overwrite?')
-                                                  ],
-                                                ),
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child:
-                                                      const Text('Overwrite'),
-                                                  onPressed: () async {
-                                                     await _traineeRef.trainee
-                                            .doc(_employeeId ?? "Empty")
-                                            .collection(
-                                                "completed on the job training")
-                                            .doc(operationNumber ?? "Empty")
-                                            .update({
-                                          "department ${_deptController.text} date of completion":
-                                              currentDate,
-                                          "department ${_deptController.text} operation no":
-                                              operationNumber ?? "Empty",
-                                          "department ${_deptController.text} faculty name":
-                                              _facultyName ?? "Empty",
-                                          "department ${_deptController.text} level":
-                                              "L1",
-                                        });
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: const Text('No'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
                                     
-                                      } else {
-                                        await _traineeRef.trainee
-                                            .doc(_employeeId ?? "Empty")
-                                            .collection(
-                                                "completed on the job training")
-                                            .doc(operationNumber ?? "Empty")
-                                            .set({
-                                          "department ${_deptController.text} date of completion":
-                                              currentDate,
-                                          "department ${_deptController.text} operation no":
-                                              operationNumber ?? "Empty",
-                                          "department ${_deptController.text} faculty name":
-                                              _facultyName ?? "Empty",
-                                          "department ${_deptController.text} level":
-                                              "L1",
-                                        });
-                                      }
-                                    });
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => DoneMark(
-                                                  screen: false,
-                                                )));
-                                  }
+                                if (snapshot.exists) {
+                                  await FirebaseFirestore.instance
+                                      .collection("manning")
+                                      .doc(_employeeId.toString() +
+                                          " " +
+                                          DateFormat("dd-MM-yyyy")
+                                              .format(currentDate))
+                                      .update({
+                                        "empId": _employeeId,
+                                    "operation no": operationNumber,
+                                    "date": Timestamp.fromDate(currentDate),
+                                    "name":_nameController.text,
+                                    "department":_deptController.text,
+                                  });
+                                } else {
+                                  await FirebaseFirestore.instance
+                                      .collection("manning")
+                                      .doc(_employeeId.toString() +
+                                          " " +
+                                          DateFormat("dd-MM-yyyy")
+                                              .format(currentDate))
+                                      .set({
+                                    "empId": _employeeId,
+                                    "operation no": operationNumber,
+                                    "date": Timestamp.fromDate(currentDate),
+                                    "name":_nameController.text,
+                                    "department":_deptController.text
+                                  });
                                 }
                               });
                             }

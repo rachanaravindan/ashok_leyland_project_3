@@ -2,7 +2,7 @@
     package="com.ashok_leyland.ashok_leyland_project_3">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
         android:label="ashok_leyland_project_3"
         android:icon="@mipmap/ic_launcher"

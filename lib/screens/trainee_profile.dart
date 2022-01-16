@@ -185,259 +185,272 @@ class _traineeProfileState extends State<traineeProfile> {
       return SafeArea(
           child: Scaffold(
         backgroundColor: HexColor("#D9E9F2"),
-        body: Column(
-          children: [
-            // BACK ARROW==================================================
-            Align(
-              alignment: Alignment.topLeft,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()));
-                },
+        body: Padding(
+          padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
+          child: Column(
+            children: [
+              // BACK ARROW==================================================
+              Align(
+                alignment: Alignment.topLeft,
                 child: Container(
                   alignment: Alignment.topLeft,
-                  margin: EdgeInsets.all(3.h),
-                  height: 3.0.h,
-                  width: 7.0.h,
-                  child: Icon(Icons.arrow_back),
+                  margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
+                  height: 5.0.h,
+                  width: 6.0.h,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()));
+                    },
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 30.0,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      padding: EdgeInsets.all(5),
+                      primary: Colors.black,
+                    ),
+                  ),
                 ),
               ),
-            ),
-            // CIRCLE AVATAR==============================================
-            Container(
-              child: Expanded(
-                child: Column(children: [
-                  Container(
-                      padding: EdgeInsets.only(left: 2.h, top: 2.h),
+
+              // CIRCLE AVATAR==============================================
+              Container(
+                child: Expanded(
+                  child: Column(children: [
+                    Container(
+                        padding: EdgeInsets.only(left: 2.h, top: 0.5.h),
+                        alignment: Alignment.topLeft,
+                        child: CircleAvatar(
+                          child: Icon(
+                            Icons.person,
+                            size: 7.h,
+                            color: Colors.white,
+                          ),
+                          radius: 5.h,
+                        )),
+                    Container(
+                      padding: EdgeInsets.only(left: 3.h, top: 1.h),
                       alignment: Alignment.topLeft,
-                      child: CircleAvatar(
-                        child: Icon(
-                          Icons.person,
-                          size: 7.h,
-                          color: Colors.white,
-                        ),
-                        radius: 5.h,
-                      )),
-                  Container(
-                    padding: EdgeInsets.only(left: 3.h, top: 1.h),
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      widget.traineeName,
-                      style: TextStyle(
-                          fontSize: 3.h,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black),
+                      child: Text(
+                        widget.traineeName,
+                        style: TextStyle(
+                            fontSize: 3.h,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black),
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 3.h, top: 1.h),
-                    alignment: Alignment.topLeft,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Container(
+                      padding: EdgeInsets.only(left: 3.h, top: 1.h),
+                      alignment: Alignment.topLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Employee Id :  ' + widget.traineeID,
+                            style: Constants.ListItemSubHeading,
+                          ),
+                          Text(
+                            'Department :  ' + widget.department??"Not Allocated",
+                            style: Constants.ListItemSubHeading,
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Container(
+                    //   padding: EdgeInsets.only(left: 3.h, top: 1.h),
+                    //   alignment: Alignment.topLeft,
+                    //   child: Text(
+                    //     'Joining Date :  ' + widget.joiningDate,
+                    //     style: Constants.ListItemSubHeading,
+                    //   ),
+                    // ),
+                    SizedBox(
+                      height: 3.h,
+                    ),
+
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Employee Id :  ' + widget.traineeID,
-                          style: Constants.ListItemSubHeading,
-                        ),
-                        Text(
-                          'Department :  ' + widget.department??"Not Allocated",
-                          style: Constants.ListItemSubHeading,
-                        ),
+                        Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding:  EdgeInsets.only(left:6.w),
+                              child: Text('Training'),
+                            )),
+                        Expanded(child: Text('Pre Test')),
+                        Expanded(child: Text('Post Test')),
                       ],
                     ),
-                  ),
-                  // Container(
-                  //   padding: EdgeInsets.only(left: 3.h, top: 1.h),
-                  //   alignment: Alignment.topLeft,
-                  //   child: Text(
-                  //     'Joining Date :  ' + widget.joiningDate,
-                  //     style: Constants.ListItemSubHeading,
-                  //   ),
-                  // ),
-                  SizedBox(
-                    height: 7.h,
-                  ),
 
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding:  EdgeInsets.only(left:6.w),
-                            child: Text('Training'),
-                          )),
-                      Expanded(child: Text('Pre Test')),
-                      Expanded(child: Text('Post Test')),
-                    ],
-                  ),
+                    // SDC Training listview starting=====================================================
+                    Expanded(
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: _marksStream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Something went wrong');
+                          }
 
-                  // SDC Training listview starting=====================================================
-                  Expanded(
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: _marksStream,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Something went wrong');
-                        }
-
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Loading();
-                        }
-                        return ListView(
-                          //  physics: NeverScrollableScrollPhysics(),
-                          children: snapshot.data.docs
-                              .map((DocumentSnapshot document) {
-                            Map<String, dynamic> data =
-                                document.data() as Map<String, dynamic>;
-                            return Card(
-                              color: data["post_test_marks"] < 50
-                                  ? Colors.red.shade400
-                                  : Colors.green,
-                              shape: BeveledRectangleBorder(
-                                borderRadius: BorderRadius.circular(0.8.h),
-                              ),
-                              margin: EdgeInsets.symmetric(
-                                  vertical: 0.5.h, horizontal: 3.w),
-                              //  color: HexColor("#D9E9F2"),
-                              elevation: 0.7.h,
-                              child: InkWell(
-                                onTap: () {
-                                 
-                                  _showMyDialog({
-                                    "name": widget.traineeName,
-                                    "empId": widget.traineeID,
-                                    "training": data["training"],
-                                    "day": data["day"],
-                                    "doj":
-                                        data["date of completion"].toString(),
-                                    "mentor": data["mentor"]
-                                  });
-                                },
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Text(
-                                          data["training"].toString(),
-                                          style: Constants.ListItemSubHeading,
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Loading();
+                          }
+                          return ListView(
+                            //  physics: NeverScrollableScrollPhysics(),
+                            children: snapshot.data.docs
+                                .map((DocumentSnapshot document) {
+                              Map<String, dynamic> data =
+                                  document.data() as Map<String, dynamic>;
+                              return Card(
+                                color: data["post_test_marks"] < 50
+                                    ? Colors.red.shade400
+                                    : Colors.green,
+                                shape: BeveledRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0.8.h),
+                                ),
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 0.5.h, horizontal: 3.w),
+                                //  color: HexColor("#D9E9F2"),
+                                elevation: 0.7.h,
+                                child: InkWell(
+                                  onTap: () {
+                                   
+                                    _showMyDialog({
+                                      "name": widget.traineeName,
+                                      "empId": widget.traineeID,
+                                      "training": data["training"],
+                                      "day": data["day"],
+                                      "doj":
+                                          data["date of completion"].toString(),
+                                      "mentor": data["mentor"]
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: Text(
+                                            data["training"].toString(),
+                                            style: Constants.ListItemSubHeading,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                        child: Text(
-                                      data["pre_test_marks"].toString(),
-                                      style: Constants.ListItemSubHeading,
-                                    )),
-                                    Expanded(
-                                        child: Text(
-                                      data["post_test_marks"].toString(),
-                                      style: Constants.ListItemSubHeading,
-                                    ))
-                                  ],
+                                      Expanded(
+                                          child: Text(
+                                        data["pre_test_marks"].toString(),
+                                        style: Constants.ListItemSubHeading,
+                                      )),
+                                      Expanded(
+                                          child: Text(
+                                        data["post_test_marks"].toString(),
+                                        style: Constants.ListItemSubHeading,
+                                      ))
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 3.h,
-                  ),
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 6.w),
-                        child: Text('Operation No'),
+                              );
+                            }).toList(),
+                          );
+                        },
                       ),
-                      Expanded(child: Padding(
-                        padding: EdgeInsets.only(left: 25.w),
-                        child: Text('Current Skill Level'),
-                      )),
-                    ],
-                  ),
-                  Expanded(
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: _levelStream,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Something went wrong');
-                        }
+                    ),
+                    SizedBox(
+                      height: 3.h,
+                    ),
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 6.w),
+                          child: Text('Operation No'),
+                        ),
+                        Expanded(child: Padding(
+                          padding: EdgeInsets.only(left: 25.w),
+                          child: Text('Current Skill Level'),
+                        )),
+                      ],
+                    ),
+                    Expanded(
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: _levelStream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Something went wrong');
+                          }
 
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Loading();
-                        }
-                        return ListView(
-                          //  physics: NeverScrollableScrollPhysics(),
-                          children: snapshot.data.docs
-                              .map((DocumentSnapshot document) {
-                            Map<String, dynamic> data =
-                                document.data() as Map<String, dynamic>;
-                            return Card(
-                              color: Colors.yellow[400],
-                              shape: BeveledRectangleBorder(
-                                borderRadius: BorderRadius.circular(0.8.h),
-                              ),
-                              margin: EdgeInsets.symmetric(
-                                  vertical: 0.5.h, horizontal: 3.w),
-                              //  color: HexColor("#D9E9F2"),
-                              elevation: 0.7.h,
-                              child: InkWell(
-                                onTap: () {
-                                  _showMyOTJTDialog({
-                                    "name": widget.traineeName,
-                                    "empId": widget.traineeID,
-                                    "doj":
-                                        data["department ${widget.department} date of completion"]
-                                                ??
-                                            "Empty",
-                                    "mentor": data[
-                                            "department ${widget.department} faculty name"] ??
-                                        "Empty"
-                                  });
-                                },
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Padding(
-                                        padding: EdgeInsets.fromLTRB(13.w,1.h,0,1.h),
-                                        child: Text(
-                                          data["department ${widget.department} operation no"] ??
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Loading();
+                          }
+                          return ListView(
+                            //  physics: NeverScrollableScrollPhysics(),
+                            children: snapshot.data.docs
+                                .map((DocumentSnapshot document) {
+                              Map<String, dynamic> data =
+                                  document.data() as Map<String, dynamic>;
+                              return Card(
+                                color: Colors.yellow[400],
+                                shape: BeveledRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0.8.h),
+                                ),
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 0.5.h, horizontal: 3.w),
+                                //  color: HexColor("#D9E9F2"),
+                                elevation: 0.7.h,
+                                child: InkWell(
+                                  onTap: () {
+                                    _showMyOTJTDialog({
+                                      "name": widget.traineeName,
+                                      "empId": widget.traineeID,
+                                      "doj":
+                                          data["department ${widget.department} date of completion"]
+                                                  ??
                                               "Empty",
-                                          style: Constants.ListItemSubHeading,
+                                      "mentor": data[
+                                              "department ${widget.department} faculty name"] ??
+                                          "Empty"
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(13.w,1.h,0,1.h),
+                                          child: Text(
+                                            data["department ${widget.department} operation no"] ??
+                                                "Empty",
+                                            style: Constants.ListItemSubHeading,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                        child: Text(
-                                      data["department ${widget.department} level"] ??
-                                          "Empty",
-                                      style: Constants.ListItemSubHeading,
-                                    )),
-                                  ],
+                                      Expanded(
+                                          child: Text(
+                                        data["department ${widget.department} level"] ??
+                                            "Empty",
+                                        style: Constants.ListItemSubHeading,
+                                      )),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      },
+                              );
+                            }).toList(),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ]),
+                  ]),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ));
     });

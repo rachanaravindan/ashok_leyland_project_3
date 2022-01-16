@@ -418,6 +418,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
                         onChanged: (str) {
                           setState(() {
                             if (str.isEmpty) _isDisable = true;
@@ -437,6 +438,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: TextFormField(
+                        keyboardType: TextInputType.number,
                         onChanged: (str) {
                           setState(() {
                             if (str.isEmpty)
@@ -458,6 +460,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: TextFormField(
+                        keyboardType: TextInputType.number,
                         onChanged: (str) {
                           setState(() {
                             if (str.isEmpty)
@@ -502,6 +505,7 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value.isEmpty ||
                             !RegExp(r'^[0-9]').hasMatch(value)) {
@@ -615,21 +619,23 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                     if (snapshot.exists) {
                                       Map<String, dynamic> documentData =
                                           snapshot.data();
-                                      if (documentData["completed Program"]
-                                              .length ==
-                                          8) {
+                                      if (documentData["completed Program"].length ==8) {
                                         _traineeRef.trainee
                                             .doc(_employeeId)
-                                            .update({"level": "L1"});
+                                            .update({
+                                          "level": "L1",
+                                          "date of promotion":
+                                              Timestamp.fromDate(currentDate)
+                                        });
                                       }
                                     }
                                   });
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => DoneMark(
-                                                screen: false,
-                                              )));
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => DoneMark(
+                                  //               screen: false,
+                                  //             )));
                                 }
                               }
                             }

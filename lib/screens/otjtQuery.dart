@@ -943,7 +943,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
                                   itemCount: _searchResults.length,
                                   itemBuilder: (BuildContext context,
                                           int index) =>
-                                      buildCard(context, _searchResults[index]),
+                                      buildCard(context, _searchResults[index],1),
                                 )
                               : Padding(
                                   padding: EdgeInsets.only(top: 5.w),

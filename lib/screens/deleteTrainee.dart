@@ -8,7 +8,6 @@ import 'package:ashok_leyland_project_3/constants.dart';
 //import 'done_add_screen.dart';
 import 'home.dart';
 
-
 class deleteTrainee extends StatefulWidget {
   final String traineeName;
   final String traineeID;
@@ -27,46 +26,89 @@ class _deleteTraineeState extends State<deleteTrainee> {
   bool _isDisable = true;
 
   showAlertDialog(BuildContext context) {
-  Widget cancelButton = TextButton(
-    child: Text("Cancel"),
-    onPressed: () {
-       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => deleteTrainee()));
-    },
-  );
-  Widget continueButton = TextButton(
-    child: Text("Delete"),
-    onPressed: () async {
-    await FirebaseFirestore.instance.collection('trainee').doc(_employeeId).collection("completed training").get().then((snapshot) {
-      for (DocumentSnapshot ds in snapshot.docs){
-        ds.reference.delete();
-      }});
-    
-      await FirebaseFirestore.instance.collection('trainee').doc(_employeeId).delete();
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => DoneMark(screen: false
-          )));
-    },
-  );
-  AlertDialog alert = AlertDialog(
-    title: Text("Delete Trainee"),
-    content: Text(
-        "Are you sure you would like to delete this Trainee from the database?"),
-    actions: [
-      cancelButton,
-      continueButton,
-    ],
-  );
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
-}
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => deleteTrainee()));
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Delete"),
+      onPressed: () async {
+        await FirebaseFirestore.instance
+            .collection('trainee')
+            .doc(_employeeId)
+            .collection("completed training")
+            .get()
+            .then((snapshot) {
+          for (DocumentSnapshot ds in snapshot.docs) {
+            ds.reference.delete();
+          }
+        });
+        await FirebaseFirestore.instance
+            .collection('trainee')
+            .doc(_employeeId)
+            .collection("completed on the job training")
+            .get()
+            .then((snapshot) {
+          for (DocumentSnapshot ds in snapshot.docs) {
+            ds.reference.delete();
+          }
+        });
 
-  
+        await FirebaseFirestore.instance
+            .collection('trainee')
+            .doc(_employeeId)
+            .delete();
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => DoneMark(screen: false)));
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text("Delete Trainee"),
+      content: Text(
+          "Are you sure you would like to delete this Trainee from the database?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Future<void> _showMyErrorDialog(String error) async {
+    print("Im Pressed");
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[Text(error)],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
@@ -133,13 +175,22 @@ class _deleteTraineeState extends State<deleteTrainee> {
                       _employeeId = input;
                       setState(() async {
                         DocumentSnapshot snapshot =
-                            await _traineeRef.trainee.doc(_employeeId).get();
-                        Map<String, dynamic> documentData = snapshot.data();
-                        print(documentData["name"] ?? "Null");
-                        print(documentData["department"] ?? "Null");
-                        _nameController.text = documentData["name"] ?? "Null";
-                        _deptController.text =
-                            documentData["department"] ?? "Not Allocated";
+                            await _traineeRef.trainee.doc(_employeeId).get()
+                                // ignore: missing_return
+                                .then((DocumentSnapshot snapshot) {
+                          if (snapshot.exists) {
+                            Map<String, dynamic> documentData = snapshot.data();
+                            print(documentData["name"] ?? "Null");
+                            print(documentData["department"] ?? "Null");
+                            _nameController.text =
+                                documentData["name"] ?? "Null";
+                            _deptController.text =
+                                documentData["department"] ?? "Not Allocated";
+                          } else {
+                            _nameController.text = "Not Found";
+                            _deptController.text = "Not Allocated";
+                          }
+                        });
                       });
                     },
                     decoration: InputDecoration(labelText: 'Employee Id'),
@@ -202,8 +253,12 @@ class _deleteTraineeState extends State<deleteTrainee> {
                           onPrimary: Colors.white // foreground
                           ),
                       onPressed: () async {
-                        
-                        showAlertDialog(context);
+                        if (_employeeId==null ||
+                            _nameController.text == "Not Found") {
+                          _showMyErrorDialog("Enter valid Employee ID");
+                        } else {
+                          showAlertDialog(context);
+                        }
                       },
                       child: Text('Delete Trainee'),
                     ))
@@ -215,5 +270,3 @@ class _deleteTraineeState extends State<deleteTrainee> {
     });
   }
 }
-
-

@@ -10,54 +10,6 @@ import 'package:sizer/sizer.dart';
 
 Widget buildCard(BuildContext context, DocumentSnapshot document, int screen) {
   Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-  print("im in buildcard");
-//   return new Sizer(builder: (context, orientation, deviceType) {
-//     return InkWell
-//       child: Card(
-//         margin: EdgeInsets.symmetric(vertical: 0.5.h, horizontal: 2.w),
-//         color: HexColor("#D9E9F2"),
-//         elevation: 0.5.h,
-//         child: Row(
-//           crossAxisAlignment: CrossAxisAlignment.end,
-//           children: [
-//             Center(
-//               child: Expanded(
-//                   child: Padding(
-//                 padding: const EdgeInsets.all(8.0),
-//                 child: CircleAvatar(
-//                   child: Icon(Icons.person),
-//                 ),
-//               )),
-//             ),
-//             Expanded(
-//                 flex: 1,
-//                 child: Padding(
-//                   padding: EdgeInsets.fromLTRB(5.w, 0, 0, 1.2.h),
-//                   child: SingleChildScrollView(
-//                     scrollDirection: Axis.horizontal,
-//                     child: Text(
-//                       data["name"] ??= "null",
-//                       style: Constants.ListItemHeading,
-//                     ),
-//                   ),
-//                 )),
-//             Expanded(
-//                 child: Padding(
-//               padding: EdgeInsets.fromLTRB(12.w, 0, 0, 1.2.h),
-//               child: SingleChildScrollView(
-//                 scrollDirection: Axis.horizontal,
-//                 child: Text(
-//                   data["empId"] ??= "null",
-//                   style: Constants.ListItemSubHeading,
-//                 ),
-//               ),
-//             )),
-//           ],
-//         ),
-//       ),
-//     );
-//   });
-// }
 
   return Bounce(
     duration: Duration(milliseconds: 20),
@@ -81,17 +33,13 @@ Widget buildCard(BuildContext context, DocumentSnapshot document, int screen) {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Center(
-            child: Expanded(
-                child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: CircleAvatar(
-                child: Icon(Icons.person),
-              ),
-            )),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: CircleAvatar(
+          child: Icon(Icons.person),
+            ),
           ),
           Expanded(
-              flex: 1,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(6.w, 0, 0, 1.2.h),
                 child: SingleChildScrollView(

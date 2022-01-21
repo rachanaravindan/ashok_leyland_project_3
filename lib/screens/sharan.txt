@@ -1,15 +1,7 @@
-await _traineeRef.trainee
-                                    .doc(_employeeId)
-                                    .collection('completed on the job training')
-                                    .doc(operationNumber)
-                                    .get()
-                                    .then((DocumentSnapshot snapshot) {
-                                  if (snapshot.exists) {
-                                    Map<String, dynamic> documentData = snapshot.data();
-                                    _statusController.text="Trained";
-                                  } else {
-                                    _statusController.text="Not Trained";
-                                    _showMyDialog(
-                                        "$_employeeId is not trained for operation number $operationNumber");
-                                  }
-                          });
+return ListTile(
+                leading: Icon(Icons.list),
+                trailing: Text(
+                  "GFG",
+                  style: TextStyle(color: Colors.green, fontSize: 15),
+                ),
+                title: Text("List item $index"));

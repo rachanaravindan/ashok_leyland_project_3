@@ -1,75 +1,15 @@
-DateTime _currentdate = new DateTime.now();
-
-  Future<Null> _selectdate(BuildContext context) async {
-    final DateTime _seldate = await showDatePicker(
-        context: context,
-        initialDate: _currentdate,
-        firstDate: DateTime(1990),
-        lastDate: DateTime(2020),
-        builder: (context, child) {
-          return SingleChildScrollView(
-            child: child,
-          );
-        });
-    if (_seldate != null) {
-      setState(() {
-        _currentdate = _seldate;
-      });
-    }
-          String _formattedate = new DateFormat.yMMMd().format(_currentdate);
-IconButton(
-                      onPressed: () {
-                        _selectdate(context);
-                      },
-                      icon: Icon(Icons.calendar_today),
-                    ),
-                    Center(child: Text('Date: $_formattedate '))
-
-
-
-
-
-
-                     AlertDialog(
-                                        title: const Text('Error'),
-                                        content: Column(
-                                          children: [
-                                            Text(
-                                                '$_employeeId already exists. Do you want to overwrite?')
-                                          ],
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            child: const Text('Overwrite'),
-                                            onPressed: () {
-                                              _traineeRef.trainee
-                                                  .doc(_employeeId)
-                                                  .set({
-                                                'name': _traineeName ?? "Null",
-                                                'empId': _employeeId ?? "Null",
-                                                'doj': Timestamp.fromDate(
-                                                    currentDate),
-                                                'qualifications':
-                                                    _traineeQualifications ??
-                                                        "Null",
-                                                'gender': GenderDropDownValue,
-                                                'age': _traineeAge ?? "Null",
-                                                'level': "L0",
-                                              });
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          DoneMark(
-                                                            screen: false,
-                                                          )));
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: const Text('No'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                      );
+await _traineeRef.trainee
+                                    .doc(_employeeId)
+                                    .collection('completed on the job training')
+                                    .doc(operationNumber)
+                                    .get()
+                                    .then((DocumentSnapshot snapshot) {
+                                  if (snapshot.exists) {
+                                    Map<String, dynamic> documentData = snapshot.data();
+                                    _statusController.text="Trained";
+                                  } else {
+                                    _statusController.text="Not Trained";
+                                    _showMyDialog(
+                                        "$_employeeId is not trained for operation number $operationNumber");
+                                  }
+                          });

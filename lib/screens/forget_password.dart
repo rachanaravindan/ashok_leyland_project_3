@@ -1,6 +1,6 @@
-import 'package:ashok_leyland_project_3/constants.dart';
-import 'package:ashok_leyland_project_3/screens/done_add_screen.dart';
-import 'package:ashok_leyland_project_3/screens/signin_page.dart';
+import 'package:altraport/constants.dart';
+import 'package:altraport/screens/done_add_screen.dart';
+import 'package:altraport/screens/signin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sizer/sizer.dart';

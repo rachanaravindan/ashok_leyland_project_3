@@ -1,5 +1,5 @@
-import 'package:ashok_leyland_project_3/constants.dart';
-import 'package:ashok_leyland_project_3/screens/trainee_profile.dart';
+import 'package:altraport/constants.dart';
+import 'package:altraport/screens/trainee_profile.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';

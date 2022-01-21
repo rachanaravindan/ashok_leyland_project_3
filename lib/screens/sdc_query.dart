@@ -1,9 +1,10 @@
 //original
 import 'dart:io';
-import 'package:ashok_leyland_project_3/Constants.dart';
-import 'package:ashok_leyland_project_3/models/card.dart';
-import 'package:ashok_leyland_project_3/screens/home.dart';
-import 'package:ashok_leyland_project_3/services/crud.dart';
+import 'package:altraport/Constants.dart';
+import 'package:altraport/models/card.dart';
+import 'package:altraport/my_fav_animations/loading.dart';
+import 'package:altraport/screens/home.dart';
+import 'package:altraport/services/crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -30,6 +31,7 @@ class _SdcQueryState extends State<SdcQuery> {
       _search,
       _levelDropDownValue = "Select Level",
       _programDropDownValue = "Choose Program";
+  bool _isLoading = false;
   DateTime _joiningDate;
   DateTime _fromDate = new DateTime.now();
   DateTime _toDate = new DateTime.now();
@@ -85,6 +87,9 @@ class _SdcQueryState extends State<SdcQuery> {
   crudMethod crudObj = new crudMethod();
 
   Future<int> _createExcel() async {
+    setState(() {
+      _isLoading = true;
+    });
 // Create a new Excel Document.
     final Workbook workbook = Workbook();
 
@@ -97,7 +102,7 @@ class _SdcQueryState extends State<SdcQuery> {
     row.add("Name");
     row.add("Date of Joining");
     row.add("Qualification");
-    row.add("Age");
+    row.add("Date Of Birth");
     row.add('Ashok Leyland Overview');
     row.add("Basics of Automobile");
     row.add('Safety');
@@ -153,8 +158,14 @@ class _SdcQueryState extends State<SdcQuery> {
                 .then((DocumentSnapshot snapshot) {
               if (snapshot.exists) {
                 Map<String, dynamic> documentMapData = snapshot.data();
-                _promotionDate = (DateFormat('dd/MM/yyyy')
-              .format((documentMapData["date of promotion"] as Timestamp).toDate())) ?? "N/A";
+                try {
+                  _promotionDate = (DateFormat('dd/MM/yyyy').format(
+                          (documentMapData["date of promotion"] as Timestamp)
+                              .toDate())) ??
+                      "N/A";
+                } catch (e) {
+                  _promotionDate = "N/A";
+                }
               }
             });
           } else {
@@ -198,6 +209,9 @@ class _SdcQueryState extends State<SdcQuery> {
 
 // Write Excel data
     await file.writeAsBytes(bytes, flush: true);
+    setState(() {
+      _isLoading = false;
+    });
 
 // Open the Excel document in mobile
     OpenFile.open('$path/Output.xlsx');
@@ -379,216 +393,227 @@ class _SdcQueryState extends State<SdcQuery> {
       }
     }
 
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-          child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              backgroundColor: Colors.yellow[00],
-              floatingActionButton: FloatingActionButton(
-                  backgroundColor: Colors.blue[300],
-                  child: Icon(Icons.file_download),
-                  onPressed: () {
-                    // _generateCsvFile();
-                    _createExcel();
-                  }),
-              body: SingleChildScrollView(
-                child: Form(
-                    key: _formKey,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              alignment: Alignment.topLeft,
-                              margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
-                              height: 5.0.h,
-                              width: 6.0.h,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => HomeScreen()));
-                                },
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                  size: 30.0,
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(5),
-                                  primary: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          Text(
-                            "SDC Query",
-                            style: Constants.boldHeading,
-                          ),
-
-                          //SEARCH BAR
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                height: 6.h,
-                                child: TextField(
-                                  controller: _searchController,
-                                  decoration: InputDecoration(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 10.0),
-                                      hintText: "Search",
-                                      focusColor: Colors.black,
-                                      fillColor: Colors.grey,
-                                      prefixIcon: Icon(Icons.search),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30))),
-                                  onChanged: (input) {
-                                    searchText = input;
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          //SELECT LEVEL DROPDOWN
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5.w),
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              dropdownColor: Colors.white,
-                              iconSize: 5.h,
-                              focusColor: Colors.red,
-                              value: _levelDropDownValue,
-                              //elevation: 5,
-                              style: TextStyle(color: Colors.black),
-                              iconEnabledColor: Colors.black,
-                              items: respectiveLevelList
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                        // color: Colors.black,
-                                        ),
-                                  ),
-                                );
-                              }).toList(),
-                              hint: Text(respectiveLevelList[0]),
-                              onChanged: (String value) {
-                                setState(() {
-                                  _levelDropDownValue = value;
-                                });
-                              },
-                            ),
-                          ),
-
-                          //CHOOSE PROGRAM DROPDOWN
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5.w),
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              dropdownColor: Colors.white,
-                              iconSize: 5.h,
-                              focusColor: Colors.red,
-                              value: _programDropDownValue,
-                              //elevation: 5,
-                              style: TextStyle(color: Colors.black),
-                              iconEnabledColor: Colors.black,
-                              items: respectiveProgramList
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                        // color: Colors.black,
-                                        ),
-                                  ),
-                                );
-                              }).toList(),
-                              hint: Text(respectiveProgramList[0]),
-                              onChanged: (String value) {
-                                setState(() {
-                                  _programDropDownValue = value;
-                                });
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(25.0),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  elevation: 2,
-
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 1.5.h, horizontal: 11.6.h),
-                                  onPrimary: Colors.white, // foreground
-                                ),
-                                onPressed: () async {
-                                  getData();
-                                },
-                                child: Text('Submit')),
-                          ),
-                          _allResults.length > 0
-                              ? Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 25.w),
-                                      child: Text(
-                                        'Name',
-                                        style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.black),
+    return _isLoading
+        ? Loading()
+        : Sizer(builder: (context, orientation, deviceType) {
+            return SafeArea(
+                child: Scaffold(
+                    resizeToAvoidBottomInset: false,
+                    backgroundColor: Colors.yellow[00],
+                    floatingActionButton: FloatingActionButton(
+                        backgroundColor: Colors.blue[300],
+                        child: Icon(Icons.file_download),
+                        onPressed: () {
+                          // _generateCsvFile();
+                          _createExcel();
+                        }),
+                    body: SingleChildScrollView(
+                      child: Form(
+                          key: _formKey,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Container(
+                                    alignment: Alignment.topLeft,
+                                    margin:
+                                        EdgeInsets.only(top: 0.h, bottom: 2.h),
+                                    height: 5.0.h,
+                                    width: 6.0.h,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomeScreen()));
+                                      },
+                                      child: Icon(
+                                        Icons.arrow_back,
+                                        color: Colors.white,
+                                        size: 30.0,
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: CircleBorder(),
+                                        padding: EdgeInsets.all(5),
+                                        primary: Colors.black,
                                       ),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 31.w),
-                                      child: Text('Id',
-                                          style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.black)),
-                                    )
-                                  ],
-                                )
-                              : Text(""),
-                          _searchResults.length > 0
-                              ? ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: _searchResults.length,
-                                  itemBuilder: (BuildContext context,
-                                          int index) =>
-                                      buildCard(
-                                          context, _searchResults[index], 1),
-                                )
-                              : Padding(
-                                  padding: EdgeInsets.only(top: 5.w),
-                                  child: Text("No Results",
-                                      style: Constants.regularHeading),
+                                  ),
                                 ),
-                        ],
-                      ),
-                    )),
-              )));
-    });
+
+                                Text(
+                                  "SDC Query",
+                                  style: Constants.boldHeading,
+                                ),
+
+                                //SEARCH BAR
+                                Padding(
+                                  padding:
+                                      EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Container(
+                                      height: 6.h,
+                                      child: TextField(
+                                        controller: _searchController,
+                                        decoration: InputDecoration(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 10.0),
+                                            hintText: "Search",
+                                            focusColor: Colors.black,
+                                            fillColor: Colors.grey,
+                                            prefixIcon: Icon(Icons.search),
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(30))),
+                                        onChanged: (input) {
+                                          searchText = input;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                //SELECT LEVEL DROPDOWN
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.w),
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    dropdownColor: Colors.white,
+                                    iconSize: 5.h,
+                                    focusColor: Colors.red,
+                                    value: _levelDropDownValue,
+                                    //elevation: 5,
+                                    style: TextStyle(color: Colors.black),
+                                    iconEnabledColor: Colors.black,
+                                    items: respectiveLevelList
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                              // color: Colors.black,
+                                              ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    hint: Text(respectiveLevelList[0]),
+                                    onChanged: (String value) {
+                                      setState(() {
+                                        _levelDropDownValue = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+
+                                //CHOOSE PROGRAM DROPDOWN
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.w),
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    dropdownColor: Colors.white,
+                                    iconSize: 5.h,
+                                    focusColor: Colors.red,
+                                    value: _programDropDownValue,
+                                    //elevation: 5,
+                                    style: TextStyle(color: Colors.black),
+                                    iconEnabledColor: Colors.black,
+                                    items: respectiveProgramList
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                              // color: Colors.black,
+                                              ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    hint: Text(respectiveProgramList[0]),
+                                    onChanged: (String value) {
+                                      setState(() {
+                                        _programDropDownValue = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(25.0),
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        elevation: 2,
+
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 1.5.h,
+                                            horizontal: 11.6.h),
+                                        onPrimary: Colors.white, // foreground
+                                      ),
+                                      onPressed: () async {
+                                        getData();
+                                      },
+                                      child: Text('Submit')),
+                                ),
+                                _allResults.length > 0
+                                    ? Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(left: 25.w),
+                                            child: Text(
+                                              'Name',
+                                              style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(left: 31.w),
+                                            child: Text('Id',
+                                                style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Colors.black)),
+                                          )
+                                        ],
+                                      )
+                                    : Text(""),
+                                _searchResults.length > 0
+                                    ? ListView.builder(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: _searchResults.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) =>
+                                                buildCard(context,
+                                                    _searchResults[index], 1),
+                                      )
+                                    : Padding(
+                                        padding: EdgeInsets.only(top: 5.w),
+                                        child: Text("No Results",
+                                            style: Constants.regularHeading),
+                                      ),
+                              ],
+                            ),
+                          )),
+                    )));
+          });
   }
 }

@@ -1,10 +1,10 @@
-import 'package:ashok_leyland_project_3/screens/done_add_screen.dart';
-import 'package:ashok_leyland_project_3/services/crud.dart';
+import 'package:altraport/screens/done_add_screen.dart';
+import 'package:altraport/services/crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
-import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:altraport/constants.dart';
 import 'assesment_list_screen.dart';
 import 'home.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -545,7 +545,10 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                           if (value.isEmpty ||
                               !RegExp(r'^[0-9]').hasMatch(value)) {
                             return "Operation Number should contain only numbers";
-                          } else {
+                          } else if(_operationDescController.text.length==0){
+                            return "Operation Number is Invalid";
+                          }
+                            else {
                             return null;
                           }
                         },
@@ -553,12 +556,20 @@ class _OnTheJobTrainingState extends State<OnTheJobTraining> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: TextField(
+                      child: TextFormField(
                         controller: _operationDescController,
                         maxLines: 3,
                         enabled: false,
                         decoration:
                             InputDecoration(labelText: 'Operation Description'),
+                          validator: (value) {
+                          if (_operationDescController.text.length==0) {
+                            return "Invalid Operation Number";
+                          } else {
+                            return null;
+                          }
+                        },
+                        
                       ),
                     ),
 

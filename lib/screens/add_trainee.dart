@@ -1,9 +1,9 @@
-import 'package:ashok_leyland_project_3/services/crud.dart';
+import 'package:altraport/services/crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
-import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:altraport/constants.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'done_add_screen.dart';
 import 'home.dart';
@@ -21,6 +21,7 @@ class _AddTraineeState extends State<AddTrainee> {
   String _traineeName, _employeeId, _traineeQualifications, _traineeAge;
   DateTime _joiningDate;
   DateTime currentDate = new DateTime.now();
+  DateTime currentBirthDate = new DateTime.now();
   bool _isDisable = false;
   bool showToggleBtn = false, showTextField = false;
   List<String> GenderItems = ['Gender', 'Male', 'Female', 'Others'];
@@ -51,6 +52,51 @@ class _AddTraineeState extends State<AddTrainee> {
     }
   }
 
+  Future<Null> _selectBirthdate(BuildContext floatcontext) async {
+    final DateTime _seldate = await showDatePicker(
+        context: floatcontext,
+        initialDate: currentBirthDate,
+        firstDate: DateTime(1990),
+        lastDate: DateTime(2100),
+        builder: (context, child) {
+          return SingleChildScrollView(
+            child: child,
+          );
+        });
+    if (_seldate != null && _seldate != currentBirthDate) {
+      setState(() {
+        print(_seldate);
+        currentBirthDate = _seldate;
+        _selectdate(context);
+      });
+    }
+  }
+
+  Future<void> _showMyDialog(String error) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[Text(error)],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isNumeric(String s) {
@@ -61,6 +107,7 @@ class _AddTraineeState extends State<AddTrainee> {
     }
 
     String _formattedate = new DateFormat.yMMMd().format(currentDate);
+    String _formatteBirthdate = new DateFormat.yMMMd().format(currentDate);
 
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
@@ -204,7 +251,7 @@ class _AddTraineeState extends State<AddTrainee> {
                       //GENDER
                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: DropdownButton<String>(
+                        child: DropdownButtonFormField<String>(
                           isExpanded: true,
                           dropdownColor: Colors.white,
                           iconSize: 5.h,
@@ -226,6 +273,8 @@ class _AddTraineeState extends State<AddTrainee> {
                             );
                           }).toList(),
                           hint: Text(GenderItems[0]),
+                          validator: (value) =>
+                              value == "Gender" ? 'field required' : null,
                           onChanged: (String value) {
                             setState(() {
                               GenderDropDownValue = value;
@@ -239,24 +288,32 @@ class _AddTraineeState extends State<AddTrainee> {
                         ),
                       ),
 
-                      //AGE
+                      //DATE OF Birth
                       Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          keyboardType:TextInputType.number,
-                          textInputAction: TextInputAction.done,
-                          decoration: InputDecoration(labelText: 'Age'),
-                          validator: (value) {
-                            if (value.isEmpty ||
-                                !RegExp(r'^[0-9]').hasMatch(value)) {
-                              return "  Enter age in numbers";
-                            } else {
-                              return null;
-                            }
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 4),
+                        child: Bounce(
+                          duration: Duration(milliseconds: 110),
+                          onPressed: () {
+                            setState(() {
+                              _selectBirthdate(context);
+                            });
                           },
-                          onChanged: (value) {
-                            _traineeAge = value;
-                          },
+                          child: Card(
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _selectBirthdate(context);
+                                    });
+                                  },
+                                  icon: Icon(Icons.calendar_today),
+                                ),
+                                Text('Date Of Birth: $_formatteBirthdate'),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                       Padding(
@@ -272,8 +329,10 @@ class _AddTraineeState extends State<AddTrainee> {
                             ),
                             onPressed: () async {
                               final isValid = _formKey.currentState.validate();
-
-                              if (isValid) {
+                              if (currentBirthDate != DateTime.now()) {
+                                _showMyDialog("Enter the Date of Birth");
+                              }
+                              else if (isValid) {
                                 print("inside isvalid");
                                 await _traineeRef.trainee
                                     .doc(_employeeId)
@@ -318,8 +377,11 @@ class _AddTraineeState extends State<AddTrainee> {
                                                             "Null",
                                                     'gender':
                                                         GenderDropDownValue,
-                                                    'age':
-                                                        _traineeAge ?? "Null",
+                                                    'age': DateFormat(
+                                                                'dd-MM-yyyy')
+                                                            .format(
+                                                                currentBirthDate) ??
+                                                        "Null",
                                                     'level': "L0",
                                                   });
                                                   Navigator.push(
@@ -351,7 +413,9 @@ class _AddTraineeState extends State<AddTrainee> {
                                       'qualifications':
                                           _traineeQualifications ?? "Null",
                                       'gender': GenderDropDownValue,
-                                      'age': _traineeAge ?? "Null",
+                                      'age': DateFormat('dd-MM-yyyy')
+                                              .format(currentBirthDate) ??
+                                          "Null",
                                       'level': "L0",
                                     });
                                     Navigator.push(

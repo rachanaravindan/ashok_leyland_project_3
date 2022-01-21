@@ -1,8 +1,8 @@
-import 'package:ashok_leyland_project_3/constants.dart';
-import 'package:ashok_leyland_project_3/constants.dart';
-import 'package:ashok_leyland_project_3/screens/home.dart';
-import 'package:ashok_leyland_project_3/services/crud.dart';
-import 'package:ashok_leyland_project_3/widgets/custom_input.dart';
+import 'package:altraport/constants.dart';
+import 'package:altraport/constants.dart';
+import 'package:altraport/screens/home.dart';
+import 'package:altraport/services/crud.dart';
+import 'package:altraport/widgets/custom_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
@@ -630,12 +630,12 @@ class _SdcTrainingScreenState extends State<SdcTrainingScreen> {
                                       }
                                     }
                                   });
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => DoneMark(
-                                  //               screen: false,
-                                  //             )));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DoneMark(
+                                                screen: false,
+                                              )));
                                 }
                               }
                             }

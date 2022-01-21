@@ -1,11 +1,11 @@
-import 'package:ashok_leyland_project_3/screens/done_add_screen.dart';
-import 'package:ashok_leyland_project_3/services/crud.dart';
+import 'package:altraport/screens/done_add_screen.dart';
+import 'package:altraport/services/crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
-import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:altraport/constants.dart';
 
 import 'home.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -229,7 +229,7 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
 
                   Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
+                    child: DropdownButtonFormField<String>(
                       isExpanded: true,
                       dropdownColor: Colors.white,
                       iconSize: 5.h,
@@ -251,6 +251,8 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                         );
                       }).toList(),
                       hint: Text(departmentItems[0]),
+                      validator: (value) =>
+                          value == "Department" ? 'field required' : null,
                       onChanged: (String value) {
                         setState(() {
                           departmentDropDownValue = value;

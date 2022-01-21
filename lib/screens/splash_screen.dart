@@ -1,6 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:ashok_leyland_project_3/screens/LandingPage.dart';
-import 'package:ashok_leyland_project_3/screens/signin_page.dart';
+import 'package:altraport/screens/LandingPage.dart';
+import 'package:altraport/screens/signin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 

@@ -1,7 +1,7 @@
-import 'package:ashok_leyland_project_3/constants.dart';
-import 'package:ashok_leyland_project_3/my_fav_animations/loading.dart';
-import 'package:ashok_leyland_project_3/screens/sdc_training.dart';
-import 'package:ashok_leyland_project_3/screens/home.dart';
+import 'package:altraport/constants.dart';
+import 'package:altraport/my_fav_animations/loading.dart';
+import 'package:altraport/screens/sdc_training.dart';
+import 'package:altraport/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -306,7 +306,7 @@ class _traineeProfileState extends State<traineeProfile> {
                               Map<String, dynamic> data =
                                   document.data() as Map<String, dynamic>;
                               return Card(
-                                color: data["post_test_marks"] < 50
+                                color: data["post_test_marks"] < 60
                                     ? Colors.red.shade400
                                     : Colors.green,
                                 shape: BeveledRectangleBorder(

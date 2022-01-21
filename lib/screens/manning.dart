@@ -1,10 +1,10 @@
-import 'package:ashok_leyland_project_3/screens/done_add_screen.dart';
-import 'package:ashok_leyland_project_3/services/crud.dart';
+import 'package:altraport/screens/done_add_screen.dart';
+import 'package:altraport/services/crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
-import 'package:ashok_leyland_project_3/constants.dart';
+import 'package:altraport/constants.dart';
 import 'assesment_list_screen.dart';
 import 'home.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,10 +18,11 @@ class _ManningState extends State<Manning> {
   // FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   var _nameController = TextEditingController();
+  var _statusController = TextEditingController();
   var _deptController = TextEditingController();
   var _operationDescController = TextEditingController();
   crudMethod _traineeRef = new crudMethod();
-
+  bool trainedFinder = false;
   String _traineeName, _employeeId;
   Map<String, String> _HEngineAssembly = {
     "-1": "Enter the Operation Number",
@@ -230,6 +231,8 @@ class _ManningState extends State<Manning> {
     }
   }
 
+  int _value = 1;
+
   @override
   Widget build(BuildContext context) {
     bool isNumeric(String s) {
@@ -254,13 +257,22 @@ class _ManningState extends State<Manning> {
               ),
             ),
             actions: <Widget>[
-              TextButton(
-                child: const Text('Ok'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()));
-                },
+              Row(
+                children: [
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Continue'),
+                    onPressed: () {
+                      trainedFinder = true;
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
               ),
             ],
           );
@@ -406,51 +418,6 @@ class _ManningState extends State<Manning> {
                         enableInteractiveSelection: true,
                       ),
                     ),
-
-                    //OPERATION NUMBER
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        textInputAction: TextInputAction.next,
-                        onChanged: (input) {
-                          setState(() {
-                            operationNumber = input;
-
-                            if (respectiveMap.containsKey(operationNumber))
-                              _operationDescController.text =
-                                  respectiveMap[operationNumber];
-                            else
-                              _operationDescController.text = "" ?? "Empty";
-
-                            if (input.isEmpty)
-                              _isDisable = true;
-                            else
-                              _isDisable = false;
-                          });
-                        },
-                        decoration: InputDecoration(
-                            labelText: 'Enter Operation Number'),
-                        validator: (value) {
-                          if (value.isEmpty ||
-                              !RegExp(r'^[0-9]').hasMatch(value)) {
-                            return "Operation Number should contain only numbers";
-                          } else {
-                            return null;
-                          }
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: _operationDescController,
-                        maxLines: 3,
-                        enabled: false,
-                        decoration:
-                            InputDecoration(labelText: 'Operation Description'),
-                      ),
-                    ),
-
                     //DATE OF TRAINING
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -478,7 +445,168 @@ class _ManningState extends State<Manning> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding:  EdgeInsets.all(2.w),
+                      child: Text("Shift",style:Constants.regularHeading),
+                    ),
+                    Column(
+                      children: <Widget>[
+                        for (int i = 1; i <= 1; i++)
+                          ListTile(
+                            title: Text(
+                              'FS',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1
+                                  .copyWith(
+                                      color: i == 5
+                                          ? Colors.black38
+                                          : Colors.black),
+                            ),
+                            leading: Radio(
+                              value: i,
+                              groupValue: _value,
+                              activeColor: Color(0xFF6200EE),
+                              onChanged: i == 5
+                                  ? null
+                                  : (int value) {
+                                      setState(() {
+                                        _value = value;
+                                      });
+                                    },
+                            ),
+                          ),
+                        for (int i = 2; i <= 2; i++)
+                          ListTile(
+                            title: Text(
+                              'MS',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1
+                                  .copyWith(
+                                      color: i == 5
+                                          ? Colors.black38
+                                          : Colors.black),
+                            ),
+                            leading: Radio(
+                              value: i,
+                              groupValue: _value,
+                              activeColor: Color(0xFF6200EE),
+                              onChanged: i == 5
+                                  ? null
+                                  : (int value) {
+                                      setState(() {
+                                        _value = value;
+                                      });
+                                    },
+                            ),
+                          ),
+                        for (int i = 3; i <= 3; i++)
+                          ListTile(
+                            title: Text(
+                              'NS',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1
+                                  .copyWith(
+                                      color: i == 5
+                                          ? Colors.black38
+                                          : Colors.black),
+                            ),
+                            leading: Radio(
+                              value: i,
+                              groupValue: _value,
+                              activeColor: Color(0xFF6200EE),
+                              onChanged: i == 5
+                                  ? null
+                                  : (int value) {
+                                      setState(() {
+                                        _value = value;
+                                        print(value);
+                                      });
+                                    },
+                            ),
+                          ),
+                      ],
+                    ),
 
+                    //OPERATION NUMBER
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        textInputAction: TextInputAction.next,
+                        onChanged: (input) {
+                          setState(() async {
+                            operationNumber = input;
+
+                            if (respectiveMap.containsKey(operationNumber))
+                              _operationDescController.text =
+                                  respectiveMap[operationNumber];
+                            else
+                              _operationDescController.text = "" ?? "Empty";
+
+                            if (input.isEmpty)
+                              _isDisable = true;
+                            else
+                              _isDisable = false;
+                            await _traineeRef.trainee
+                                .doc(_employeeId)
+                                .collection('completed on the job training')
+                                .doc(operationNumber)
+                                .get()
+                                .then((DocumentSnapshot snapshot) {
+                              if (snapshot.exists) {
+                                Map<String, dynamic> documentData =
+                                    snapshot.data();
+                                _statusController.text = "Trained";
+                                trainedFinder = true;
+                              } else {
+                                _statusController.text = "Not Trained";
+                                trainedFinder = false;
+                              }
+                            });
+                          });
+                        },
+                        decoration: InputDecoration(
+                            labelText: 'Enter Operation Number'),
+                        validator: (value) {
+                          if (value.isEmpty ||
+                              !RegExp(r'^[0-9]').hasMatch(value)) {
+                            return "Operation Number should contain only numbers";
+                          } else {
+                            return null;
+                          }
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _operationDescController,
+                        maxLines: 3,
+                        enabled: false,
+                        decoration:
+                            InputDecoration(labelText: 'Operation Description'),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _statusController,
+                        onChanged: (input) {
+                          _traineeName = input;
+                          setState(() {
+                            if (input.isEmpty)
+                              _isDisable = true;
+                            else
+                              _isDisable = false;
+                          });
+                        },
+                        decoration: InputDecoration(labelText: 'Status'),
+                        enabled: false,
+                        enableInteractiveSelection: true,
+                      ),
+                    ),
                     //SUBMIT BUTTON
                     Padding(
                         padding: const EdgeInsets.all(25.0),
@@ -497,46 +625,73 @@ class _ManningState extends State<Manning> {
                               ),
                           onPressed: () async {
                             final isValid = _formKey.currentState.validate();
+                            String shift;
                             if (isValid) {
-                              
-                              print(currentDate.toString());
-                              await FirebaseFirestore.instance
-                                  .collection("manning")
-                                  .doc(_employeeId.toString() +" "+
-                                      DateFormat("dd-MM-yyyy").format(currentDate))
-                                  .get()
-                                  .then((DocumentSnapshot snapshot) async {
-                                    
-                                if (snapshot.exists) {
-                                  await FirebaseFirestore.instance
-                                      .collection("manning")
-                                      .doc(_employeeId.toString() +
-                                          " " +
-                                          DateFormat("dd-MM-yyyy")
-                                              .format(currentDate))
-                                      .update({
-                                        "empId": _employeeId,
-                                    "operation no": operationNumber,
-                                    "date": Timestamp.fromDate(currentDate),
-                                    "name":_nameController.text,
-                                    "department":_deptController.text,
-                                  });
-                                } else {
-                                  await FirebaseFirestore.instance
-                                      .collection("manning")
-                                      .doc(_employeeId.toString() +
-                                          " " +
-                                          DateFormat("dd-MM-yyyy")
-                                              .format(currentDate))
-                                      .set({
-                                    "empId": _employeeId,
-                                    "operation no": operationNumber,
-                                    "date": Timestamp.fromDate(currentDate),
-                                    "name":_nameController.text,
-                                    "department":_deptController.text
-                                  });
+                              if (trainedFinder == false)
+                                _showMyDialog(
+                                    "$_employeeId is not trained for operation number $operationNumber");
+                              else {
+                                if (_value == 1) {
+                                  shift = "FS";
+                                } else if (_value == 1) {
+                                  shift = "MS";
+                                } else if (_value == 1) {
+                                  shift = "NS";
                                 }
-                              });
+                                print(currentDate.toString());
+                                await FirebaseFirestore.instance
+                                    .collection("manning")
+                                    .doc(_employeeId.toString() +
+                                        " " +
+                                        DateFormat("dd-MM-yyyy")
+                                            .format(currentDate))
+                                    .get()
+                                    .then((DocumentSnapshot snapshot) async {
+                                  if (snapshot.exists) {
+                                    await FirebaseFirestore.instance
+                                        .collection("manning")
+                                        .doc(_employeeId.toString() +
+                                            " " +
+                                            DateFormat("dd-MM-yyyy")
+                                                .format(currentDate))
+                                        .update({
+                                      "empId": _employeeId,
+                                      "operation no": operationNumber,
+                                      "date": Timestamp.fromDate(currentDate),
+                                      "name": _nameController.text,
+                                      "department": _deptController.text,
+                                      "shift": shift
+                                    });
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => DoneMark(
+                                                  screen: false,
+                                                )));
+                                  } else {
+                                    await FirebaseFirestore.instance
+                                        .collection("manning")
+                                        .doc(_employeeId.toString() +
+                                            " " +
+                                            DateFormat("dd-MM-yyyy")
+                                                .format(currentDate))
+                                        .set({
+                                      "empId": _employeeId,
+                                      "operation no": operationNumber,
+                                      "date": Timestamp.fromDate(currentDate),
+                                      "name": _nameController.text,
+                                      "department": _deptController.text,
+                                      "shift": shift
+                                    });
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => DoneMark(
+                                                  screen: false,
+                                                )));
+                                  }
+                                });
+                              }
                             }
                           },
                           child: Text('SUBMIT'),

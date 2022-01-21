@@ -1,8 +1,9 @@
 //original
 import 'dart:io';
-import 'package:ashok_leyland_project_3/Constants.dart';
-import 'package:ashok_leyland_project_3/models/card.dart';
-import 'package:ashok_leyland_project_3/screens/home.dart';
+import 'package:altraport/Constants.dart';
+import 'package:altraport/models/card.dart';
+import 'package:altraport/my_fav_animations/loading.dart';
+import 'package:altraport/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -172,6 +173,7 @@ class _OtjtQueryState extends State<OtjtQuery> {
     "490": "CYLINDER BLOCK & Head WASHING",
     "500": "Camshaft & crankshaft washing",
   };
+  bool _isLoading = false;
   DateTime _joiningDate;
   DateTime _fromDate = new DateTime.now();
   DateTime _toDate = new DateTime.now();
@@ -483,6 +485,9 @@ class _OtjtQueryState extends State<OtjtQuery> {
     }
 
     Future<void> _createExcel(Map<String, String> mapp) async {
+      setState(() {
+        _isLoading = true;
+      });
       print("Im trying to print");
       final Workbook workbook = Workbook();
 
@@ -573,387 +578,405 @@ class _OtjtQueryState extends State<OtjtQuery> {
 
 // Write Excel data
       await file.writeAsBytes(bytes, flush: true);
+      setState(() {
+        _isLoading = false;
+      });
 
 // Open the Excel document in mobile
       OpenFile.open('$path/Output.xlsx');
     }
 
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-          child: Scaffold(
-              // resizeToAvoidBottomInset: false,
-              backgroundColor: Colors.yellow[00],
-              floatingActionButton: FloatingActionButton(
-                  backgroundColor: Colors.blue[300],
-                  child: Icon(Icons.file_download),
-                  onPressed: () {
-                    if (departmentDropDownValue == 'A - Engine Assembly')
-                      _createExcel(_AEngineAssembly);
-                    else if (departmentDropDownValue == 'H - Engine Assembly')
-                      _createExcel(_HEngineAssembly);
-                  }),
-              body: SingleChildScrollView(
-                child: Form(
-                    key: _formKey,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              alignment: Alignment.topLeft,
-                              margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
-                              height: 5.0.h,
-                              width: 6.0.h,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => HomeScreen()));
-                                },
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                  size: 30.0,
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(5),
-                                  primary: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          Center(
-                            child: Text(
-                              "Skill Query",
-                              style: Constants.boldHeading,
-                            ),
-                          ),
-
-                          //SEARCH BAR
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                height: 6.h,
-                                child: TextField(
-                                  controller: _searchController,
-                                  onChanged: (input) {
-                                    searchText = input;
-                                  },
-                                  decoration: InputDecoration(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 10.0),
-                                      hintText: "Search",
-                                      focusColor: Colors.black,
-                                      fillColor: Colors.grey,
-                                      prefixIcon: Icon(Icons.search),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30))),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5.w),
-                            child: DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              dropdownColor: Colors.white,
-                              iconSize: 5.h,
-                              focusColor: Colors.red,
-                              value: departmentDropDownValue,
-                              //elevation: 5,
-                              style: TextStyle(color: Colors.black),
-                              iconEnabledColor: Colors.black,
-                              items: departmentItems
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                        // color: Colors.black,
-                                        ),
+    return _isLoading
+        ? Loading()
+        : Sizer(builder: (context, orientation, deviceType) {
+            return SafeArea(
+                child: Scaffold(
+                    // resizeToAvoidBottomInset: false,
+                    backgroundColor: Colors.yellow[00],
+                    floatingActionButton: FloatingActionButton(
+                        backgroundColor: Colors.blue[300],
+                        child: Icon(Icons.file_download),
+                        onPressed: () {
+                          if (departmentDropDownValue == 'A - Engine Assembly')
+                            _createExcel(_AEngineAssembly);
+                          else if (departmentDropDownValue ==
+                              'H - Engine Assembly')
+                            _createExcel(_HEngineAssembly);
+                        }),
+                    body: SingleChildScrollView(
+                      child: Form(
+                          key: _formKey,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Container(
+                                    alignment: Alignment.topLeft,
+                                    margin:
+                                        EdgeInsets.only(top: 0.h, bottom: 2.h),
+                                    height: 5.0.h,
+                                    width: 6.0.h,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomeScreen()));
+                                      },
+                                      child: Icon(
+                                        Icons.arrow_back,
+                                        color: Colors.white,
+                                        size: 30.0,
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: CircleBorder(),
+                                        padding: EdgeInsets.all(5),
+                                        primary: Colors.black,
+                                      ),
+                                    ),
                                   ),
-                                );
-                              }).toList(),
-                              hint: Text(departmentItems[0]),
-                              validator: (value) => value == "Department"
-                                  ? 'field required'
-                                  : null,
-                              onChanged: (String value) {
-                                setState(() {
-                                  departmentDropDownValue = value;
-                                  if (value != "department") {
-                                    showToggleBtn = true;
-                                  } else
-                                    showToggleBtn = false;
-                                });
-                                // getData();
-                              },
-                            ),
-                          ),
-                          //SELECT LEVEL DROPDOWN
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5.w),
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              dropdownColor: Colors.white,
-                              iconSize: 5.h,
-                              focusColor: Colors.red,
-                              value: _levelDropDownValue,
-                              //elevation: 5,
-                              style: TextStyle(color: Colors.black),
-                              iconEnabledColor: Colors.black,
-                              items: respectiveLevelList
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
+                                ),
+
+                                Center(
                                   child: Text(
-                                    value,
-                                    style: TextStyle(
-                                        // color: Colors.black,
-                                        ),
+                                    "Skill Query",
+                                    style: Constants.boldHeading,
                                   ),
-                                );
-                              }).toList(),
-                              hint: Text(respectiveLevelList[0]),
-                              onChanged: (String value) {
-                                setState(() {
-                                  _levelDropDownValue = value;
-                                  //getData();
-                                });
-                              },
-                            ),
-                          ),
-
-                          //CHOOSE PROGRAM DROPDOWN
-                          // Padding(
-                          //   padding: EdgeInsets.symmetric(horizontal: 5.w),
-                          //   child: DropdownButton<String>(
-                          //     isExpanded: true,
-                          //     dropdownColor: Colors.white,
-                          //     iconSize: 5.h,
-                          //     focusColor: Colors.red,
-                          //     value: _programDropDownValue,
-                          //     //elevation: 5,
-                          //     style: TextStyle(color: Colors.black),
-                          //     iconEnabledColor: Colors.black,
-                          //     items: respectiveProgramList
-                          //         .map<DropdownMenuItem<String>>((String value) {
-                          //       return DropdownMenuItem<String>(
-                          //         value: value,
-                          //         child: Text(
-                          //           value,
-                          //           style: TextStyle(
-                          //               // color: Colors.black,
-                          //               ),
-                          //         ),
-                          //       );
-                          //     }).toList(),
-                          //     hint: Text(respectiveProgramList[0]),
-                          //     onChanged: (String value) {
-                          //       setState(() {
-                          //         _programDropDownValue = value;
-                          //         getData();
-                          //       });
-                          //     },
-                          //   ),
-                          // ),
-                          //OPERATION NUMBER
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5.w),
-                            child: TextField(
-                              onChanged: (input) {
-                                setState(() {
-                                  operationNumber = input;
-                                  //getData();
-                                  print(operationNumber);
-                                  try {
-                                    if (departmentDropDownValue ==
-                                        "H - Engine Assembly") {
-                                      if (_HEngineAssembly.containsKey(
-                                          operationNumber))
-                                        _operationDescController.text =
-                                            _HEngineAssembly[operationNumber];
-                                      else
-                                        _operationDescController.text =
-                                            "" ?? "Empty";
-                                    }
-                                    if (departmentDropDownValue ==
-                                        "A - Engine Assembly") {
-                                      if (_AEngineAssembly.containsKey(
-                                          operationNumber))
-                                        _operationDescController.text =
-                                            _AEngineAssembly[operationNumber];
-                                      else
-                                        _operationDescController.text =
-                                            "" ?? "Empty";
-                                    }
-                                  } catch (error) {
-                                    print("im in catch");
-                                    _operationDescController.text = "";
-                                  }
-                                });
-                                //getData();
-                              },
-                              decoration: InputDecoration(
-                                  labelText: 'Enter Operation Number'),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5.w),
-                            child: TextField(
-                              controller: _operationDescController,
-                              maxLines: 3,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                  labelText: 'Operation Description'),
-                            ),
-                          ),
-
-                          //SUBMIT BUTTON
-                          Padding(
-                            padding: const EdgeInsets.all(25.0),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  elevation: 2,
-
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 1.5.h, horizontal: 11.6.h),
-                                  onPrimary: Colors.white, // foreground
                                 ),
-                                onPressed: () async {
-                                  final isValid =
-                                      _formKey.currentState.validate();
-                                  if (isValid == true) {
-                                    print(searchText);
-                                    print(searchText == "-1");
-                                    print("im inside isValid");
-                                    getData();
-                                  } else {
-                                    setState(() {
-                                      _allResults = [];
-                                      _searchResults = [];
-                                    });
-                                  }
-                                },
-                                child: Text('Submit')),
-                          ),
 
-                          // //FROM DATEPICKER
-                          // Padding(
-                          //   padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
-                          //   child: GestureDetector(
-                          //     onTap: () {
-                          //       setState(() {
-                          //         selectFromDate(context);
-                          //       });
-                          //     },
-                          //     child: Card(
-                          //       child: Row(
-                          //         children: [
-                          //           IconButton(
-                          //             onPressed: () {
-                          //               setState(() {
-                          //                 selectFromDate(context);
-                          //               });
-                          //             },
-                          //             icon: Icon(Icons.calendar_today),
-                          //           ),
-                          //           Text('From Date : ' +
-                          //               DateFormat("dd-MM-yyyy")
-                          //                   .format(_fromDate)),
-                          //         ],
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-
-                          // //TO DATEPICKER
-                          // Padding(
-                          //   padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
-                          //   child: GestureDetector(
-                          //     onTap: () {
-                          //       setState(() {
-                          //         _selectToDate(context);
-                          //       });
-                          //     },
-                          //     child: Card(
-                          //       child: Row(
-                          //         children: [
-                          //           IconButton(
-                          //             onPressed: () {
-                          //               // ignore: unnecessary_statements
-                          //               (() {
-                          //                 _selectToDate(context);
-                          //               });
-                          //             },
-                          //             icon: Icon(Icons.calendar_today),
-                          //           ),
-                          //           Text('To Date : ' +
-                          //               DateFormat("dd-MM-yyyy")
-                          //                   .format(_toDate)),
-                          //         ],
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          _searchResults.length > 0
-                              ? Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 25.w,
+                                //SEARCH BAR
+                                Padding(
+                                  padding:
+                                      EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Container(
+                                      height: 6.h,
+                                      child: TextField(
+                                        controller: _searchController,
+                                        onChanged: (input) {
+                                          searchText = input;
+                                        },
+                                        decoration: InputDecoration(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 10.0),
+                                            hintText: "Search",
+                                            focusColor: Colors.black,
+                                            fillColor: Colors.grey,
+                                            prefixIcon: Icon(Icons.search),
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(30))),
+                                      ),
                                     ),
-                                    Text(
-                                      'Name',
-                                      style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black),
-                                    ),
-                                    SizedBox(
-                                      width: 40.w,
-                                    ),
-                                    Text('Id',
-                                        style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.black))
-                                  ],
-                                )
-                              : Text(""),
-                          _searchResults.length > 0
-                              ? ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  itemCount: _searchResults.length,
-                                  itemBuilder: (BuildContext context,
-                                          int index) =>
-                                      buildCard(context, _searchResults[index],1),
-                                )
-                              : Padding(
-                                  padding: EdgeInsets.only(top: 5.w),
-                                  child: Text("No Results",
-                                      style: Constants.regularHeading),
+                                  ),
                                 ),
-                        ],
-                      ),
-                    )),
-              )));
-    });
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.w),
+                                  child: DropdownButtonFormField<String>(
+                                    isExpanded: true,
+                                    dropdownColor: Colors.white,
+                                    iconSize: 5.h,
+                                    focusColor: Colors.red,
+                                    value: departmentDropDownValue,
+                                    //elevation: 5,
+                                    style: TextStyle(color: Colors.black),
+                                    iconEnabledColor: Colors.black,
+                                    items: departmentItems
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                              // color: Colors.black,
+                                              ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    hint: Text(departmentItems[0]),
+                                    validator: (value) => value == "Department"
+                                        ? 'field required'
+                                        : null,
+                                    onChanged: (String value) {
+                                      setState(() {
+                                        departmentDropDownValue = value;
+                                        if (value != "department") {
+                                          showToggleBtn = true;
+                                        } else
+                                          showToggleBtn = false;
+                                      });
+                                      // getData();
+                                    },
+                                  ),
+                                ),
+                                //SELECT LEVEL DROPDOWN
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.w),
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    dropdownColor: Colors.white,
+                                    iconSize: 5.h,
+                                    focusColor: Colors.red,
+                                    value: _levelDropDownValue,
+                                    //elevation: 5,
+                                    style: TextStyle(color: Colors.black),
+                                    iconEnabledColor: Colors.black,
+                                    items: respectiveLevelList
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                              // color: Colors.black,
+                                              ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    hint: Text(respectiveLevelList[0]),
+                                    onChanged: (String value) {
+                                      setState(() {
+                                        _levelDropDownValue = value;
+                                        //getData();
+                                      });
+                                    },
+                                  ),
+                                ),
+
+                                //CHOOSE PROGRAM DROPDOWN
+                                // Padding(
+                                //   padding: EdgeInsets.symmetric(horizontal: 5.w),
+                                //   child: DropdownButton<String>(
+                                //     isExpanded: true,
+                                //     dropdownColor: Colors.white,
+                                //     iconSize: 5.h,
+                                //     focusColor: Colors.red,
+                                //     value: _programDropDownValue,
+                                //     //elevation: 5,
+                                //     style: TextStyle(color: Colors.black),
+                                //     iconEnabledColor: Colors.black,
+                                //     items: respectiveProgramList
+                                //         .map<DropdownMenuItem<String>>((String value) {
+                                //       return DropdownMenuItem<String>(
+                                //         value: value,
+                                //         child: Text(
+                                //           value,
+                                //           style: TextStyle(
+                                //               // color: Colors.black,
+                                //               ),
+                                //         ),
+                                //       );
+                                //     }).toList(),
+                                //     hint: Text(respectiveProgramList[0]),
+                                //     onChanged: (String value) {
+                                //       setState(() {
+                                //         _programDropDownValue = value;
+                                //         getData();
+                                //       });
+                                //     },
+                                //   ),
+                                // ),
+                                //OPERATION NUMBER
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.w),
+                                  child: TextField(
+                                    onChanged: (input) {
+                                      setState(() {
+                                        operationNumber = input;
+                                        //getData();
+                                        print(operationNumber);
+                                        try {
+                                          if (departmentDropDownValue ==
+                                              "H - Engine Assembly") {
+                                            if (_HEngineAssembly.containsKey(
+                                                operationNumber))
+                                              _operationDescController.text =
+                                                  _HEngineAssembly[
+                                                      operationNumber];
+                                            else
+                                              _operationDescController.text =
+                                                  "" ?? "Empty";
+                                          }
+                                          if (departmentDropDownValue ==
+                                              "A - Engine Assembly") {
+                                            if (_AEngineAssembly.containsKey(
+                                                operationNumber))
+                                              _operationDescController.text =
+                                                  _AEngineAssembly[
+                                                      operationNumber];
+                                            else
+                                              _operationDescController.text =
+                                                  "" ?? "Empty";
+                                          }
+                                        } catch (error) {
+                                          print("im in catch");
+                                          _operationDescController.text = "";
+                                        }
+                                      });
+                                      //getData();
+                                    },
+                                    decoration: InputDecoration(
+                                        labelText: 'Enter Operation Number'),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.w),
+                                  child: TextField(
+                                    controller: _operationDescController,
+                                    maxLines: 3,
+                                    enabled: false,
+                                    decoration: InputDecoration(
+                                        labelText: 'Operation Description'),
+                                  ),
+                                ),
+
+                                //SUBMIT BUTTON
+                                Padding(
+                                  padding: const EdgeInsets.all(25.0),
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        elevation: 2,
+
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 1.5.h,
+                                            horizontal: 11.6.h),
+                                        onPrimary: Colors.white, // foreground
+                                      ),
+                                      onPressed: () async {
+                                        final isValid =
+                                            _formKey.currentState.validate();
+                                        if (isValid == true) {
+                                          print(searchText);
+                                          print(searchText == "-1");
+                                          print("im inside isValid");
+                                          getData();
+                                        } else {
+                                          setState(() {
+                                            _allResults = [];
+                                            _searchResults = [];
+                                          });
+                                        }
+                                      },
+                                      child: Text('Submit')),
+                                ),
+
+                                // //FROM DATEPICKER
+                                // Padding(
+                                //   padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
+                                //   child: GestureDetector(
+                                //     onTap: () {
+                                //       setState(() {
+                                //         selectFromDate(context);
+                                //       });
+                                //     },
+                                //     child: Card(
+                                //       child: Row(
+                                //         children: [
+                                //           IconButton(
+                                //             onPressed: () {
+                                //               setState(() {
+                                //                 selectFromDate(context);
+                                //               });
+                                //             },
+                                //             icon: Icon(Icons.calendar_today),
+                                //           ),
+                                //           Text('From Date : ' +
+                                //               DateFormat("dd-MM-yyyy")
+                                //                   .format(_fromDate)),
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
+
+                                // //TO DATEPICKER
+                                // Padding(
+                                //   padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
+                                //   child: GestureDetector(
+                                //     onTap: () {
+                                //       setState(() {
+                                //         _selectToDate(context);
+                                //       });
+                                //     },
+                                //     child: Card(
+                                //       child: Row(
+                                //         children: [
+                                //           IconButton(
+                                //             onPressed: () {
+                                //               // ignore: unnecessary_statements
+                                //               (() {
+                                //                 _selectToDate(context);
+                                //               });
+                                //             },
+                                //             icon: Icon(Icons.calendar_today),
+                                //           ),
+                                //           Text('To Date : ' +
+                                //               DateFormat("dd-MM-yyyy")
+                                //                   .format(_toDate)),
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
+                                _searchResults.length > 0
+                                    ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 25.w,
+                                          ),
+                                          Text(
+                                            'Name',
+                                            style: TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.black),
+                                          ),
+                                          SizedBox(
+                                            width: 40.w,
+                                          ),
+                                          Text('Id',
+                                              style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.black))
+                                        ],
+                                      )
+                                    : Text(""),
+                                _searchResults.length > 0
+                                    ? ListView.builder(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        itemCount: _searchResults.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) =>
+                                                buildCard(context,
+                                                    _searchResults[index], 1),
+                                      )
+                                    : Padding(
+                                        padding: EdgeInsets.only(top: 5.w),
+                                        child: Text("No Results",
+                                            style: Constants.regularHeading),
+                                      ),
+                              ],
+                            ),
+                          )),
+                    )));
+          });
   }
 }

@@ -1,7 +1,7 @@
-import 'package:ashok_leyland_project_3/constants.dart';
-import 'package:ashok_leyland_project_3/screens/home.dart';
-import 'package:ashok_leyland_project_3/screens/signin_page.dart';
-import 'package:ashok_leyland_project_3/services/verify.dart';
+import 'package:altraport/constants.dart';
+import 'package:altraport/screens/home.dart';
+import 'package:altraport/screens/signin_page.dart';
+import 'package:altraport/services/verify.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

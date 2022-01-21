@@ -1,9 +1,10 @@
 //original
 import 'dart:io';
-import 'package:ashok_leyland_project_3/Constants.dart';
-import 'package:ashok_leyland_project_3/models/card.dart';
-import 'package:ashok_leyland_project_3/models/manning_card.dart';
-import 'package:ashok_leyland_project_3/screens/home.dart';
+import 'package:altraport/Constants.dart';
+import 'package:altraport/models/card.dart';
+import 'package:altraport/models/manning_card.dart';
+import 'package:altraport/my_fav_animations/loading.dart';
+import 'package:altraport/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -174,6 +175,7 @@ class _ManningQueryState extends State<ManningQuery> {
     "490": "CYLINDER BLOCK & Head WASHING",
     "500": "Camshaft & crankshaft washing",
   };
+  bool _isLoading = false;
   DateTime _joiningDate;
   DateTime _fromDate = new DateTime.now();
   DateTime _toDate = new DateTime.now();
@@ -336,6 +338,9 @@ class _ManningQueryState extends State<ManningQuery> {
     }
 
     Future<void> _createExcel(Map<String, String> mapp) async {
+      setState(() {
+        _isLoading = true;
+      });
       print("Im trying to print");
       final Workbook workbook = Workbook();
 
@@ -348,10 +353,12 @@ class _ManningQueryState extends State<ManningQuery> {
       //HEADING
       row.add("Sno");
       row.add("Date");
+      row.add("Operation No");
+      row.add("Shift");
       row.add("EmpId");
       row.add("Name");
       row.add("Department");
-      row.add("Operation No");
+
       rows.add(row);
       for (int i = 0; i < _allResults.length; i++) {
         Map<String, dynamic> data =
@@ -368,11 +375,14 @@ class _ManningQueryState extends State<ManningQuery> {
         }
 
         row.add(i + 1);
-        row.add((DateFormat('dd/MM/yyyy').format((data["date"] as Timestamp).toDate())));
+        row.add((DateFormat('dd/MM/yyyy')
+            .format((data["date"] as Timestamp).toDate())));
+        row.add(data["operation no"]);
+        row.add(data["shift"]);
         row.add(data["empId"]);
         row.add(data["name"]);
         row.add(data["department"]);
-        row.add(data["operation no"]);
+
         rows.add(row);
       }
       // print(rows);
@@ -406,362 +416,402 @@ class _ManningQueryState extends State<ManningQuery> {
 
 // Write Excel data
       await file.writeAsBytes(bytes, flush: true);
-
+setState(() {
+        _isLoading = false;
+      });
 // Open the Excel document in mobile
       OpenFile.open('$path/Output.xlsx');
     }
 
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-          child: Scaffold(
-              // resizeToAvoidBottomInset: false,
-              backgroundColor: Colors.yellow[00],
-              floatingActionButton: FloatingActionButton(
-                  backgroundColor: Colors.blue[300],
-                  child: Icon(Icons.file_download),
-                  onPressed: () {
-                    departmentDropDownValue = 'H - Engine Assembly';
-                    if (departmentDropDownValue == 'A - Engine Assembly')
-                      _createExcel(_AEngineAssembly);
-                    else if (departmentDropDownValue == 'H - Engine Assembly')
-                      _createExcel(_HEngineAssembly);
-                  }),
-              body: SingleChildScrollView(
-                child: Form(
-                    key: _formKey,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              alignment: Alignment.topLeft,
-                              margin: EdgeInsets.only(top: 0.h, bottom: 2.h),
-                              height: 5.0.h,
-                              width: 6.0.h,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => HomeScreen()));
-                                },
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                  size: 30.0,
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(5),
-                                  primary: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          Center(
-                            child: Text(
-                              "Manning Query",
-                              style: Constants.boldHeading,
-                            ),
-                          ),
-
-                          //SEARCH BAR
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                height: 6.h,
-                                child: TextField(
-                                  controller: _searchController,
-                                  onChanged: (input) {
-                                    searchText = input;
-                                  },
-                                  decoration: InputDecoration(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 10.0),
-                                      hintText: "Search",
-                                      focusColor: Colors.black,
-                                      fillColor: Colors.grey,
-                                      prefixIcon: Icon(Icons.search),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30))),
-                                ),
-                              ),
-                            ),
-                          ),
-                          // //FROM DATEPICKER
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectFromDate(context);
-                                });
-                              },
-                              child: Card(
-                                child: Row(
-                                  children: [
-                                    IconButton(
+    return _isLoading
+        ? Loading()
+        : Sizer(builder: (context, orientation, deviceType) {
+            return SafeArea(
+                child: Scaffold(
+                    // resizeToAvoidBottomInset: false,
+                    backgroundColor: Colors.yellow[00],
+                    floatingActionButton: FloatingActionButton(
+                        backgroundColor: Colors.blue[300],
+                        child: Icon(Icons.file_download),
+                        onPressed: () {
+                          departmentDropDownValue = 'H - Engine Assembly';
+                          if (departmentDropDownValue == 'A - Engine Assembly')
+                            _createExcel(_AEngineAssembly);
+                          else if (departmentDropDownValue ==
+                              'H - Engine Assembly')
+                            _createExcel(_HEngineAssembly);
+                        }),
+                    body: SingleChildScrollView(
+                      child: Form(
+                          key: _formKey,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(3.w, 3.h, 2.w, 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Container(
+                                    alignment: Alignment.topLeft,
+                                    margin:
+                                        EdgeInsets.only(top: 0.h, bottom: 2.h),
+                                    height: 5.0.h,
+                                    width: 6.0.h,
+                                    child: ElevatedButton(
                                       onPressed: () {
-                                        setState(() {
-                                          selectFromDate(context);
-                                        });
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomeScreen()));
                                       },
-                                      icon: Icon(Icons.calendar_today),
+                                      child: Icon(
+                                        Icons.arrow_back,
+                                        color: Colors.white,
+                                        size: 30.0,
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: CircleBorder(),
+                                        padding: EdgeInsets.all(5),
+                                        primary: Colors.black,
+                                      ),
                                     ),
-                                    Text('From Date : ' +
-                                        DateFormat("dd-MM-yyyy")
-                                            .format(_fromDate)),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
 
-                          // //TO DATEPICKER
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectToDate(context);
-                                });
-                              },
-                              child: Card(
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        // ignore: unnecessary_statements
-                                        (() {
-                                          _selectToDate(context);
-                                        });
-                                      },
-                                      icon: Icon(Icons.calendar_today),
+                                Center(
+                                  child: Text(
+                                    "Manning Query",
+                                    style: Constants.boldHeading,
+                                  ),
+                                ),
+
+                                //SEARCH BAR
+                                Padding(
+                                  padding:
+                                      EdgeInsets.fromLTRB(2.h, 3.h, 2.h, 1.h),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Container(
+                                      height: 6.h,
+                                      child: TextField(
+                                        controller: _searchController,
+                                        onChanged: (input) {
+                                          searchText = input;
+                                        },
+                                        decoration: InputDecoration(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 10.0),
+                                            hintText: "Search",
+                                            focusColor: Colors.black,
+                                            fillColor: Colors.grey,
+                                            prefixIcon: Icon(Icons.search),
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(30))),
+                                      ),
                                     ),
-                                    Text('To Date : ' +
-                                        DateFormat("dd-MM-yyyy")
-                                            .format(_toDate)),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          //SUBMIT BUTTON
-                          Padding(
-                            padding:  EdgeInsets.only(top:1.h,bottom: 1.h),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  elevation: 2,
-
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 1.5.h, horizontal: 11.6.h),
-                                  onPrimary: Colors.white, // foreground
-                                ),
-                                onPressed: () async {
-                                  final isValid =
-                                      _formKey.currentState.validate();
-                                  getData();
-                                  if (isValid == true) {
-                                    print(searchText);
-                                    print(searchText == "-1");
-                                    print("im inside isValid");
-                                    getData();
-                                  } else {
-                                    setState(() {
-                                      _allResults = [];
-                                      _searchResults = [];
-                                    });
-                                  }
-                                },
-                                child: Text('Submit')),
-                          ),
-
-                          // //FROM DATEPICKER
-                          // Padding(
-                          //   padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
-                          //   child: GestureDetector(
-                          //     onTap: () {
-                          //       setState(() {
-                          //         selectFromDate(context);
-                          //       });
-                          //     },
-                          //     child: Card(
-                          //       child: Row(
-                          //         children: [
-                          //           IconButton(
-                          //             onPressed: () {
-                          //               setState(() {
-                          //                 selectFromDate(context);
-                          //               });
-                          //             },
-                          //             icon: Icon(Icons.calendar_today),
-                          //           ),
-                          //           Text('From Date : ' +
-                          //               DateFormat("dd-MM-yyyy")
-                          //                   .format(_fromDate)),
-                          //         ],
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-
-                          // //TO DATEPICKER
-                          // Padding(
-                          //   padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
-                          //   child: GestureDetector(
-                          //     onTap: () {
-                          //       setState(() {
-                          //         _selectToDate(context);
-                          //       });
-                          //     },
-                          //     child: Card(
-                          //       child: Row(
-                          //         children: [
-                          //           IconButton(
-                          //             onPressed: () {
-                          //               // ignore: unnecessary_statements
-                          //               (() {
-                          //                 _selectToDate(context);
-                          //               });
-                          //             },
-                          //             icon: Icon(Icons.calendar_today),
-                          //           ),
-                          //           Text('To Date : ' +
-                          //               DateFormat("dd-MM-yyyy")
-                          //                   .format(_toDate)),
-                          //         ],
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-
-                          _searchResults.length > 0
-                              ? ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  itemCount: _searchResults.length,
-                                  itemBuilder: (BuildContext context,
-                                          int index) =>
-                                      Padding(
-                                        padding:  EdgeInsets.only(top: 1.h),
-                                        child: Container(
-                                          color: HexColor("#D9E9F2"),
-                                          child: Padding(
-                                            padding: EdgeInsets.only(left: 4.w,top:1.h,bottom: 1.h),
-                                            child: Row(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 1.w),
-                                                  child: CircleAvatar(
-                                                    child: Icon(Icons.person,
-                                                        size: 7.5.w),
-                                                    radius: 7.5.w,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 12.w),
-                                                  child: Column(
-                                                    children: [
-                                                      Text("EmpId",
-                                                            style: TextStyle(
-                                                                fontSize: 16.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colors
-                                                                    .black)),
-                                                      Text("Name",
-                                                            style: TextStyle(
-                                                                fontSize: 16.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colors
-                                                                    .black)),
-                                                      Text("Op No",
-                                                            style: TextStyle(
-                                                                fontSize: 16.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colors
-                                                                    .black)),
-                                                      Text("Date",
-                                                            style: TextStyle(
-                                                                fontSize: 16.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colors
-                                                                    .black)),
-                                                    ],
-                                                  )
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 6.w),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        _searchResults[index]
-                                                            ["empId"],
-                                                        style: Constants
-                                                            .regularDarkText,
-                                                      ),
-                                                      Text(
-                                                        _searchResults[index]
-                                                            ["name"],
-                                                        style: Constants
-                                                            .regularDarkText,
-                                                      ),
-                                                      Text(
-                                                        _searchResults[index]
-                                                            ["operation no"],
-                                                        style: Constants
-                                                            .regularDarkText,
-                                                      ),
-                                                      Text(
-                                                        (DateFormat('dd/MM/yyyy')
-                                                            .format((_searchResults[
-                                                                            index]
-                                                                        ["date"]
-                                                                    as Timestamp)
-                                                                .toDate())),
-                                                        style: Constants
-                                                            .regularDarkText,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                // //FROM DATEPICKER
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(7, 7, 7, 5),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectFromDate(context);
+                                      });
+                                    },
+                                    child: Card(
+                                      child: Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                selectFromDate(context);
+                                              });
+                                            },
+                                            icon: Icon(Icons.calendar_today),
                                           ),
-                                        ),
-                                      ))
-                              : Padding(
-                                  padding: EdgeInsets.only(top: 5.w),
-                                  child: Text("No Results",
-                                      style: Constants.regularHeading),
+                                          Text('From Date : ' +
+                                              DateFormat("dd-MM-yyyy")
+                                                  .format(_fromDate)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                        ],
-                      ),
-                    )),
-              )));
-    });
+
+                                // //TO DATEPICKER
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(7, 0, 7, 30),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectToDate(context);
+                                      });
+                                    },
+                                    child: Card(
+                                      child: Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              // ignore: unnecessary_statements
+                                              (() {
+                                                _selectToDate(context);
+                                              });
+                                            },
+                                            icon: Icon(Icons.calendar_today),
+                                          ),
+                                          Text('To Date : ' +
+                                              DateFormat("dd-MM-yyyy")
+                                                  .format(_toDate)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                //SUBMIT BUTTON
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: 1.h, bottom: 1.h),
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        elevation: 2,
+
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 1.5.h,
+                                            horizontal: 11.6.h),
+                                        onPrimary: Colors.white, // foreground
+                                      ),
+                                      onPressed: () async {
+                                        final isValid =
+                                            _formKey.currentState.validate();
+                                        getData();
+                                        if (isValid == true) {
+                                          print(searchText);
+                                          print(searchText == "-1");
+                                          print("im inside isValid");
+                                          getData();
+                                        } else {
+                                          setState(() {
+                                            _allResults = [];
+                                            _searchResults = [];
+                                          });
+                                        }
+                                      },
+                                      child: Text('Submit')),
+                                ),
+
+                                // //FROM DATEPICKER
+                                // Padding(
+                                //   padding: const EdgeInsets.fromLTRB(7, 7, 7, 5),
+                                //   child: GestureDetector(
+                                //     onTap: () {
+                                //       setState(() {
+                                //         selectFromDate(context);
+                                //       });
+                                //     },
+                                //     child: Card(
+                                //       child: Row(
+                                //         children: [
+                                //           IconButton(
+                                //             onPressed: () {
+                                //               setState(() {
+                                //                 selectFromDate(context);
+                                //               });
+                                //             },
+                                //             icon: Icon(Icons.calendar_today),
+                                //           ),
+                                //           Text('From Date : ' +
+                                //               DateFormat("dd-MM-yyyy")
+                                //                   .format(_fromDate)),
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
+
+                                // //TO DATEPICKER
+                                // Padding(
+                                //   padding: const EdgeInsets.fromLTRB(7, 0, 7, 30),
+                                //   child: GestureDetector(
+                                //     onTap: () {
+                                //       setState(() {
+                                //         _selectToDate(context);
+                                //       });
+                                //     },
+                                //     child: Card(
+                                //       child: Row(
+                                //         children: [
+                                //           IconButton(
+                                //             onPressed: () {
+                                //               // ignore: unnecessary_statements
+                                //               (() {
+                                //                 _selectToDate(context);
+                                //               });
+                                //             },
+                                //             icon: Icon(Icons.calendar_today),
+                                //           ),
+                                //           Text('To Date : ' +
+                                //               DateFormat("dd-MM-yyyy")
+                                //                   .format(_toDate)),
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
+
+                                _searchResults.length > 0
+                                    ? ListView.builder(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        itemCount: _searchResults.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) =>
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 1.h),
+                                                  child: Container(
+                                                    color: HexColor("#D9E9F2"),
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 4.w,
+                                                          top: 1.h,
+                                                          bottom: 1.h),
+                                                      child: Row(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 1.w),
+                                                            child: CircleAvatar(
+                                                              child: Icon(
+                                                                  Icons.person,
+                                                                  size: 7.5.w),
+                                                              radius: 7.5.w,
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left:
+                                                                          12.w),
+                                                              child: Column(
+                                                                children: [
+                                                                  Text("EmpId",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16.0,
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color:
+                                                                              Colors.black)),
+                                                                  Text("Name",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16.0,
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color:
+                                                                              Colors.black)),
+                                                                  Text("Op No",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16.0,
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color:
+                                                                              Colors.black)),
+                                                                  Text("Date",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16.0,
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color:
+                                                                              Colors.black)),
+                                                                  Text("Shift",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16.0,
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color:
+                                                                              Colors.black)),
+                                                                ],
+                                                              )),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 6.w),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  _searchResults[
+                                                                          index]
+                                                                      ["empId"],
+                                                                  style: Constants
+                                                                      .regularDarkText,
+                                                                ),
+                                                                Text(
+                                                                  _searchResults[
+                                                                          index]
+                                                                      ["name"],
+                                                                  style: Constants
+                                                                      .regularDarkText,
+                                                                ),
+                                                                Text(
+                                                                  _searchResults[
+                                                                          index]
+                                                                      [
+                                                                      "operation no"],
+                                                                  style: Constants
+                                                                      .regularDarkText,
+                                                                ),
+                                                                Text(
+                                                                  (DateFormat(
+                                                                          'dd/MM/yyyy')
+                                                                      .format((_searchResults[index]["date"]
+                                                                              as Timestamp)
+                                                                          .toDate())),
+                                                                  style: Constants
+                                                                      .regularDarkText,
+                                                                ),
+                                                                Text(
+                                                                  _searchResults[
+                                                                          index]
+                                                                      ["shift"],
+                                                                  style: Constants
+                                                                      .regularDarkText,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ))
+                                    : Padding(
+                                        padding: EdgeInsets.only(top: 5.w),
+                                        child: Text("No Results",
+                                            style: Constants.regularHeading),
+                                      ),
+                              ],
+                            ),
+                          )),
+                    )));
+          });
   }
 }

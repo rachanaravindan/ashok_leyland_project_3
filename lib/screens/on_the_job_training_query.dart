@@ -1,8 +1,8 @@
 //original
 import 'dart:io';
-import 'package:ashok_leyland_project_3/Constants.dart';
-import 'package:ashok_leyland_project_3/models/card.dart';
-import 'package:ashok_leyland_project_3/screens/home.dart';
+import 'package:altraport/Constants.dart';
+import 'package:altraport/models/card.dart';
+import 'package:altraport/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

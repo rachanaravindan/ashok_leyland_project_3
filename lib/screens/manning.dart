@@ -167,7 +167,7 @@ class _ManningState extends State<Manning> {
   DateTime _joiningDate;
   DateTime currentDate = new DateTime.now();
   bool _isDisable = false;
-  bool showToggleBtn = false, showTextField = false;
+  bool showToggleBtn = false;
 
   List<String> departmentItems = [
     'Department',
@@ -181,6 +181,12 @@ class _ManningState extends State<Manning> {
     'A - Engine Machining',
     'Axle Assembly',
     'Axle Machining'
+  ];
+  List<String> shiftItems = [
+    'Shift',
+    'FS',
+    'DS',
+    'NS',
   ];
   Map<String, String> respectiveMap;
 
@@ -201,13 +207,14 @@ class _ManningState extends State<Manning> {
     '12. Able to participate in suggestion scheme and any other improvement projects',
     '13. Able to train others'
   ];
-  String departmentDropDownValue;
+  String departmentDropDownValue, shiftDropDownValue;
   String operationNumber = "-1";
   String assessmentListDropDownValue;
   crudMethod crudOperations = new crudMethod();
   void initState() {
-    var departmentDropDownValue = departmentItems[0];
-    var assessmentListDropDownValue = assessmentListItems[0];
+    departmentDropDownValue = departmentItems[0];
+    shiftDropDownValue = shiftItems[0];
+    assessmentListDropDownValue = assessmentListItems[0];
     super.initState();
   }
 
@@ -350,22 +357,6 @@ class _ManningState extends State<Manning> {
                               _showMyDialog(
                                   "Department is not allocated for $_employeeId ");
                             }
-
-                            setState(() {
-                              departmentDropDownValue = value;
-                              if (value == 'H - Engine Assembly')
-                                respectiveMap = Map.from(_HEngineAssembly);
-                              else if (value == 'A - Engine Assembly')
-                                respectiveMap = Map.from(_AEngineAssembly);
-
-                              if (value != "department") {
-                                showToggleBtn = true;
-                              } else
-                                showToggleBtn = false;
-                              showTextField = false;
-                              // print("Im printing");
-                              // print(respectiveMap);
-                            });
                           });
                         },
                         decoration: InputDecoration(labelText: 'Employee Id'),
@@ -399,7 +390,7 @@ class _ManningState extends State<Manning> {
                         enableInteractiveSelection: true,
                       ),
                     ),
-                    // DEPARTMENT
+                    // Parent Department
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextField(
@@ -413,9 +404,48 @@ class _ManningState extends State<Manning> {
                               _isDisable = false;
                           });
                         },
-                        decoration: InputDecoration(labelText: 'Department'),
+                        decoration: InputDecoration(labelText: 'Parent Department'),
                         enabled: false,
                         enableInteractiveSelection: true,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        dropdownColor: Colors.white,
+                        iconSize: 5.h,
+                        focusColor: Colors.red,
+                        value: departmentDropDownValue,
+                        //elevation: 5,
+                        style: TextStyle(color: Colors.black),
+                        iconEnabledColor: Colors.black,
+                        items: departmentItems
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                  // color: Colors.black,
+                                  ),
+                            ),
+                          );
+                        }).toList(),
+                        hint: Text(departmentItems[0]),
+                        validator: (value) =>
+                            value == "Department" || value==null ? 'field required' : null,
+                        onChanged: (String value) {
+                          setState(() {
+                            departmentDropDownValue = value;
+                              if (value == 'H - Engine Assembly')
+                                respectiveMap = Map.from(_HEngineAssembly);
+                              else if (value == 'A - Engine Assembly')
+                                respectiveMap = Map.from(_AEngineAssembly);
+                              // print("Im printing");
+                              // print(respectiveMap);
+                          });
+                        },
                       ),
                     ),
                     //DATE OF TRAINING
@@ -446,90 +476,39 @@ class _ManningState extends State<Manning> {
                       ),
                     ),
                     Padding(
-                      padding:  EdgeInsets.all(2.w),
-                      child: Text("Shift",style:Constants.regularHeading),
+                      padding: EdgeInsets.all(8.0),
+                      child: DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        dropdownColor: Colors.white,
+                        iconSize: 5.h,
+                        focusColor: Colors.red,
+                        value: shiftDropDownValue,
+                        //elevation: 5,
+                        style: TextStyle(color: Colors.black),
+                        iconEnabledColor: Colors.black,
+                        items: shiftItems
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                  // color: Colors.black,
+                                  ),
+                            ),
+                          );
+                        }).toList(),
+                        hint: Text(shiftItems[0]),
+                        validator: (value) =>
+                            value == "Shift" || value==null ? 'field required' : null,
+                        onChanged: (String value) {
+                          setState(() {
+                            shiftDropDownValue = value;
+                          });
+                        },
+                      ),
                     ),
-                    Column(
-                      children: <Widget>[
-                        for (int i = 1; i <= 1; i++)
-                          ListTile(
-                            title: Text(
-                              'FS',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1
-                                  .copyWith(
-                                      color: i == 5
-                                          ? Colors.black38
-                                          : Colors.black),
-                            ),
-                            leading: Radio(
-                              value: i,
-                              groupValue: _value,
-                              activeColor: Color(0xFF6200EE),
-                              onChanged: i == 5
-                                  ? null
-                                  : (int value) {
-                                      setState(() {
-                                        _value = value;
-                                      });
-                                    },
-                            ),
-                          ),
-                        for (int i = 2; i <= 2; i++)
-                          ListTile(
-                            title: Text(
-                              'MS',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1
-                                  .copyWith(
-                                      color: i == 5
-                                          ? Colors.black38
-                                          : Colors.black),
-                            ),
-                            leading: Radio(
-                              value: i,
-                              groupValue: _value,
-                              activeColor: Color(0xFF6200EE),
-                              onChanged: i == 5
-                                  ? null
-                                  : (int value) {
-                                      setState(() {
-                                        _value = value;
-                                      });
-                                    },
-                            ),
-                          ),
-                        for (int i = 3; i <= 3; i++)
-                          ListTile(
-                            title: Text(
-                              'NS',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1
-                                  .copyWith(
-                                      color: i == 5
-                                          ? Colors.black38
-                                          : Colors.black),
-                            ),
-                            leading: Radio(
-                              value: i,
-                              groupValue: _value,
-                              activeColor: Color(0xFF6200EE),
-                              onChanged: i == 5
-                                  ? null
-                                  : (int value) {
-                                      setState(() {
-                                        _value = value;
-                                        print(value);
-                                      });
-                                    },
-                            ),
-                          ),
-                      ],
-                    ),
-
+                   
                     //OPERATION NUMBER
                     Padding(
                       padding: EdgeInsets.all(8.0),
@@ -625,19 +604,12 @@ class _ManningState extends State<Manning> {
                               ),
                           onPressed: () async {
                             final isValid = _formKey.currentState.validate();
-                            String shift;
                             if (isValid) {
                               if (trainedFinder == false)
                                 _showMyDialog(
                                     "$_employeeId is not trained for operation number $operationNumber");
                               else {
-                                if (_value == 1) {
-                                  shift = "FS";
-                                } else if (_value == 1) {
-                                  shift = "MS";
-                                } else if (_value == 1) {
-                                  shift = "NS";
-                                }
+                                
                                 print(currentDate.toString());
                                 await FirebaseFirestore.instance
                                     .collection("manning")
@@ -660,7 +632,8 @@ class _ManningState extends State<Manning> {
                                       "date": Timestamp.fromDate(currentDate),
                                       "name": _nameController.text,
                                       "department": _deptController.text,
-                                      "shift": shift
+                                      "shift": shiftDropDownValue,
+                                      "assignedDepartment":departmentDropDownValue
                                     });
                                     Navigator.push(
                                         context,
@@ -681,7 +654,9 @@ class _ManningState extends State<Manning> {
                                       "date": Timestamp.fromDate(currentDate),
                                       "name": _nameController.text,
                                       "department": _deptController.text,
-                                      "shift": shift
+                                      "shift": shiftDropDownValue,
+                                      "assignedDepartment":
+                                          departmentDropDownValue
                                     });
                                     Navigator.push(
                                         context,

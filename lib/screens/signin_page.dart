@@ -197,7 +197,7 @@ class _SignInPageState extends State<SignInPage> {
                                         borderRadius:
                                             BorderRadius.circular(10.0),
                                         borderSide: BorderSide(
-                                          color: Colors.cyan,
+                                          color: Colors.blue,
                                           width: 2.5,
                                         ),
                                       ),
@@ -206,7 +206,7 @@ class _SignInPageState extends State<SignInPage> {
                                               BorderRadius.circular(15),
                                           borderSide: BorderSide(
                                             width: 1,
-                                            color: Colors.indigoAccent,
+                                            color: Colors.blue,
                                           )),
                                       errorBorder: OutlineInputBorder(
                                           borderRadius:
@@ -277,7 +277,7 @@ class _SignInPageState extends State<SignInPage> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                                 borderSide: BorderSide(
-                                  color: Colors.cyan,
+                                  color: Colors.blue,
                                   width: 2.0,
                                 ),
                               ),
@@ -285,7 +285,7 @@ class _SignInPageState extends State<SignInPage> {
                                   borderRadius: BorderRadius.circular(15),
                                   borderSide: BorderSide(
                                     width: 1,
-                                    color: Colors.indigoAccent,
+                                    color: Colors.blue,
                                   )),
                               errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
@@ -319,7 +319,7 @@ class _SignInPageState extends State<SignInPage> {
                             });
                             if (buttonText == "Create an Account") {
                               String e = await register( 
-                                  _emailcontroller.text, _pwdcontroller.text);
+                                  _emailcontroller.text.trimRight(), _pwdcontroller.text.trimRight());
                               if (e == 'weak-password') {
                                 _showMyDialog("Weak Password");
                                 setState(() {
@@ -338,7 +338,7 @@ class _SignInPageState extends State<SignInPage> {
                               }
                             } else {
                               String e = await _authObj.signIn(
-                                  _emailcontroller.text, _pwdcontroller.text);
+                                  _emailcontroller.text.trimRight(), _pwdcontroller.text.trimRight());
                               print(e);
                               if (e != null) {
                                 _showMyDialog(getMessageFromErrorCode(e));
@@ -403,26 +403,30 @@ class _SignInPageState extends State<SignInPage> {
 //SIGN IN BUTTON
 Widget colorbutton(String hintText, Function onTapFunction) {
   return Sizer(builder: (context, orientation, deviceType) {
-    return Container(
-      width: MediaQuery.of(context).size.width - 90,
-      height: 60,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: const LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                Colors.indigo,
-                Colors.indigoAccent,
-              ])),
-      child: Center(
-        child: InkWell(
-          child: Text(
-            hintText,
-            style: TextStyle(
-                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+    return Bounce(
+      duration: Duration(milliseconds: 50),
+      onPressed: onTapFunction,
+      child: Container(
+        width: MediaQuery.of(context).size.width - 90,
+        height: 60,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Colors.indigo,
+                  Colors.indigoAccent,
+                ])),
+        child: Center(
+          child: InkWell(
+            child: Text(
+              hintText,
+              style: TextStyle(
+                  color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            onTap: onTapFunction,
           ),
-          onTap: onTapFunction,
         ),
       ),
     );

@@ -174,6 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: GestureDetector(
                         onTap: () async {
                           await FirebaseAuth.instance.signOut();
+                          
                           Navigator.push(
                               context,
                               MaterialPageRoute(

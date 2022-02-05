@@ -302,40 +302,6 @@ class _ManningQueryState extends State<ManningQuery> {
       }
     }
 
-    Future<List> iterate(List row, Map<String, String> mapp) async {
-      for (int i = 0; i < _allResults.length; i++) {
-        Map<String, dynamic> data =
-            _allResults[i].data() as Map<String, dynamic>;
-        List<dynamic> row = [];
-        row.add(i + 1);
-        row.add(data["empId"]);
-        row.add(data["name"]);
-        //row.add(data["department"]);
-        row.add("06-12-21");
-        mapp.keys.forEach((k) async {
-          await FirebaseFirestore.instance
-              .collection("trainee")
-              .doc(data["empId"])
-              .collection("completed on the job training")
-              .doc(k.toString())
-              .get()
-              .then((DocumentSnapshot snapshot) {
-            if (snapshot.exists) {
-              print("Im in the snapshot.exists");
-              Map<String, dynamic> documentData = snapshot.data();
-              row.add(
-                  documentData["department $departmentDropDownValue level"] ??
-                      "Empty");
-            } else {
-              print("Im in else");
-              row.add("Na");
-            }
-            // print(tempRow);
-            // print(row);
-          });
-        });
-      }
-    }
 
     Future<void> _createExcel(Map<String, String> mapp) async {
       setState(() {
@@ -357,8 +323,8 @@ class _ManningQueryState extends State<ManningQuery> {
       row.add("Shift");
       row.add("EmpId");
       row.add("Name");
-      row.add("Department");
-
+      row.add("Parent Department");
+      row.add("Assigned Department");
       rows.add(row);
       for (int i = 0; i < _allResults.length; i++) {
         Map<String, dynamic> data =
@@ -382,6 +348,7 @@ class _ManningQueryState extends State<ManningQuery> {
         row.add(data["empId"]);
         row.add(data["name"]);
         row.add(data["department"]);
+        row.add(data["assignedDepartment"]);
 
         rows.add(row);
       }
@@ -703,8 +670,11 @@ setState(() {
                                                               padding: EdgeInsets
                                                                   .only(
                                                                       left:
-                                                                          12.w),
+                                                                          7.w),
                                                               child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
                                                                 children: [
                                                                   Text("EmpId",
                                                                       style: TextStyle(
@@ -715,6 +685,14 @@ setState(() {
                                                                           color:
                                                                               Colors.black)),
                                                                   Text("Name",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16.0,
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color:
+                                                                              Colors.black)),
+                                                                  Text("Dept",
                                                                       style: TextStyle(
                                                                           fontSize:
                                                                               16.0,
@@ -751,7 +729,7 @@ setState(() {
                                                           Padding(
                                                             padding:
                                                                 EdgeInsets.only(
-                                                                    left: 6.w),
+                                                                    left: 3.w),
                                                             child: Column(
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
@@ -768,6 +746,13 @@ setState(() {
                                                                   _searchResults[
                                                                           index]
                                                                       ["name"],
+                                                                  style: Constants
+                                                                      .regularDarkText,
+                                                                ),
+                                                                Text(
+                                                                  _searchResults[
+                                                                          index]
+                                                                      ["assignedDepartment"],
                                                                   style: Constants
                                                                       .regularDarkText,
                                                                 ),

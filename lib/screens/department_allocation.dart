@@ -42,7 +42,7 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
   String departmentDropDownValue;
   crudMethod crudOperations = new crudMethod();
   void initState() {
-    var departmentDropDownValue = departmentItems[0];
+    departmentDropDownValue = departmentItems[0];
     super.initState();
   }
   
@@ -166,6 +166,9 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                               _nameController.text =
                                   documentData["name"] ?? "Null";
                             }
+                            else {
+                              _nameController.text = "Enter Valid Employee ID";
+                            }
                           });
                         });
                       },
@@ -252,7 +255,7 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                       }).toList(),
                       hint: Text(departmentItems[0]),
                       validator: (value) =>
-                          value == "Department" ? 'field required' : null,
+                          value == "Department"||value==null ? 'field required' : null,
                       onChanged: (String value) {
                         setState(() {
                           departmentDropDownValue = value;
@@ -278,6 +281,10 @@ class _DepartmentAllocationState extends State<DepartmentAllocation> {
                           onPrimary: Colors.white, // foreground
                         ),
                         onPressed: () async {
+                          if (_nameController.text ==
+                              "Enter Valid Employee ID") {
+                            _showMyDialog("Enter Valid Employee ID");
+                          }
                           final isValid = _formKey.currentState.validate();
                           // crudOperations.storeData({});
                           if (isValid) {

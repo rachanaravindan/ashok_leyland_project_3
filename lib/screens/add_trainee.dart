@@ -47,13 +47,12 @@ class _AddTraineeState extends State<AddTrainee> {
       setState(() {
         print(_seldate);
         currentDate = _seldate;
-        _selectdate(context);
       });
     }
   }
 
   Future<Null> _selectBirthdate(BuildContext floatcontext) async {
-    final DateTime _seldate = await showDatePicker(
+    final DateTime _selbirthdate = await showDatePicker(
         context: floatcontext,
         initialDate: currentBirthDate,
         firstDate: DateTime(1990),
@@ -63,11 +62,10 @@ class _AddTraineeState extends State<AddTrainee> {
             child: child,
           );
         });
-    if (_seldate != null && _seldate != currentBirthDate) {
+    if (_selbirthdate != null && _selbirthdate != currentBirthDate) {
       setState(() {
-        print(_seldate);
-        currentBirthDate = _seldate;
-        _selectdate(context);
+        print(_selbirthdate);
+        currentBirthDate = _selbirthdate;
       });
     }
   }
@@ -107,7 +105,7 @@ class _AddTraineeState extends State<AddTrainee> {
     }
 
     String _formattedate = new DateFormat.yMMMd().format(currentDate);
-    String _formatteBirthdate = new DateFormat.yMMMd().format(currentDate);
+    String _formatteBirthdate = new DateFormat.yMMMd().format(currentBirthDate);
 
     return Sizer(builder: (context, orientation, deviceType) {
       return SafeArea(
@@ -329,7 +327,7 @@ class _AddTraineeState extends State<AddTrainee> {
                             ),
                             onPressed: () async {
                               final isValid = _formKey.currentState.validate();
-                              if (currentBirthDate != DateTime.now()) {
+                              if (DateFormat('dd-MM-yyyy').format(currentBirthDate) == DateFormat('dd-MM-yyyy').format(DateTime.now())) {
                                 _showMyDialog("Enter the Date of Birth");
                               }
                               else if (isValid) {
